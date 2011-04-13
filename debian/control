@@ -1,13 +1,13 @@
 Source: bugzilla
 Section: web
 Priority: optional
-Maintainer: Raphael Bossek <bossekr@debian.org>
+Maintainer: Tamer Saadeh <tamer@tamersaadeh.com>
 Build-Depends: po-debconf, debhelper (>= 7.0.50), python-central (>= 0.5), quilt (>= 0.46-7~), fakeroot, gettext
 Build-Depends-Indep: debconf (>= 0.9.95) | debconf-2.0
 XS-Python-Version: all
 Standards-Version: 3.9.1
 
-Package: bugzilla3
+Package: bugzilla4
 Architecture: all
 Section: web
 Homepage: http://www.bugzilla.org
@@ -53,8 +53,8 @@ Recommends: libchart-perl (>= 0.99c.pre3-0.1),
             mysql-server | postgresql,
             cvs,
             imagemagick
-Conflicts: bugzilla (<< 3.0.0)
-Replaces: bugzilla (<< 3.0.0)
+Conflicts: bugzilla (<< 4.0.0)
+Replaces: bugzilla (<< 4.0.0)
 XB-Python-Version: ${python:Versions}
 Description: web-based bug tracking system
  Bugzilla is a Bug Tracking System accessible through a web interface,
@@ -64,16 +64,23 @@ Description: web-based bug tracking system
   * prioritize bugs;
   * set bug dependencies;
   * arrange bugs by product and component.
- It can also be used as a todo list manager.
- .
+  * It can also be used as a todo list manager.
+ What's new since 4.0:
+  * A fully-redesigned Advanced Search page
+  * Automatic duplicate detection when filing bugs
+  * Drop-down autocomplete for every field that accepts a user name or email address
+  * Full control and retrieval of bugs via the WebService, including updating existing bugs
+  * Redesigned home page icons from J. Pink Design
+  * Numerous usability improvements
+  * and much, much more...
  This package provides a web application that lets users make and look
  up bug reports. Interested users are automatically informed about
  changes to a bug's status.
 
-Package: bugzilla3-doc
+Package: bugzilla4-doc
 Section: doc
 Architecture: all
-Suggests: bugzilla3
+Suggests: bugzilla4
 Depends: ${misc:Depends}
 Homepage: http://www.bugzilla.org
 XB-Python-Version: ${python:Versions}
