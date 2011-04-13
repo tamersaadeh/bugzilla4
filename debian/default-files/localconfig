@@ -33,10 +33,10 @@ $db_driver = 'mysql';
 $db_host = 'localhost';
 
 # The name of the database
-$db_name = 'bugzilla3';
+$db_name = 'bugzilla4';
 
 # Who we connect to the database as.
-$db_user = 'bugzilla3';
+$db_user = 'bugzilla4';
 
 # Enter your database password here. It's normally advisable to specify
 # a password for your bugzilla database user.

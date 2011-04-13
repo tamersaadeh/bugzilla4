@@ -22,14 +22,14 @@
 
 # Change the code to set UNCONFIRMED status as default recarding of the configuration.
 # Setup:
-# ln -s /usr/share/doc/bugzilla3/examples/30_unconfirmed_allways.sh /etc/bugzilla3/pre-checksetup.d/
+# ln -s /usr/share/doc/bugzilla4/examples/30_unconfirmed_allways.sh /etc/bugzilla4/pre-checksetup.d/
 
 set -e
 
 tmpf=`tempfile`
 trap "rm -f $tmpf" EXIT QUIT
 
-f="/usr/share/bugzilla3/web/enter_bug.cgi"
+f="/usr/share/bugzilla4/web/enter_bug.cgi"
 if grep -q '^unless ($has_editbugs || $has_canconfirm) {' "$f" 2>/dev/null; then
 	sed -e 's,^unless ($has_editbugs || $has_canconfirm) {,if (1) {,g' "$f" >"$tmpf"
 	cat "$tmpf" >"$f"
