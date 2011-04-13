@@ -42,7 +42,7 @@ done
 
 # Change the documentation to the directories where the files are.
 for f in `grep -rl ">contrib/recode\.pl<" "$BUGZILLA_TEMPLATEDIR"`; do
-	sed -e 's,>\(contrib/recode\.pl\)<,>/usr/share/bugzilla3/\1<,g' "$f" >"$tmpf"
+	sed -e 's,>\(contrib/recode\.pl\)<,>/usr/share/bugzilla4/\1<,g' "$f" >"$tmpf"
 	diff -u "$f" "$tmpf" || true
 	cat "$tmpf" >"$f"
 done

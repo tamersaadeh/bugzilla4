@@ -3,7 +3,7 @@
 
 tmpf=`mktemp`
 trap "rm $tmpf" EXIT QUIT
-dpkg-statoverride --list '*/bugzilla3*'| sed -e 's,^\([^[:space:]]\+\)[[:space:]]\([^[:space:]]\+\)[[:space:]]\([^[:space:]]\+\)[[:space:]]\(.*\),test -e "\4" \&\& chown \1:\2 "\4" \&\& chmod \3 "\4",g' >"$tmpf"
+dpkg-statoverride --list '*/bugzilla4*'| sed -e 's,^\([^[:space:]]\+\)[[:space:]]\([^[:space:]]\+\)[[:space:]]\([^[:space:]]\+\)[[:space:]]\(.*\),test -e "\4" \&\& chown \1:\2 "\4" \&\& chmod \3 "\4",g' >"$tmpf"
 . "$tmpf"
 
 # Please read the post-checksetup.d/10setdefaultdpkgstatoverride about how

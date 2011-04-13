@@ -4,7 +4,7 @@
 
 set -e
 
-c="/etc/bugzilla3/params"
+c="/etc/bugzilla4/params"
 
 # We assume if GraphViz is installed the webdot support should be enabled.
 if test -x /usr/bin/dot && test -s "$c"; then
