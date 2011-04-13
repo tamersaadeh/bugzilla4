@@ -1,3 +1,9 @@
+bugzilla (4.0.0.0-0ubuntu1) natty; urgency=low
+
+  * Initial update to Bugzilla 4.
+
+ -- Tamer Saadeh <tamer@tamersaadeh.com>  Wed, 13 Apr 2011 15:36:34 +0300
+
 bugzilla (3.6.3.0-2) unstable; urgency=medium
 
   * Support for noninteractive mode in Debconf. Closes: #602738
