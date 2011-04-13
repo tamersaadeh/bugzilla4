@@ -21,13 +21,13 @@ version="$2"
 # Make sure it's the same in
 # + debian/rules
 # + maintenance/checksetup_debian.sh
-# + debian/bugzilla3.{pre,post}{inst,rm}
+# + debian/bugzilla4.{pre,post}{inst,rm}
 std_exports()
 {
-    export BUGZILLA_ETCDIR="/etc/bugzilla3"
-    export BUGZILLA_VARDIR="/var/lib/bugzilla3"
+    export BUGZILLA_ETCDIR="/etc/bugzilla4"
+    export BUGZILLA_VARDIR="/var/lib/bugzilla4"
     export BUGZILLA_DATADIR="$BUGZILLA_VARDIR/data"
-    export BUGZILLA_SHAREDIR="/usr/share/bugzilla3"
+    export BUGZILLA_SHAREDIR="/usr/share/bugzilla4"
     export BUGZILLA_WEBDIR="$BUGZILLA_SHAREDIR/web"
     export BUGZILLA_CONTRIBDIR="$BUGZILLA_SHAREDIR/contrib"
     export BUGZILLA_TEMPLATEDIR="$BUGZILLA_VARDIR/template"
@@ -36,8 +36,8 @@ std_exports()
 }
 
 # A copy of this function is the following scripts:
-# * bugzilla3.{pre,post}{inst,rm}
-# * bugzilla3.config
+# * bugzilla4.{pre,post}{inst,rm}
+# * bugzilla4.config
 start_dbc()
 {
     local _class="$1"
@@ -47,11 +47,11 @@ start_dbc()
     # in an error message. We skip this call to supress the error output.
     if [ "$_class" = "preinst" ]; then
         return 0
-    # If dbconfig-common and bugzilla3 are installed first time
+    # If dbconfig-common and bugzilla4 are installed first time
     # these file is not avaialabe at config stage.
     elif [ -f /usr/share/dbconfig-common/dpkg/${_class}.mysql ]; then
         . /usr/share/dbconfig-common/dpkg/${_class}.mysql
-        dbc_go bugzilla3 $_mode $_version
+        dbc_go bugzilla4 $_mode $_version
         case $_class in
         config|postinst)
             if [ "$_version" ]; then
@@ -84,8 +84,8 @@ case "$mode" in
         done
         rm -rf "$BUGZILLA_ETCDIR"/*.ucf-old "$BUGZILLA_ETCDIR"/*.ucf-dist
         rm -rf "$BUGZILLA_VARDIR"
-        # Forget all dpkg-statoverride entries for bugzilla3
-        for f in `dpkg-statoverride --list "*/bugzilla3*" 2>/dev/null | cut -d ' ' -f 4`; do
+        # Forget all dpkg-statoverride entries for bugzilla4
+        for f in `dpkg-statoverride --list "*/bugzilla4*" 2>/dev/null | cut -d ' ' -f 4`; do
             dpkg-statoverride --remove "$f"
         done
     ;;

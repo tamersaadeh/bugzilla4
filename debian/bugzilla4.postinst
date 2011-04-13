@@ -27,13 +27,13 @@ version="$2"
 # + debian/rules
 # + debian/Makefile
 # + maintenance/checksetup_debian.sh
-# + debian/bugzilla3.{pre,post}{inst,rm}
+# + debian/bugzilla4.{pre,post}{inst,rm}
 std_exports()
 {
-    export BUGZILLA_ETCDIR="/etc/bugzilla3"
-    export BUGZILLA_VARDIR="/var/lib/bugzilla3"
+    export BUGZILLA_ETCDIR="/etc/bugzilla4"
+    export BUGZILLA_VARDIR="/var/lib/bugzilla4"
     export BUGZILLA_DATADIR="$BUGZILLA_VARDIR/data"
-    export BUGZILLA_SHAREDIR="/usr/share/bugzilla3"
+    export BUGZILLA_SHAREDIR="/usr/share/bugzilla4"
     export BUGZILLA_WEBDIR="$BUGZILLA_SHAREDIR/web"
     export BUGZILLA_CONTRIBDIR="$BUGZILLA_SHAREDIR/contrib"
     export BUGZILLA_TEMPLATEDIR="$BUGZILLA_VARDIR/template"
@@ -79,8 +79,8 @@ cpfile()
 }
 
 # A copy of this function is the following scripts:
-# * bugzilla3.{pre,post}{inst,rm}
-# * bugzilla3.config
+# * bugzilla4.{pre,post}{inst,rm}
+# * bugzilla4.config
 start_dbc()
 {
     local _class="$1"
@@ -90,11 +90,11 @@ start_dbc()
     # in an error message. We skip this call to suppress the error output.
     if [ "$_class" = "preinst" ]; then
         return 0
-    # If dbconfig-common and bugzilla3 are installed first time
+    # If dbconfig-common and bugzilla4 are installed first time
     # these file is not avaialabe at config stage.
     elif [ -f /usr/share/dbconfig-common/dpkg/${_class}.mysql ]; then
         . /usr/share/dbconfig-common/dpkg/${_class}.mysql
-        dbc_go bugzilla3 $_mode $_version
+        dbc_go bugzilla4 $_mode $_version
         case $_class in
         config|postinst)
             if [ "$_version" ]; then
@@ -142,39 +142,39 @@ if [ "$mode" = "configure" ]; then
     run_script $BUGZILLA_ETCDIR/post-checksetup.d/15restoredpkgstatoverride >/dev/null 2>&1 \
     || true
 
-    # Setup a preleminary /etc/bugzilla3/params file.
+    # Setup a preleminary /etc/bugzilla4/params file.
     if [ ! -e "$BUGZILLA_ETCDIR/params" ]; then
         cpfile "$BUGZILLA_SHAREDIR/debian/params" "$BUGZILLA_ETCDIR/params"
     fi
 
-    # 1) Save the shutdownhtml text for use by /etc/bugzilla3/{pre,post}-checksetup.d scripts.
+    # 1) Save the shutdownhtml text for use by /etc/bugzilla4/{pre,post}-checksetup.d scripts.
     # 2) Disable Bugzilla if not already done by the administrator (using our Debconf shutdownhtml message).
-    db_get "bugzilla3/shutdownhtml"
+    db_get "bugzilla4/shutdownhtml"
     shutdownhtmlf=`mktemp -p $BUGZILLA_DATADIR -t shutdownhtml.XXXXXXXXXX`
     echo "$RET" >"$shutdownhtmlf"
     cpfile "$shutdownhtmlf" "$BUGZILLA_DATADIR/shutdownhtml"
     run_script $BUGZILLA_ETCDIR/pre-checksetup.d/03shutdownhtmlset \
     || true
 
-    # Create the /etc/bugzilla3/localconfig file using dbconfig-common configuration.
+    # Create the /etc/bugzilla4/localconfig file using dbconfig-common configuration.
     # If dbconfig-common is disabled the default localconfig-template redistributed
-    # with the bugzilla3 package will be used.
+    # with the bugzilla4 package will be used.
     if [ ! -s "$BUGZILLA_ETCDIR/localconfig" ]; then
-        # Install the default /etc/bugzilla3/localconfig file using Debian's template.
+        # Install the default /etc/bugzilla4/localconfig file using Debian's template.
         cpfile "$BUGZILLA_SHAREDIR/debian/localconfig" "$BUGZILLA_ETCDIR/localconfig"
     fi
     if start_dbc postinst $mode $version; then
         [ -n "$dbc_dbport" ] \
         || dbc_dbport="0"
-        echo "$dbc_dbserver" | /usr/share/bugzilla3/contrib/bugzparam --localconfig --stdin "db_host"
-        echo "$dbc_dbport" | /usr/share/bugzilla3/contrib/bugzparam --localconfig --stdin --value "db_port"
-        echo "$dbc_dbname" | /usr/share/bugzilla3/contrib/bugzparam --localconfig --stdin "db_name"
-        echo "$dbc_dbuser" | /usr/share/bugzilla3/contrib/bugzparam --localconfig --stdin "db_user"
-        echo "$dbc_dbpass" | /usr/share/bugzilla3/contrib/bugzparam --localconfig --stdin "db_pass"
-        /usr/share/bugzilla3/contrib/bugzparam --localconfig --value "create_htaccess" "0"
+        echo "$dbc_dbserver" | /usr/share/bugzilla4/contrib/bugzparam --localconfig --stdin "db_host"
+        echo "$dbc_dbport" | /usr/share/bugzilla4/contrib/bugzparam --localconfig --stdin --value "db_port"
+        echo "$dbc_dbname" | /usr/share/bugzilla4/contrib/bugzparam --localconfig --stdin "db_name"
+        echo "$dbc_dbuser" | /usr/share/bugzilla4/contrib/bugzparam --localconfig --stdin "db_user"
+        echo "$dbc_dbpass" | /usr/share/bugzilla4/contrib/bugzparam --localconfig --stdin "db_pass"
+        /usr/share/bugzilla4/contrib/bugzparam --localconfig --value "create_htaccess" "0"
     fi
     # Debconf is not a registry! We have to save default answers in a seperate file.
-    /usr/share/bugzilla3/contrib/dumpanswerfile
+    /usr/share/bugzilla4/contrib/dumpanswerfile
 
     # We do not start checksetup.pl with Debian's template of localconfig.
     # This tempalte is not working and need manual tunning.
@@ -187,9 +187,9 @@ if [ "$mode" = "configure" ]; then
         # Debian ask you if Status/Resolution field were modified by you. In this case the installation
         # procedure do *NOT* start checksetup.pl. The answer-file will be used as mark for a second run
         # in the hope you have modified checksetup_nondebian.pl (the original file) successful.
-        db_get "bugzilla3/customized_values"
+        db_get "bugzilla4/customized_values"
         customized_values="$RET"
-        db_get "bugzilla3/customized_values_ask_again"
+        db_get "bugzilla4/customized_values_ask_again"
         customized_values_ask_again="$RET"
         if [ "$customized_values" = "false" -o "$customized_values_ask_again" = "false" ]; then
             # Call checksetup now that everything is ready
@@ -203,18 +203,18 @@ if [ "$mode" = "configure" ]; then
             # me disable this error check.
             # The user have to take care about the error reports.
             if [ "$errorcode" != "0" ]; then
-                db_input critical "bugzilla3/checksetup_failed" || true
+                db_input critical "bugzilla4/checksetup_failed" || true
                 db_go || true
                 errorcode=0
             else
-                db_reset "bugzilla3/checksetup_failed" || true
+                db_reset "bugzilla4/checksetup_failed" || true
             fi
         fi
     fi
 
     # Install default apache2 CGI configuration.
     if [ -d "/etc/apache2/conf.d" ] && ( [ -z "$version" ] || dpkg --compare-versions "$version" lt "3.0.10.0-1" || ( dpkg --compare-versions "$version" gt "3.2" && dpkg --compare-versions "$version" lt "3.0.10.0-1" ) ); then
-        ln -sf "/usr/share/doc/bugzilla3/examples/basic.conf" "/etc/apache2/conf.d/bugzilla3.conf"
+        ln -sf "/usr/share/doc/bugzilla4/examples/basic.conf" "/etc/apache2/conf.d/bugzilla4.conf"
         invoke-rc.d apache2 reload || true
     fi
 fi 
