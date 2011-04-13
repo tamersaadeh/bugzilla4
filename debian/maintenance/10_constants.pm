@@ -25,15 +25,15 @@ sub bz_locations {
 	# Constant default paths.
 	my %overwritten_locations = (
 		'libpath' => "/usr/share/perl5",
-		'cgi_path' => "/usr/share/bugzilla3/web",
-		'localconfig' => "/etc/bugzilla3/localconfig",
-		'debian_paramsdir' => "/etc/bugzilla3",
-		'skinsdir' => "/usr/share/bugzilla3/web/skins",
+		'cgi_path' => "/usr/share/bugzilla4/web",
+		'localconfig' => "/etc/bugzilla4/localconfig",
+		'debian_paramsdir' => "/etc/bugzilla4",
+		'skinsdir' => "/usr/share/bugzilla4/web/skins",
 		# It's important to use cgi_path for webdotdir in order to get
 		# substitution in showdependencygraph.cgi working. On the filesystem
-		# /var/lib/bugzilla3/data/webdot is the right directory which
-		# symlinked in /usr/share/bugzilla3/web as data(/webdot).
-		'webdotdir' => "/usr/share/bugzilla3/web/data/webdot",
+		# /var/lib/bugzilla4/data/webdot is the right directory which
+		# symlinked in /usr/share/bugzilla4/web as data(/webdot).
+		'webdotdir' => "/usr/share/bugzilla4/web/data/webdot",
 		# The `project` entry is only a simplification to skip this entry for substitution.
 		'project' => $locations->{'project'},
 		);
@@ -45,14 +45,14 @@ sub bz_locations {
 		$overwritten_locations{'debian_webpath'} = $ENV{'X_BUGZILLA_WEBPATH'};
 	}
 	else {
-		$overwritten_locations{'debian_webpath'} = '/bugzilla3/';
+		$overwritten_locations{'debian_webpath'} = '/bugzilla4/';
 	}
 
 	# Apply our changes.
 	for my $localkey (keys %overwritten_locations) {
 		$locations->{$localkey} = $overwritten_locations{$localkey};
 	}
-	my $varlib = "/var/lib/bugzilla3";
+	my $varlib = "/var/lib/bugzilla4";
 
 	# Transform all entris to new `libpath` directory.
 	for my $localkey (keys %{$locations}) {

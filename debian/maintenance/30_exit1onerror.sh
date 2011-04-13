@@ -25,8 +25,8 @@ fi
 if ! grep -q "exit(9);$" "$d/Bugzilla/Install/Localconfig.pm"; then
 	cat <<__EOF__
 It's important to exit with error code 9 in the case where
-/etc/bugzilla3/localconfig file is updated.
-In this case /usr/share/bugzilla3/lib/checksetup.pl restart
+/etc/bugzilla4/localconfig file is updated.
+In this case /usr/share/bugzilla4/lib/checksetup.pl restart
 checksetup. Please modify debian/maintenance/checksetup_debian.sh
 otherwise.
 __EOF__

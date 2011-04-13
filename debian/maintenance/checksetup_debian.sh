@@ -9,13 +9,13 @@ set -e
 # Make sure it's the same in
 # + debian/rules
 # + maintenance/checksetup_debian.sh
-# + debian/bugzilla3.{pre,post}{inst,rm}
+# + debian/bugzilla4.{pre,post}{inst,rm}
 std_exports()
 {
-    export BUGZILLA_ETCDIR="/etc/bugzilla3"
-    export BUGZILLA_VARDIR="/var/lib/bugzilla3"
+    export BUGZILLA_ETCDIR="/etc/bugzilla4"
+    export BUGZILLA_VARDIR="/var/lib/bugzilla4"
     export BUGZILLA_DATADIR="$BUGZILLA_VARDIR/data"
-    export BUGZILLA_SHAREDIR="/usr/share/bugzilla3"
+    export BUGZILLA_SHAREDIR="/usr/share/bugzilla4"
     export BUGZILLA_WEBDIR="$BUGZILLA_SHAREDIR/web"
     export BUGZILLA_CONTRIBDIR="$BUGZILLA_SHAREDIR/contrib"
     export BUGZILLA_TEMPLATEDIR="$BUGZILLA_VARDIR/template"
@@ -30,13 +30,13 @@ cleanup()
 
 checksetup()
 {
-    # /usr/share/bugzilla3/lib/checksetup_nondebian.pl exit with error code 9
-    # if the /etc/bugzilla3/localconfig variables where updated. In this case
+    # /usr/share/bugzilla4/lib/checksetup_nondebian.pl exit with error code 9
+    # if the /etc/bugzilla4/localconfig variables where updated. In this case
     # we restart checksetup_nondebian.pl to apply the changes.
     errorcode=9
     while [ "$errorcode" = "9" ]; do
-        echo "Run X_BUGZILLA_SITE=\"$X_BUGZILLA_SITE\" su www-data -p -c perl /usr/share/bugzilla3/lib/checksetup_nondebian.pl $* >>$tmplog"
-        su www-data -p -c "perl /usr/share/bugzilla3/lib/checksetup_nondebian.pl $*" >>"$tmplog" 2>&1 \
+        echo "Run X_BUGZILLA_SITE=\"$X_BUGZILLA_SITE\" su www-data -p -c perl /usr/share/bugzilla4/lib/checksetup_nondebian.pl $* >>$tmplog"
+        su www-data -p -c "perl /usr/share/bugzilla4/lib/checksetup_nondebian.pl $*" >>"$tmplog" 2>&1 \
             && errorcode=0 \
             || errorcode=$?
     done
@@ -63,7 +63,7 @@ checksetup()
             -e 's,/usr/bin/perl install-module.pl HTML::Parser.*,apt-get install libhtml-parser-perl,g' | \
         sed -e 's,\: /usr/bin/perl install-module.pl ,\: dh-make-perl --install --cpan ,g' \
             -e 's,http://cyberelk.net/tim/patchutils/,apt-get install patchutils,g' \
-            -e 's,/usr/bin/perl install-module.pl --all,view /usr/share/doc/bugzilla3/README.Debian*,g'
+            -e 's,/usr/bin/perl install-module.pl --all,view /usr/share/doc/bugzilla4/README.Debian*,g'
      return $errorcode
 }
 
@@ -88,7 +88,7 @@ fi
 answerf=`mktemp -p $BUGZILLA_ETCDIR -t answerfile.XXXXXXXXXX`
 chgrp www-data "$answerf"
 chmod 0640 "$answerf"
-# Reuse the /etc/bugzilla3/localconfig variables for some of the questions.
+# Reuse the /etc/bugzilla4/localconfig variables for some of the questions.
 cat "$BUGZILLA_ETCDIR/localconfig" >>"$answerf"
 echo "\$answer{'db_host'} = \$db_host;" >>"$answerf"
 echo "\$answer{'db_port'} = \$db_port;" >>"$answerf"
@@ -109,8 +109,8 @@ if [ "$errorcode" = "0" ]; then
 fi
 
 # update all the bugzilla sites
-if [ "$errorcode" = "0" -a -d /etc/bugzilla3/sites ]; then
-    for site in `cd /etc/bugzilla3/sites/ && ls -1`; do 
+if [ "$errorcode" = "0" -a -d /etc/bugzilla4/sites ]; then
+    for site in `cd /etc/bugzilla4/sites/ && ls -1`; do 
         X_BUGZILLA_SITE="$site" checksetup $@ \
         || errorcode=$?
 

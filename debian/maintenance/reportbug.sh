@@ -3,7 +3,7 @@
 
 set -e
 
-f="/var/log/bugzilla3-install.log"
+f="/var/log/bugzilla4-install.log"
 echo "$f:" >&3
 test -e "$f" && \
 	cat "$f" >&3

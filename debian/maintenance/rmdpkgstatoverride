@@ -2,7 +2,7 @@
 
 set -e
 
-for f in `dpkg-statoverride --list "*/bugzilla3*"|cut -d ' ' -f 4`; do
+for f in `dpkg-statoverride --list "*/bugzilla4*"|cut -d ' ' -f 4`; do
 	echo "$f"
 	dpkg-statoverride --remove "$f"
 done

@@ -14,7 +14,7 @@
 #
 
 use strict;
-use lib "/usr/share/bugzilla3";
+use lib "/usr/share/bugzilla4";
 
 # Work-arround to be able to use Bugzilla functionality where
 # shutdownhtml parameter is set.

@@ -1,5 +1,5 @@
 #!/bin/sh
-# This scripts helps me to analyse the current status of debconf for bugzilla3 package
+# This scripts helps me to analyse the current status of debconf for bugzilla4 package
 
 . /usr/share/debconf/confmodule
 
@@ -9,9 +9,9 @@ trap "rm $tmpf" QUIT EXIT
 
 echo >&2 "D: Looking for debconf variables..."
 # Extract all debconf value pairs including dbconfig-common
-for f in bugzilla3.config bugzilla3.postinst /usr/share/dbconfig-common/dpkg/*; do
-    grep 'db_.*\(\$dbc_package\|bugzilla3\)/[^*[:space:]]\+' "$f" | \
-    sed -e 's,$dbc_package,bugzilla3,g;s,$dbc_dbtype,mysql,g;s,.*\(bugzilla3/[^"$[:space:]]\+\).*,\1,g;s,.*$.*,,g' >>"$tmpf"
+for f in bugzilla4.config bugzilla4.postinst /usr/share/dbconfig-common/dpkg/*; do
+    grep 'db_.*\(\$dbc_package\|bugzilla4\)/[^*[:space:]]\+' "$f" | \
+    sed -e 's,$dbc_package,bugzilla4,g;s,$dbc_dbtype,mysql,g;s,.*\(bugzilla4/[^"$[:space:]]\+\).*,\1,g;s,.*$.*,,g' >>"$tmpf"
 done
 echo >&2 "D: Query debconf variables..."
 # Query all debconf value pairs
@@ -23,15 +23,15 @@ done
 
 if test -e /usr/share/dbconfig-common/dpkg/postinst.mysql; then
     echo >&2 "D: Start dbconfig-common"
-    . /etc/dbconfig-common/bugzilla3.conf
-    echo >&2 "D: dbc_go bugzilla3 config"
+    . /etc/dbconfig-common/bugzilla4.conf
+    echo >&2 "D: dbc_go bugzilla4 config"
     . /usr/share/dbconfig-common/dpkg/config.mysql
-    echo >&2 "D: dbc_go bugzilla3 reconfigure"
-    dbvars_file="/etc/bugzilla3/dbconfig-params"
+    echo >&2 "D: dbc_go bugzilla4 reconfigure"
+    dbvars_file="/etc/bugzilla4/dbconfig-params"
     dbc_generate_include="sh:$dbvars_file"
-    dbc_go bugzilla3 reconfigure
-    #dbc_go bugzilla3 config
-    test -e /etc/bugzilla3/dbconfig-params && . /etc/bugzilla3/dbconfig-params
+    dbc_go bugzilla4 reconfigure
+    #dbc_go bugzilla4 config
+    test -e /etc/bugzilla4/dbconfig-params && . /etc/bugzilla4/dbconfig-params
     echo >&2 "D: $dbc_dropuser_cmd"
     $dbc_dropuser_cmd
     echo >&2 "D: $dbc_createuser_cmd"
@@ -46,10 +46,10 @@ if test -e /usr/share/dbconfig-common/dpkg/postinst.mysql; then
      -e "s,^\$db_name[[:space:]]*=.*,\$db_name = '$dbc_dbname';,g" \
      -e "s,^\$db_user[[:space:]]*=.*,\$db_user = '$dbc_dbuser';,g" \
      -e "s,^\$db_pass[[:space:]]*=.*,\$db_pass = '$dbc_dbpass';,g" \
-     -e "s,^\$create_htaccess[[:space:]]*=.*,\$create_htaccess = 0;,g" /etc/bugzilla3/localconfig >"$tmpf"
-    cat "$tmpf" >/etc/bugzilla3/localconfig
+     -e "s,^\$create_htaccess[[:space:]]*=.*,\$create_htaccess = 0;,g" /etc/bugzilla4/localconfig >"$tmpf"
+    cat "$tmpf" >/etc/bugzilla4/localconfig
     echo >&2 "D: checksetup.pl"
-    /usr/share/bugzilla3/lib/checksetup.pl
+    /usr/share/bugzilla4/lib/checksetup.pl
 fi
 
 # vim:ts=4 et sw=4
