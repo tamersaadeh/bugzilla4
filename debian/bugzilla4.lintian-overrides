@@ -1,6 +1,6 @@
 # This is safe because we call dumpanswerfile only at installation stage.
-bugzilla3: debconf-is-not-a-registry usr/share/bugzilla3/contrib/dumpanswerfile
+bugzilla4: debconf-is-not-a-registry usr/share/bugzilla4/contrib/dumpanswerfile
 # Scripts in tempalte (translations) are PERL scripts
-bugzilla3: script-not-executable
+bugzilla4: script-not-executable
 # Same license information as in documentation directory but for the web
-bugzilla3: extra-license-file
+bugzilla4: extra-license-file
