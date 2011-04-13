@@ -1,17 +1,8 @@
-# These templates have been reviewed by the debian-l10n-english
-# team
-#
-# If modifications/additions/rewording are needed, please ask
-# debian-l10n-english@lists.debian.org for advice.
-#
-# Even minor modifications require translation updates and such
-# changes should be coordinated with translators and reviewers.
-
-Template: bugzilla3/pwd_check
+Template: bugzilla4/pwd_check
 Type: password
 _Description: Password confirmation:
 
-Template: bugzilla3/bugzilla_admin_name
+Template: bugzilla4/bugzilla_admin_name
 Type: string
 _Description: Email address of Bugzilla administrator:
  Please enter the email address of the Bugzilla administrator; all mail for
@@ -22,16 +13,16 @@ _Description: Email address of Bugzilla administrator:
  the @. You'll be able to change this setting through Bugzilla's
  web interface.
 
-Template: bugzilla3/bugzilla_admin_real_name
+Template: bugzilla4/bugzilla_admin_real_name
 Type: string
 _Description: Real name of Bugzilla administrator:
 
-Template: bugzilla3/bugzilla_admin_pwd
+Template: bugzilla4/bugzilla_admin_pwd
 Type: password
 _Description: Password for the Bugzilla administrator account:
  Please enter at least 6 characters.
 
-Template: bugzilla3/customized_values
+Template: bugzilla4/customized_values
 Type: boolean
 Default: true
 _Description: Have Status or Resolution values been customized?
@@ -40,37 +31,37 @@ _Description: Have Status or Resolution values been customized?
  can continue.
  .
  For each update of this package, a new version of the checksetup_nondebian.pl
- script is installed; the /usr/share/bugzilla3/debian/pre-checksetup.d
+ script is installed; the /usr/share/bugzilla4/debian/pre-checksetup.d
  directory can be used to automatically apply your modifications before
  execution.
 
-Template: bugzilla3/customized_values_ask_again
+Template: bugzilla4/customized_values_ask_again
 Type: boolean
 Default: false
 _Description: Prompt about customized Status/Resolution at each update?
  If you modified Status/Resolution fields and created a script within
- /usr/share/bugzilla3/debian/pre-checksetup.d to apply changes to
- /usr/share/bugzilla3/lib/checksetup_nondebian.pl, you may want to avoid
+ /usr/share/bugzilla4/debian/pre-checksetup.d to apply changes to
+ /usr/share/bugzilla4/lib/checksetup_nondebian.pl, you may want to avoid
  being prompted at each package upgrade.
  .
  If you accept being prompted, you will have to call
- /usr/share/bugzilla3/lib/checksetup.pl yourself, at each package
+ /usr/share/bugzilla4/lib/checksetup.pl yourself, at each package
  upgrade, before using Bugzilla.
  .
  If you did not modify Status/Resolution, you should skip prompting as
  checksetup.pl will be started
  automatically (together with the {pre,post}-checksetup.d scripts).
 
-Template: bugzilla3/checksetup_failed
+Template: bugzilla4/checksetup_failed
 Type: error
 _Description: Setup of Bugzilla failed and needs further investigation
  Bugzilla has the "shutdownhtml" configuration parameter set, putting
  it offline (with logins disabled) until configured.
  .
- To set up Bugzilla, run "dpkg-reconfigure bugzilla3" (as root) and
+ To set up Bugzilla, run "dpkg-reconfigure bugzilla4" (as root) and
  choose "dbconfig-config".
 
-Template: bugzilla3/shutdownhtml
+Template: bugzilla4/shutdownhtml
 Type: string
 Default: <h1>Bugzilla is down for maintenance purposes. Please try again later.</h1>
 _Description: Bugzilla downtime message:
