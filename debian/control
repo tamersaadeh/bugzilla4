@@ -47,7 +47,8 @@ Suggests: bugzilla4-doc,
           patchutils,
           libwww-perl,
           ruby,
-          libjson-xs-perl (>= 2.0)
+          libjson-xs-perl (>= 2.0),
+          libapache2-mod-perl2 (>= 1.999022)
 Recommends: libchart-perl (>= 0.99c.pre3-0.1),
             libtemplate-plugin-gd-perl,
             libxml-parser-perl,
