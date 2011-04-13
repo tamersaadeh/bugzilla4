@@ -15,13 +15,13 @@ version="$2"
 # Make sure it's the same in
 # + debian/rules
 # + maintenance/checksetup_debian.sh
-# + debian/bugzilla3.{pre,post}{inst,rm}
+# + debian/bugzilla4.{pre,post}{inst,rm}
 std_exports()
 {
-    export BUGZILLA_ETCDIR="/etc/bugzilla3"
-    export BUGZILLA_VARDIR="/var/lib/bugzilla3"
+    export BUGZILLA_ETCDIR="/etc/bugzilla4"
+    export BUGZILLA_VARDIR="/var/lib/bugzilla4"
     export BUGZILLA_DATADIR="$BUGZILLA_VARDIR/data"
-    export BUGZILLA_SHAREDIR="/usr/share/bugzilla3"
+    export BUGZILLA_SHAREDIR="/usr/share/bugzilla4"
     export BUGZILLA_WEBDIR="$BUGZILLA_SHAREDIR/web"
     export BUGZILLA_CONTRIBDIR="$BUGZILLA_SHAREDIR/contrib"
     export BUGZILLA_TEMPLATEDIR="$BUGZILLA_VARDIR/template"
@@ -30,8 +30,8 @@ std_exports()
 }
 
 # A copy of this function is the following scripts:
-# * bugzilla3.{pre,post}{inst,rm}
-# * bugzilla3.config
+# * bugzilla4.{pre,post}{inst,rm}
+# * bugzilla4.config
 start_dbc()
 {
     local _class="$1"
@@ -41,11 +41,11 @@ start_dbc()
     # in an error message. We skip this call to supress the error output.
     if [ "$_class" = "preinst" ]; then
         return 0
-    # If dbconfig-common and bugzilla3 are installed first time
+    # If dbconfig-common and bugzilla4 are installed first time
     # these file is not avaialabe at config stage.
     elif [ -f /usr/share/dbconfig-common/dpkg/${_class}.mysql ]; then
         . /usr/share/dbconfig-common/dpkg/${_class}.mysql
-        dbc_go bugzilla3 $_mode $_version
+        dbc_go bugzilla4 $_mode $_version
         case $_class in
         config|postinst)
             if [ "$_version" ]; then
@@ -83,11 +83,11 @@ if [ "$mode" = "upgrade" ]; then
     fi
 
     # Migrate $BUGZILLA_ETCDIR/params:
-    # urlbase: /cgi-bin/bugzilla3 -> /bugzilla3
-    # url_docbase: /docs/bugzilla3-doc/%lang%/html -> /doc/bugzilla3-doc/%lang%/html
+    # urlbase: /cgi-bin/bugzilla4 -> /bugzilla4
+    # url_docbase: /docs/bugzilla4-doc/%lang%/html -> /doc/bugzilla4-doc/%lang%/html
     if test -s "$BUGZILLA_ETCDIR/params" && dpkg --compare-versions "$version" lt "3.0.10.0-1" || ( dpkg --compare-versions "$version" ge "3.2" && dpkg --compare-versions "$version" lt "3.2.5.0-1" ); then
-        sed -e 's,/cgi-bin/bugzilla3,/bugzilla3,g' \
-            -e 's,/docs/bugzilla3-doc/%lang%/html/,/doc/bugzilla3-doc/%lang%/html/,g' \
+        sed -e 's,/cgi-bin/bugzilla4,/bugzilla4,g' \
+            -e 's,/docs/bugzilla4-doc/%lang%/html/,/doc/bugzilla4-doc/%lang%/html/,g' \
             "$BUGZILLA_ETCDIR/params" >"$tmpf"
         cat "$tmpf" >"$BUGZILLA_ETCDIR/params"
     fi
@@ -111,9 +111,9 @@ if [ "$mode" = "upgrade" ]; then
         fi
     fi
 
-    # http://bugs.debian.org/571107 : Fix access rights for /etc/bugzilla3/localconfig
-    # Fix also access rights for /etc/bugzilla3/dbconfig-parms and /etc/bugzilla3/parms
-    # Only remove the old/wrong information. /usr/share/bugzilla3/lib/checksetup.pl will fix it later on.
+    # http://bugs.debian.org/571107 : Fix access rights for /etc/bugzilla4/localconfig
+    # Fix also access rights for /etc/bugzilla4/dbconfig-parms and /etc/bugzilla4/parms
+    # Only remove the old/wrong information. /usr/share/bugzilla4/lib/checksetup.pl will fix it later on.
     if dpkg --compare-versions "$version" le "3.6.2.0-1"; then
         for f in "$BUGZILLA_ETCDIR/localconfig" "$BUGZILLA_ETCDIR/dbconfig-params" "$BUGZILLA_ETCDIR/params"; do
             dpkg-statoverride --remove "$f" >/dev/null 2>&1 || true

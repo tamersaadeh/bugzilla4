@@ -16,8 +16,8 @@ version="$2"
 . /usr/share/debconf/confmodule
 
 # A copy of this function is the following scripts:
-# * bugzilla3.{pre,post}{inst,rm}
-# * bugzilla3.config
+# * bugzilla4.{pre,post}{inst,rm}
+# * bugzilla4.config
 start_dbc()
 {
     local _class="$1"
@@ -27,11 +27,11 @@ start_dbc()
     # in an error message. We skip this call to supress the error output.
     if [ "$_class" = "preinst" ]; then
         return 0
-    # If dbconfig-common and bugzilla3 are installed first time
+    # If dbconfig-common and bugzilla4 are installed first time
     # these file is not avaialabe at config stage.
     elif [ -f /usr/share/dbconfig-common/dpkg/${_class}.mysql ]; then
         . /usr/share/dbconfig-common/dpkg/${_class}.mysql
-        dbc_go bugzilla3 $_mode $_version
+        dbc_go bugzilla4 $_mode $_version
         case $_class in
         config|postinst)
             if [ "$_version" ]; then
@@ -56,13 +56,13 @@ start_dbc()
 # Make sure it's the same in
 # + debian/rules
 # + maintenance/checksetup_debian.sh
-# + debian/bugzilla3.{pre,post}{inst,rm}
+# + debian/bugzilla4.{pre,post}{inst,rm}
 std_exports()
 {
-    export BUGZILLA_ETCDIR="/etc/bugzilla3"
-    export BUGZILLA_VARDIR="/var/lib/bugzilla3"
+    export BUGZILLA_ETCDIR="/etc/bugzilla4"
+    export BUGZILLA_VARDIR="/var/lib/bugzilla4"
     export BUGZILLA_DATADIR="$BUGZILLA_VARDIR/data"
-    export BUGZILLA_SHAREDIR="/usr/share/bugzilla3"
+    export BUGZILLA_SHAREDIR="/usr/share/bugzilla4"
     export BUGZILLA_WEBDIR="$BUGZILLA_SHAREDIR/web"
     export BUGZILLA_CONTRIBDIR="$BUGZILLA_SHAREDIR/contrib"
     export BUGZILLA_TEMPLATEDIR="$BUGZILLA_VARDIR/template"
@@ -73,9 +73,9 @@ std_exports
 start_dbc prerm $* || true
 
 if [ "$mode" = "remove" ]; then
-	f="/etc/apache2/conf.d/bugzilla3"
+	f="/etc/apache2/conf.d/bugzilla4"
 	# Remove default apache2 CGI configuration.
-	if [ -e "/usr/share/doc/bugzilla3/examples/basic.conf" -a -e "$f" ] && cmp -s "/usr/share/doc/bugzilla3/examples/basic.conf" "$f" && test -L "$f"; then
+	if [ -e "/usr/share/doc/bugzilla4/examples/basic.conf" -a -e "$f" ] && cmp -s "/usr/share/doc/bugzilla4/examples/basic.conf" "$f" && test -L "$f"; then
 		rm -f "$f"
 	fi
 
