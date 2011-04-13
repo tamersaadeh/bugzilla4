@@ -18,13 +18,13 @@ BUGZILLA_SRCDIR := $(CURDIR)/bugzilla-srcdir
 # + debian/rules
 # + debian/Makefile
 # + maintenance/checksetup_debian.sh
-# + debian/bugzilla3.{pre,post}{inst,rm}
-export BUGZILLA_PKGDIR := $(CURDIR)/debian/bugzilla3
-export BUGZILLA_ETCDIR := $(BUGZILLA_PKGDIR)/etc/bugzilla3
-export BUGZILLA_VARDIR := $(BUGZILLA_PKGDIR)/var/lib/bugzilla3
+# + debian/bugzilla4.{pre,post}{inst,rm}
+export BUGZILLA_PKGDIR := $(CURDIR)/debian/bugzilla4
+export BUGZILLA_ETCDIR := $(BUGZILLA_PKGDIR)/etc/bugzilla4
+export BUGZILLA_VARDIR := $(BUGZILLA_PKGDIR)/var/lib/bugzilla4
 export BUGZILLA_DATADIR := $(BUGZILLA_VARDIR)/data
-export BUGZILLA_SHAREDIR := $(BUGZILLA_PKGDIR)/usr/share/bugzilla3
-export BUGZILLA_WEBDIR := $(BUGZILLA_PKGDIR)/usr/share/bugzilla3/web
+export BUGZILLA_SHAREDIR := $(BUGZILLA_PKGDIR)/usr/share/bugzilla4
+export BUGZILLA_WEBDIR := $(BUGZILLA_PKGDIR)/usr/share/bugzilla4/web
 export BUGZILLA_CONTRIBDIR := $(BUGZILLA_SHAREDIR)/contrib
 export BUGZILLA_TEMPLATEDIR := $(BUGZILLA_VARDIR)/template
 export BUGZILLA_COMPILEDTEMPLATEDIR := $(BUGZILLA_DATADIR)/template
@@ -94,36 +94,36 @@ override_dh_auto_install:
 	# building the -fr package
 	$(MAKE) -f debian/Makefile install CURDIR=$(CURDIR)
 	# We install our debian helpers
-	$(INSTALL) -d -m 0755 -o root -g root $(CURDIR)/debian/bugzilla3/etc/bugzilla3/pre-checksetup.d
+	$(INSTALL) -d -m 0755 -o root -g root $(CURDIR)/debian/bugzilla4/etc/bugzilla4/pre-checksetup.d
 	cd $(CURDIR)/debian/pre-checksetup.d && for f in *; do \
-		$(INSTALL) -m 0755 -o root -g root $$f $(CURDIR)/debian/bugzilla3/etc/bugzilla3/pre-checksetup.d/$$f; \
+		$(INSTALL) -m 0755 -o root -g root $$f $(CURDIR)/debian/bugzilla4/etc/bugzilla4/pre-checksetup.d/$$f; \
 	done
-	$(INSTALL) -d -m 0755 -o root -g root $(CURDIR)/debian/bugzilla3/etc/bugzilla3/post-checksetup.d
+	$(INSTALL) -d -m 0755 -o root -g root $(CURDIR)/debian/bugzilla4/etc/bugzilla4/post-checksetup.d
 	cd $(CURDIR)/debian/post-checksetup.d && for f in *; do \
-		$(INSTALL) -m 0755 -o root -g root $$f $(CURDIR)/debian/bugzilla3/etc/bugzilla3/post-checksetup.d/$$f; \
+		$(INSTALL) -m 0755 -o root -g root $$f $(CURDIR)/debian/bugzilla4/etc/bugzilla4/post-checksetup.d/$$f; \
 	done
-	$(INSTALL) -d -m 0755 -o root -g root $(CURDIR)/debian/bugzilla3/usr/share/bugzilla3/debian
-	$(INSTALL)    -m 0644 -o root -g root debian/default-files/params $(CURDIR)/debian/bugzilla3/usr/share/bugzilla3/debian
-	$(INSTALL)    -m 0644 -o root -g root debian/default-files/localconfig $(CURDIR)/debian/bugzilla3/usr/share/bugzilla3/debian
+	$(INSTALL) -d -m 0755 -o root -g root $(CURDIR)/debian/bugzilla4/usr/share/bugzilla4/debian
+	$(INSTALL)    -m 0644 -o root -g root debian/default-files/params $(CURDIR)/debian/bugzilla4/usr/share/bugzilla4/debian
+	$(INSTALL)    -m 0644 -o root -g root debian/default-files/localconfig $(CURDIR)/debian/bugzilla4/usr/share/bugzilla4/debian
 	# Installing exemples 
-	$(INSTALL) -d -m 0755 -o root -g root $(CURDIR)/debian/bugzilla3/usr/share/doc/bugzilla3/examples
-	$(INSTALL)    -m 0755 -o root -g root debian/examples/*.sh $(CURDIR)/debian/bugzilla3/usr/share/doc/bugzilla3/examples
-	$(INSTALL)    -m 0644 -o root -g root debian/examples/*.conf $(CURDIR)/debian/bugzilla3/usr/share/doc/bugzilla3/examples
+	$(INSTALL) -d -m 0755 -o root -g root $(CURDIR)/debian/bugzilla4/usr/share/doc/bugzilla4/examples
+	$(INSTALL)    -m 0755 -o root -g root debian/examples/*.sh $(CURDIR)/debian/bugzilla4/usr/share/doc/bugzilla4/examples
+	$(INSTALL)    -m 0644 -o root -g root debian/examples/*.conf $(CURDIR)/debian/bugzilla4/usr/share/doc/bugzilla4/examples
 	# Install default configuration files
-	$(INSTALL) -d -m 0755 -o root -g root $(CURDIR)/debian/bugzilla3/etc/bugzilla3
-	$(INSTALL) -m 0644 -o root -g root debian/default-files/index.html $(CURDIR)/debian/bugzilla3/etc/bugzilla3
+	$(INSTALL) -d -m 0755 -o root -g root $(CURDIR)/debian/bugzilla4/etc/bugzilla4
+	$(INSTALL) -m 0644 -o root -g root debian/default-files/index.html $(CURDIR)/debian/bugzilla4/etc/bugzilla4
 	# preparing the vhost conf dir
-	$(INSTALL) -d -m 0755 -o root -g root $(CURDIR)/debian/bugzilla3/etc/bugzilla3/sites
+	$(INSTALL) -d -m 0755 -o root -g root $(CURDIR)/debian/bugzilla4/etc/bugzilla4/sites
 	# replace checksetup.pl script by Debian modification
-	mv $(CURDIR)/debian/bugzilla3/usr/share/bugzilla3/lib/checksetup.pl $(CURDIR)/debian/bugzilla3/usr/share/bugzilla3/lib/checksetup_nondebian.pl
-	$(INSTALL)    -m 0755 -o root -g root $(CURDIR)/debian/maintenance/checksetup_debian.sh $(CURDIR)/debian/bugzilla3/usr/share/bugzilla3/lib/checksetup.pl
+	mv $(CURDIR)/debian/bugzilla4/usr/share/bugzilla4/lib/checksetup.pl $(CURDIR)/debian/bugzilla4/usr/share/bugzilla4/lib/checksetup_nondebian.pl
+	$(INSTALL)    -m 0755 -o root -g root $(CURDIR)/debian/maintenance/checksetup_debian.sh $(CURDIR)/debian/bugzilla4/usr/share/bugzilla4/lib/checksetup.pl
 	# use YUI (Yahoo User Interface Library) package instead of bugzilla's version
 	sh $(CURDIR)/debian/post-checksetup.d/55localyui
 	# added support for reportbug
-	#$(INSTALL) -d $(CURDIR)/debian/bugzilla3/usr/share/bug
-	#$(INSTALL) -m 0755 -o root -g root $(CURDIR)/debian/maintenance/reportbug.sh $(CURDIR)/debian/bugzilla3/usr/share/bug/bugzilla3
+	#$(INSTALL) -d $(CURDIR)/debian/bugzilla4/usr/share/bug
+	#$(INSTALL) -m 0755 -o root -g root $(CURDIR)/debian/maintenance/reportbug.sh $(CURDIR)/debian/bugzilla4/usr/share/bug/bugzilla4
 	# Additional tools
-	$(INSTALL)    -m 755 -o root -g root $(CURDIR)/debian/maintenance/bugzparam $(CURDIR)/debian/bugzilla3/usr/share/bugzilla3/contrib/bugzparam
-	$(INSTALL)    -m 755 -o root -g root $(CURDIR)/debian/maintenance/dumpanswerfile $(CURDIR)/debian/bugzilla3/usr/share/bugzilla3/contrib/dumpanswerfile
+	$(INSTALL)    -m 755 -o root -g root $(CURDIR)/debian/maintenance/bugzparam $(CURDIR)/debian/bugzilla4/usr/share/bugzilla4/contrib/bugzparam
+	$(INSTALL)    -m 755 -o root -g root $(CURDIR)/debian/maintenance/dumpanswerfile $(CURDIR)/debian/bugzilla4/usr/share/bugzilla4/contrib/dumpanswerfile
 
 .PHONY:	help maintainer_translate maintainer_fixpatch maintainer_updateja
