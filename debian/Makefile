@@ -6,13 +6,13 @@
 # + debian/rules
 # + debian/Makefile
 # + maintenance/checksetup_debian.sh
-# + debian/bugzilla3.{pre,post}{inst,rm}
-export BUGZILLA_PKGDIR := $(CURDIR)/debian/bugzilla3
-export BUGZILLA_ETCDIR := $(BUGZILLA_PKGDIR)/etc/bugzilla3
-export BUGZILLA_VARDIR := $(BUGZILLA_PKGDIR)/var/lib/bugzilla3
+# + debian/bugzilla4.{pre,post}{inst,rm}
+export BUGZILLA_PKGDIR := $(CURDIR)/debian/bugzilla4
+export BUGZILLA_ETCDIR := $(BUGZILLA_PKGDIR)/etc/bugzilla4
+export BUGZILLA_VARDIR := $(BUGZILLA_PKGDIR)/var/lib/bugzilla4
 export BUGZILLA_DATADIR := $(BUGZILLA_VARDIR)/data
-export BUGZILLA_SHAREDIR := $(BUGZILLA_PKGDIR)/usr/share/bugzilla3
-export BUGZILLA_WEBDIR := $(BUGZILLA_PKGDIR)/usr/share/bugzilla3/web
+export BUGZILLA_SHAREDIR := $(BUGZILLA_PKGDIR)/usr/share/bugzilla4
+export BUGZILLA_WEBDIR := $(BUGZILLA_PKGDIR)/usr/share/bugzilla4/web
 export BUGZILLA_CONTRIBDIR := $(BUGZILLA_SHAREDIR)/contrib
 export BUGZILLA_TEMPLATEDIR := $(BUGZILLA_VARDIR)/template
 export BUGZILLA_COMPILEDTEMPLATEDIR := $(BUGZILLA_DATADIR)/template
@@ -22,7 +22,7 @@ export BUGZILLA_EXTENSIONSDIR := $(BUGZILLA_VARDIR)/extensions
 # For a better maintenance, we'll create by hand each
 # bugzilla's sub directories.
 BUGZILLA_PERLDIR= $(BUGZILLA_PKGDIR)/usr/share/perl5
-BUGZILLA_DOCDIR = $(BUGZILLA_PKGDIR)/usr/share/doc/bugzilla3
+BUGZILLA_DOCDIR = $(BUGZILLA_PKGDIR)/usr/share/doc/bugzilla4
 BUGZILLA_WWW	= $(BUGZILLA_SHAREDIR)/web
 BUGZILLA_CGIDIR = $(BUGZILLA_WWW)
 BUGZILLA_CONTRIB= $(BUGZILLA_SHAREDIR)/contrib
