@@ -1,0 +1,48 @@
+#! /bin/sh
+# Copyright (C) 2009  Raphael Bossek <bossekr@debian.org>
+# Static files are not stored within the cgi-bin directory. We have to redirect
+# the request to our static directories.
+
+set -e
+
+tmpf=`tempfile`
+
+trap "rm $tmpf" EXIT QUIT
+
+debian_webpath="[% Locations('debian_webpath') %]"
+
+for f in `find "$BUGZILLA_TEMPLATEDIR" -type f -name "*.tmpl" 2>/dev/null`; do
+	if ! grep -q " Locations('debian_webpath') " "$f" && grep -q "=\"skins/\|\[% \"skins/\|\[% style_url[\.[:space:]]\|\[% javascript_url\|\[% atomlink\|\[% Param('urlbase') " "$f"; then
+		sed -e "s,\[% Param('urlbase') %\]bugzilla.dtd,${debian_webpath}bugzilla.dtd,g" \
+		    -e "s,\(.\+\)\(\[% style_url[\.[:space:]]\),\1${debian_webpath}\2,g" \
+		    -e "s,\(\[% javascript_url\),${debian_webpath}\1,g" \
+		    -e "s,=\"skins/,=\"${debian_webpath}skins/,g" \
+		    -e "s,\[% \"skins,${debian_webpath}[% \"skins,g" \
+		    -e "s,\(\[% atomlink\),${debian_webpath}\1,g" \
+		    "$f" >"$tmpf"
+		diff -u "$f" "$tmpf" || true
+		cat "$tmpf" >"$f"
+	fi
+done
+
+# Where to find Debian's YUI (Yahoo User Interface Library)
+# js/yui/yahoo-dom-event.js -> js/yui/yahoo-dom-event/yahoo-dom-event.js
+# js/yui/calendar.js        -> js/yui/calendar/calendar.js
+# js/yui/calendar.css       -> js/yui/calendar/assets/calendar.css
+# js/cookie.js              -> js/cookie/cookie.js
+for f in `grep -rl "/yui/yahoo-dom-event\.js\|/yui/cookie\.js\|/yui/calendar\.js\|/yui/calendar\.css" "$BUGZILLA_TEMPLATEDIR"`; do
+    sed -e 's,/yui/yahoo-dom-event\.js,/yui/yahoo-dom-event/yahoo-dom-event.js,g' \
+        -e 's,/yui/calendar\.js,/yui/calendar/calendar.js,g' \
+	-e 's,/yui/calendar\.css,/yui/calendar/assets/calendar\.css,g' \
+	-e 's,/yui/cookie\.js,/yui/cookie/cookie.js,g' "$f" \
+        >"$tmpf"
+    diff -u "$f" "$tmpf" || true
+    cat "$tmpf" >"$f"
+done
+
+# Change the documentation to the directories where the files are.
+for f in `grep -rl ">contrib/recode\.pl<" "$BUGZILLA_TEMPLATEDIR"`; do
+	sed -e 's,>\(contrib/recode\.pl\)<,>/usr/share/bugzilla3/\1<,g' "$f" >"$tmpf"
+	diff -u "$f" "$tmpf" || true
+	cat "$tmpf" >"$f"
+done

@@ -1,0 +1,56 @@
+#!/bin/sh
+#
+# The contents of this file are subject to the Mozilla Public
+# License Version 1.1 (the "License"); you may not use this file
+# except in compliance with the License. You may obtain a copy of
+# the License at http://www.mozilla.org/MPL/
+#
+# Software distributed under the License is distributed on an "AS
+# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+# implied. See the License for the specific language governing
+# rights and limitations under the License.
+#
+# Copyright (C) 2010  Raphael Bossek <bossekr@debian.org>
+#
+set -e
+set -x
+
+# This scripts extracts all TAR archives into the <DIR> directory.
+# Usage: create-bugzilla-srcdir
+
+d="$PWD/bugzilla-srcdir"
+test "$d"
+test ! -d "$d"
+tmpd="$d.tmp"
+test ! -e $tmpd
+mkdir -p "$d"
+trap "rm -rf $tmpd" STOP QUIT EXIT
+for f in *.tar*; do
+	mkdir -p $tmpd
+	case "$f" in
+	*.bz2)	tar -C $tmpd -xjf $f ;;
+	*.gz)	tar -C $tmpd -xzf $f ;;
+	esac
+	langdir=`find $tmpd -name "index.html.tmpl" | grep ".\+/default/index.html.tmpl" | sed -e 's,/default/.*,,g' | head -n 1 || true`
+	tardir=`echo "$langdir" | sed -e 's,/template/.*,,g'`
+	if test -e "$tardir/checksetup.pl"; then
+		# Original source archive found; move previous translations.
+		test -d "$d/template" && mv "$d/template/"* "$tardir/template/"
+		rm -rf "$d"
+		mv "$tardir" "$d"
+		continue
+	fi
+	if test "x$langdir" = "x"; then
+		echo >&2 "E: Could not find index.html.tmpl in $f."
+		exit 10
+	elif test "x$langdir" = "x$tmpd"; then
+		echo >&2 "E: $f is not a valid archive; the language name have to exist as directory name."
+		exit 11
+	else
+		td="$d/template"
+		test ! -d $td/`basename $langdir`
+		mkdir -p "$td"
+		mv $langdir $td
+	fi
+	rm -rf "$tmpd"
+done

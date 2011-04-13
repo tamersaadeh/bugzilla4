@@ -1,0 +1,143 @@
+README.Debian for bugzilla3 package
+==============================================================================
+
+Customisation
+------------------------------------------------------------------------------
+
+  The /etc/bugzilla3/pre-checksetup.d and post-checksetup.d directories hold 
+  scritps which will be executed by /usr/share/bugzilla3/lib/checksetup.pl:
+
+  # run-parts --verbose --exit-on-error --lsbsysinit <dir>
+
+  Put your own scripts into this directory.
+
+  You can use your own templates and skins; put them in /etc/bugzilla3/template 
+  and /etc/bugzilla3/skins. This content gets copied to the corresponding 
+  directories by the /etc/bugzilla3/pre-checksetup.d scripts.
+
+  User/Group and mode of files and directories are managed with dpkg-statoverride.
+  If you intend to change the default values please use
+
+  # dpkg-statoverride --update --add root root 0640 /etc/bugzill3/localconfig
+
+  For template files, you'll only have to use 'dpkg-stateoverride' on the 
+  /var/lib/bugzilla3/template directory and the 
+  /var/lib/bugzilla3/template/en/default/index.html.tmpl file.
+  
+  This information will be used to set the user/group and mode of all directories
+  and files recursively within the
+  - /var/lib/bugzilla3/template
+  - /var/lib/bugzilla3/data/template
+  directories.
+  Check the /etc/bugzilla3/post-checksetup.d/15restoredpkgstatoverride script for
+  more implementation details.
+  The reason why we do it this way is speed, 'dpkg-statoverride' is really slow.
+  I hope this is not annoying to you. Otherwise reprot a bug with a suggestions 
+  on how to improve the situation. ;-)
+
+About GraphViz and dependency graphs ("webdotbase")
+------------------------------------------------------------------------------
+
+  The "webdotbase" configuration parameter (/etc/bugzilla3/params) has
+  to be set to `/usr/bin/dot`. This parameter can be configured by Bugzilla's
+  "Parameters >> Dependency Graphs" too.
+
+About the "urlbase" setting
+------------------------------------------------------------------------------
+
+  When bugzilla is installed for the first time, you have to edit the conffile
+  /etc/bugzilla3/params and change the value of urlbase to something that makes
+  sense according to your installation. For instance, you can set it to
+  '/bugzilla3/' if you don't use VirtualHosts.
+  That parameter will be used by Bugzilla for building links in a lot of places,
+  so take care to assign it a correct value.
+
+About /usr/share/bugzilla3/lib/email_in.pl (Debian Bug #528780, #549700)
+------------------------------------------------------------------------------
+  To use this software you need the libemail-reply-perl and
+  libemail-mime-attachment-stripper-perl packages. They don't yet exist in
+  Debian. To resolve this depenceny please follow these steps:
+
+  $ sudo apt-get install dh-make-perl
+  $ mkdir tmp
+  $ cd tmp
+  $ dh-make-perl --build --cpan Email::Reply
+  $ sudo dpkg -i ~/.cpan/build/libemail-reply-perl_*.deb
+  $ dh-make-perl --build --cpan Email::Mime::Attachment::Stripper
+  $ sudo dpkg -i ~/.cpan/build/libemail-mime-attachment-stripper-perl_*.deb
+  
+  Until these two packages are officially in debian, this is the way to install
+  them.
+
+  Install further packages to get email_in.pl working:
+  $ sudo apt-get install libemail-mime-creator-perl libemail-date-format-perl
+
+  In order to receive e-mails add following line to /etc/aliases:
+  bug-submit:  "|sudo -u www-data /usr/share/bugzilla3/lib/email_in.pl"
+
+Installation of outstanding packages
+------------------------------------------------------------------------------
+  Installation of outstanding packages is not supported right now. Please
+  refer to Suggested and Recommended packages (dpkg --status bugzilla3) to
+  get information on other needed perl modules.
+
+  You can use dh-make-perl (application and package name) to install needed
+  Perl modules as described in the previous section.
+
+How to set several VirtualHosts with this package
+------------------------------------------------------------------------------
+
+  Reported as Bugzilla enhancement: https://bugzilla.mozilla.org/show_bug.cgi?id=465887
+
+  If you want to provide several virtual hosts of Bugzilla, you can achieve that
+  goal easily thanks to your Apache configuration.
+
+  You will need to enable the Apache mod_env module first:
+    
+    # a2enmod env
+
+  Then prepare a configuration directory for your virtual host. The simpliest 
+  way is to copy the one the package created:
+  `/etc/bugzilla3'. 
+  Name this new configuration directory like that:
+  `/etc/bugzilla3/sites/host' where `host' is the name of your virtual host.
+
+  Add a virtual host section in your Apache configuraiton file. 
+  This can be done in different ways, depending on the kind of VirtualHost
+  you want. This package comes with two virtual host examples, located under
+  `/usr/share/doc/bugzilla3/examples/'.
+
+  If you want a virtualhost that uses the same static files as the orginal
+  package, just use the example: `vh-basic.conf'.
+
+  If you'd rather have different static files for the virtual host, you can
+  use the other example: `vh-custom-static.conf'.
+
+  As you can see in those examples, two environment variables are provided for
+  fitting your needs:
+    - X_BUGZILLA_SITE which is the name of the virtual host, it is used to find
+      wich configuration directory to use: `/etc/bugzilla3/sites/X_BUGZILLA_SITE'.
+    - X_BUGZILLA_WEBPATH wich is the prefix to prepend to every static files in
+      the templates.
+
+  When you are okay with the apache configuration, you can restart it and
+  test your virtual host;
+
+  # apache2ctl graceful
+
+  If you want to have specific templates for a given virtual host, that's also
+  possible, just copy `/var/lib/bugzilla3/template' to
+  `/var/lib/bugzilla3/template-X_BUGZILLA_SITE' and apply your changes there.
+  Take care to preserve permissions when you copy the files.
+  
+  At this time, you can set a different database for each virtual host,
+  customize templates for another or even share the same database... Everything
+  is possible with a little effort.
+
+  Even though each bugzilla site will be updated with checksetup.pl, the params
+  file won't be updated. The only params file that is updated during the
+  postinst phase is the standard one: `/etc/bugzilla3/params'.
+
+  Thanks to Yann Dirson for the mod_env idea.
+
+-- Raphael Bossek <bossekr@debian.org>  Mon, 05 May 2008 13:07:36 +0200

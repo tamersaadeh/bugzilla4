@@ -1,0 +1,29 @@
+#!/bin/sh
+# Copyright (C) 2009  Raphael Bossek <bossekr@debian.org>
+
+tmpf=`mktemp`
+trap "rm $tmpf" EXIT QUIT
+dpkg-statoverride --list '*/bugzilla3*'| sed -e 's,^\([^[:space:]]\+\)[[:space:]]\([^[:space:]]\+\)[[:space:]]\([^[:space:]]\+\)[[:space:]]\(.*\),test -e "\4" \&\& chown \1:\2 "\4" \&\& chmod \3 "\4",g' >"$tmpf"
+. "$tmpf"
+
+# Please read the post-checksetup.d/10setdefaultdpkgstatoverride about how
+# to speed up the processing of "$BUGZILLA_VARDIR"/templates
+for d in `find "$BUGZILLA_VARDIR"/template -mindepth 1 -type d 2>/dev/null`; do
+	chmod --reference="$BUGZILLA_VARDIR"/template "$d"
+	chown --reference="$BUGZILLA_VARDIR"/template "$d"
+done
+for f in `find "$BUGZILLA_VARDIR"/template -mindepth 1 -type f 2>/dev/null`; do
+	test "$f" = "$BUGZILLA_VARDIR"/template/en/default/index.html.tmpl && continue
+	chmod --reference="$BUGZILLA_VARDIR"/template/en/default/index.html.tmpl "$f"
+	chown --reference="$BUGZILLA_VARDIR"/template/en/default/index.html.tmpl "$f"
+done
+# Access rights for the $BUGZILLA_DATADIR/template content are the same as
+# for the source files.
+for d in `find $BUGZILLA_DATADIR/template -mindepth 1 -type d 2>/dev/null`; do
+	chmod --reference="$BUGZILLA_VARDIR"/template "$d"
+	chown --reference="$BUGZILLA_VARDIR"/template "$d"
+done
+for f in `find $BUGZILLA_DATADIR/template -mindepth 1 -type f 2>/dev/null`; do
+	chmod --reference="$BUGZILLA_VARDIR"/template/en/default/index.html.tmpl "$f"
+	chown --reference="$BUGZILLA_VARDIR"/template/en/default/index.html.tmpl "$f"
+done

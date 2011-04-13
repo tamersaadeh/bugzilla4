@@ -1,0 +1,45 @@
+#!/bin/sh 
+
+set -e
+
+doit() 
+{
+    test -x /usr/share/bugzilla3/lib/collectstats.pl && \
+    su www-data -c /usr/share/bugzilla3/lib/collectstats.pl
+
+    test -x /usr/share/bugzilla3/lib/whineatnews.pl && \
+    su www-data -c /usr/share/bugzilla3/lib/whineatnews.pl >/dev/null
+
+    test -x /usr/share/bugzilla3/lib/whine.pl && \
+    su www-data -c /usr/share/bugzilla3/lib/whine.pl >/dev/null
+
+    answerfile="/var/lib/bugzilla3/data/answerfile"
+    if [ -x /usr/share/bugzilla3/lib/sanitycheck.pl -a -s "$answerfile" ]; then
+        if [ "$X_BUGZILLA_SITE" ]; then
+            paramsf="/etc/bugzilla3/site/$X_BUGZILLA_SITE"
+        else
+            paramsf="/etc/bugzilla3/params"
+        fi
+        # Extract the email address for sanitycheck.pl
+        admin=`perl -e "require \"$answerfile\"; print \\\$answer{'ADMIN_EMAIL'}. \"\\n\"";`
+        su www-data -c "/usr/share/bugzilla3/lib/sanitycheck.pl --login \"$admin\""
+    fi
+}
+
+# process the main configuration: /etc/bugzilla3
+doit
+
+# then the extra sites: /etc/bugzilla3/sites/*
+if [ -d /etc/bugzilla3/sites ]; then
+    for site in `cd /etc/bugzilla3/sites && ls -1`; do
+        X_BUGZILLA_SITE="$site" doit
+    done
+fi
+
+# Remove old GraphViz pictures
+if [ -d /var/lib/bugzilla3/data/webdot ]; then
+    find /var/lib/bugzilla3/data/webdot -type f -mtime +1 -exec rm {} \; || true
+fi
+exit 0
+
+# vim:ts=4 et sw=4

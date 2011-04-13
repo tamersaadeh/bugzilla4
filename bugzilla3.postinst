@@ -1,0 +1,229 @@
+#!/bin/sh 
+
+# summary of how this script can be called:
+#  * <postinst> `configure' <most-recently-configured-version>
+#  * <old-postinst> `abort-upgrade' <new version>
+#  * <conflictor's-postinst> `abort-remove' `in-favour' <package> <new-version>
+#  * <deconfigured's-postinst> `abort-deconfigure' `in-favour' <failed-install-package> <version> `removing' <conflicting-package> <version>
+# for details, see http://www.debian.org/doc/debian-policy/ch-maintainerscripts.html
+#
+# quoting from the policy:
+#     Any necessary prompting should almost always be confined to the
+#     post-installation script, and should be protected with a conditional
+#     so that unnecessary prompting doesn't happen if a package's
+#     installation fails and the `postinst' is called with `abort-upgrade',
+#     `abort-remove' or `abort-deconfigure'.
+
+# Debconf is needed here
+. /usr/share/debconf/confmodule
+db_version 2.0
+
+set -e
+
+mode="$1"
+version="$2"
+
+# Make sure it's the same in
+# + debian/rules
+# + debian/Makefile
+# + maintenance/checksetup_debian.sh
+# + debian/bugzilla3.{pre,post}{inst,rm}
+std_exports()
+{
+    export BUGZILLA_ETCDIR="/etc/bugzilla3"
+    export BUGZILLA_VARDIR="/var/lib/bugzilla3"
+    export BUGZILLA_DATADIR="$BUGZILLA_VARDIR/data"
+    export BUGZILLA_SHAREDIR="/usr/share/bugzilla3"
+    export BUGZILLA_WEBDIR="$BUGZILLA_SHAREDIR/web"
+    export BUGZILLA_CONTRIBDIR="$BUGZILLA_SHAREDIR/contrib"
+    export BUGZILLA_TEMPLATEDIR="$BUGZILLA_VARDIR/template"
+    export BUGZILLA_COMPILEDTEMPLATEDIR="$BUGZILLA_DATADIR/template"
+    export BUGZILLA_EXTENSIONSDIR="$BUGZILLA_VARDIR/extensions"
+}
+
+cleanup()
+{
+    rm -f "$shutdownhtmlf" "$statoverridef" "$BUGZILLA_ETCDIR"/*.ucf-old "$BUGZILLA_ETCDIR"/*.ucf-dist
+}
+
+restoreacl()
+{
+    [ -e "$statoverridef" ] \
+    || statoverridef=`mktemp`
+    set +e
+    dpkg-statoverride --list "$*"| sed -e 's,^\([^[:space:]]\+\)[[:space:]]\([^[:space:]]\+\)[[:space:]]\([^[:space:]]\+\)[[:space:]]\(.*\),chown \1:\2 "\4"\nchmod \3 "\4",g' >"$statoverridef"
+    . "$statoverridef"
+    set -e
+}
+
+# This function have the following features:
+# 1) Restore ACL from dpkg-statoverride for the destitiona file, if destination does not exists.
+# 2) The ACL of the destination file is kept.
+# 3) Ask the user if the source differ with the destination file.
+cpfile()
+{
+    local _sourcef="$1"
+    local _destf="$2"
+    local _donotask="$3"
+
+    if [ -e "$_destf" ]; then
+        if [ "$version" -a "$_donotask" != "donotask" ]; then
+            ucf --debconf-ok "$_sourcef" "$_destf"
+        else
+            cp -f "$_sourcef" "$_destf"
+        fi
+    else
+        cp "$_sourcef" "$_destf"
+    fi
+    restoreacl "$_destf"
+}
+
+# A copy of this function is the following scripts:
+# * bugzilla3.{pre,post}{inst,rm}
+# * bugzilla3.config
+start_dbc()
+{
+    local _class="$1"
+    local _mode="$2"
+    local _version="$3"
+    # The preinst stage is not supported by dbconfig-common and result
+    # in an error message. We skip this call to suppress the error output.
+    if [ "$_class" = "preinst" ]; then
+        return 0
+    # If dbconfig-common and bugzilla3 are installed first time
+    # these file is not avaialabe at config stage.
+    elif [ -f /usr/share/dbconfig-common/dpkg/${_class}.mysql ]; then
+        . /usr/share/dbconfig-common/dpkg/${_class}.mysql
+        dbc_go bugzilla3 $_mode $_version
+        case $_class in
+        config|postinst)
+            if [ "$_version" ]; then
+                [ "$dbc_upgrade" = "true" ] \
+                || return 1
+            else
+                [ "$dbc_install" = "true" ] \
+                || return 1
+            fi
+            ;;
+        prerm|postrm)
+            [ "$dbc_remove" = "true" ] \
+            || return 1
+            ;;
+        esac
+    # For all other stages then config it's a error if the file is missing.
+    elif [ "$_class" != "config" ]; then
+        return 1;
+    fi
+}
+
+run_script()
+{
+    if [ "$errorcode" = "0" ]; then
+        test -x $1 \
+        && echo "Run $*" \
+        && $* \
+        || errorcode=$?
+
+        [ "$errorcode" = "0" ] \
+        || echo >&2 "$1 failed with error code $errorcode."
+    fi
+    return $errorcode
+}
+
+trap cleanup EXIT QUIT
+umask 0027
+std_exports
+errorcode=0
+
+if [ "$mode" = "configure" ]; then
+    # Fix file/directory permissions.
+    run_script $BUGZILLA_ETCDIR/post-checksetup.d/10setdefaultdpkgstatoverride >/dev/null 2>&1 \
+    || true
+    run_script $BUGZILLA_ETCDIR/post-checksetup.d/15restoredpkgstatoverride >/dev/null 2>&1 \
+    || true
+
+    # Setup a preleminary /etc/bugzilla3/params file.
+    if [ ! -e "$BUGZILLA_ETCDIR/params" ]; then
+        cpfile "$BUGZILLA_SHAREDIR/debian/params" "$BUGZILLA_ETCDIR/params"
+    fi
+
+    # 1) Save the shutdownhtml text for use by /etc/bugzilla3/{pre,post}-checksetup.d scripts.
+    # 2) Disable Bugzilla if not already done by the administrator (using our Debconf shutdownhtml message).
+    db_get "bugzilla3/shutdownhtml"
+    shutdownhtmlf=`mktemp -p $BUGZILLA_DATADIR -t shutdownhtml.XXXXXXXXXX`
+    echo "$RET" >"$shutdownhtmlf"
+    cpfile "$shutdownhtmlf" "$BUGZILLA_DATADIR/shutdownhtml"
+    run_script $BUGZILLA_ETCDIR/pre-checksetup.d/03shutdownhtmlset \
+    || true
+
+    # Create the /etc/bugzilla3/localconfig file using dbconfig-common configuration.
+    # If dbconfig-common is disabled the default localconfig-template redistributed
+    # with the bugzilla3 package will be used.
+    if [ ! -s "$BUGZILLA_ETCDIR/localconfig" ]; then
+        # Install the default /etc/bugzilla3/localconfig file using Debian's template.
+        cpfile "$BUGZILLA_SHAREDIR/debian/localconfig" "$BUGZILLA_ETCDIR/localconfig"
+    fi
+    if start_dbc postinst $mode $version; then
+        [ -n "$dbc_dbport" ] \
+        || dbc_dbport="0"
+        echo "$dbc_dbserver" | /usr/share/bugzilla3/contrib/bugzparam --localconfig --stdin "db_host"
+        echo "$dbc_dbport" | /usr/share/bugzilla3/contrib/bugzparam --localconfig --stdin --value "db_port"
+        echo "$dbc_dbname" | /usr/share/bugzilla3/contrib/bugzparam --localconfig --stdin "db_name"
+        echo "$dbc_dbuser" | /usr/share/bugzilla3/contrib/bugzparam --localconfig --stdin "db_user"
+        echo "$dbc_dbpass" | /usr/share/bugzilla3/contrib/bugzparam --localconfig --stdin "db_pass"
+        /usr/share/bugzilla3/contrib/bugzparam --localconfig --value "create_htaccess" "0"
+    fi
+    # Debconf is not a registry! We have to save default answers in a seperate file.
+    /usr/share/bugzilla3/contrib/dumpanswerfile
+
+    # We do not start checksetup.pl with Debian's template of localconfig.
+    # This tempalte is not working and need manual tunning.
+    if [ -s "$BUGZILLA_ETCDIR/localconfig" ] && ! cmp -s "$BUGZILLA_SHAREDIR/debian/localconfig" "$BUGZILLA_ETCDIR/localconfig"; then
+        # Read in bugzilla-srcdir/docs/en/rel_notes.txt in chapter "Outstanding Issues" about this:
+        #   (No Bug Number) VERY IMPORTANT: If you have customized the values in    
+        #   your Status/Resolution field, you must edit checksetup.pl BEFORE YOU
+        #   RUN IT. Find the line that starts like this:
+        #
+        # Debian ask you if Status/Resolution field were modified by you. In this case the installation
+        # procedure do *NOT* start checksetup.pl. The answer-file will be used as mark for a second run
+        # in the hope you have modified checksetup_nondebian.pl (the original file) successful.
+        db_get "bugzilla3/customized_values"
+        customized_values="$RET"
+        db_get "bugzilla3/customized_values_ask_again"
+        customized_values_ask_again="$RET"
+        if [ "$customized_values" = "false" -o "$customized_values_ask_again" = "false" ]; then
+            # Call checksetup now that everything is ready
+            # The params file will then be updated if needed, the resulting file
+            # will be saved in $params_new
+            run_script $BUGZILLA_SHAREDIR/lib/checksetup.pl --verbose \
+            || errorcode=$?
+
+            # Tons of error reports agains bugzilla's faild installation where
+            # a invalid database configuration was the source of the problem let
+            # me disable this error check.
+            # The user have to take care about the error reports.
+            if [ "$errorcode" != "0" ]; then
+                db_input critical "bugzilla3/checksetup_failed" || true
+                db_go || true
+                errorcode=0
+            else
+                db_reset "bugzilla3/checksetup_failed" || true
+            fi
+        fi
+    fi
+
+    # Install default apache2 CGI configuration.
+    if [ -d "/etc/apache2/conf.d" ] && ( [ -z "$version" ] || dpkg --compare-versions "$version" lt "3.0.10.0-1" || ( dpkg --compare-versions "$version" gt "3.2" && dpkg --compare-versions "$version" lt "3.0.10.0-1" ) ); then
+        ln -sf "/usr/share/doc/bugzilla3/examples/basic.conf" "/etc/apache2/conf.d/bugzilla3.conf"
+        invoke-rc.d apache2 reload || true
+    fi
+fi 
+
+#DEBHELPER#
+
+# Let's close cleanly debconf        
+db_stop
+
+exit $errorcode
+
+# vim:ts=4 et sw=4

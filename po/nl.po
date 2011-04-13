@@ -1,0 +1,189 @@
+#
+#    Translators, if you are not familiar with the PO format, gettext
+#    documentation is worth reading, especially sections dedicated to
+#    this format, e.g. by running:
+#         info -n '(gettext)PO Files'
+#         info -n '(gettext)Header Entry'
+#
+#    Some information specific to po-debconf are available at
+#            /usr/share/doc/po-debconf/README-trans
+#         or http://www.debian.org/intl/l10n/po-debconf/README-trans
+#
+#    Developers do not need to manually edit POT or PO files.
+#
+# Luk Claes <luk.claes@ugent.be>, 2005
+msgid ""
+msgstr ""
+"Project-Id-Version: bugzilla 3.4.7.0-2\n"
+"Report-Msgid-Bugs-To: bugzilla@packages.debian.org\n"
+"POT-Creation-Date: 2010-09-02 09:43+0200\n"
+"PO-Revision-Date: 2009-07-18 05:55+0200\n"
+"Last-Translator: Paul Gevers <paul@climbing.nl>\n"
+"Language-Team: Debian l10n Dutch <debian-l10n-dutch@lists.debian.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: password
+#. Description
+#: ../bugzilla3.templates:2001
+msgid "Password confirmation:"
+msgstr "Bevestiging van het wachtwoord:"
+
+#. Type: string
+#. Description
+#: ../bugzilla3.templates:3001
+msgid "Email address of Bugzilla administrator:"
+msgstr "E-mailadres van de Bugzilla-beheerder:"
+
+#. Type: string
+#. Description
+#: ../bugzilla3.templates:3001
+msgid ""
+"Please enter the email address of the Bugzilla administrator; all mail for "
+"the administrator will be sent to this address. This email address is also "
+"used as the administrator login for Bugzilla."
+msgstr ""
+"Wat is het e-mailadres van de Bugzilla-beheerder? Alle post voor de "
+"beheerder zal naar dit adres worden verzonden. Dit e-mailadres wordt ook "
+"gebruikt als de loginnaam voor de Bugzilla-beheerder."
+
+#. Type: string
+#. Description
+#: ../bugzilla3.templates:3001
+msgid ""
+"A valid address must contain exactly one '@', and at least one '.' after the "
+"@. You'll be able to change this setting through Bugzilla's web interface."
+msgstr ""
+"Een correct adres moet precies ????n '@' en ten minste ????n '.' achter de @ "
+"bevatten. U kunt deze instelling later aanpassen in de webinterface van "
+"Bugzilla."
+
+#. Type: string
+#. Description
+#: ../bugzilla3.templates:4001
+msgid "Real name of Bugzilla administrator:"
+msgstr "Echte naam van de Bugzilla-beheerder:"
+
+#. Type: password
+#. Description
+#: ../bugzilla3.templates:5001
+msgid "Password for the Bugzilla administrator account:"
+msgstr "Geef het wachtwoord van de Bugzilla-beheerdersaccount."
+
+#. Type: password
+#. Description
+#: ../bugzilla3.templates:5001
+msgid "Please enter at least 6 characters."
+msgstr ""
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:6001
+msgid "Have Status or Resolution values been customized?"
+msgstr "Zijn \"Status\" of \"Resolution\" waarden aangepast?"
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:6001
+msgid ""
+"If values in the Status or Resolution fields have been customized, the "
+"checksetup procedure must be modified appropriately before installation can "
+"continue."
+msgstr ""
+"Als er \"Status\" of \"Resolution\" velden zijn aangepast, dan moet de "
+"checksetup procedure navenant worden aangepast voordat de installatie verder "
+"kan gaan."
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:6001
+msgid ""
+"For each update of this package, a new version of the checksetup_nondebian."
+"pl script is installed; the /usr/share/bugzilla3/debian/pre-checksetup.d "
+"directory can be used to automatically apply your modifications before "
+"execution."
+msgstr ""
+"Voor elke bijwerking van dit pakket wordt een nieuwe versie van het "
+"checksetup_nondebian.pl script ge??nstalleerd. U kunt de /usr/share/"
+"bugzilla3/debian/pre-checksetup.d map gebruiken om automatisch uw "
+"wijzigingen toe te passen v????r uitvoering."
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:7001
+msgid "Prompt about customized Status/Resolution at each update?"
+msgstr "Vraag naar Status/Resolution aanpassingen bij iedere bijwerking?"
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:7001
+msgid ""
+"If you modified Status/Resolution fields and created a script within /usr/"
+"share/bugzilla3/debian/pre-checksetup.d to apply changes to /usr/share/"
+"bugzilla3/lib/checksetup_nondebian.pl, you may want to avoid being prompted "
+"at each package upgrade."
+msgstr ""
+"Als u Status/Resolution velden aan heeft gepast en een script aan heeft "
+"gemaakt in /usr/share/bugzilla3/debian/pre-checksetup.d om wijzigingen te "
+"doen aan /usr/share/bugzilla3/lib/checksetup_nondebian.pl, dan wilt u "
+"misschien vragen tijdens iedere bijwerking van dit pakket vermijden."
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:7001
+msgid ""
+"If you accept being prompted, you will have to call /usr/share/bugzilla3/lib/"
+"checksetup.pl yourself, at each package upgrade, before using Bugzilla."
+msgstr ""
+"Als u vragen accepteert, dan zult u /usr/share/bugzilla3/lib/checksetup.pl "
+"zelf moeten aanroepen na iedere bijwerking, voordat u Bugzilla gebruikt."
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:7001
+msgid ""
+"If you did not modify Status/Resolution, you should skip prompting as "
+"checksetup.pl will be started automatically (together with the {pre,post}-"
+"checksetup.d scripts)."
+msgstr ""
+"Als u Status/Resolution niet heeft aangepast, dan dient u vragen te "
+"vermijden, aangezien checksetup.pl automatisch gestart zal worden "
+"(tegelijkertijd met de {pre,post}-checksetup.d scripts)."
+
+#. Type: error
+#. Description
+#: ../bugzilla3.templates:8001
+msgid "Setup of Bugzilla failed and needs further investigation"
+msgstr ""
+
+#. Type: error
+#. Description
+#: ../bugzilla3.templates:8001
+msgid ""
+"Bugzilla has the \"shutdownhtml\" configuration parameter set, putting it "
+"offline (with logins disabled) until configured."
+msgstr ""
+
+#. Type: error
+#. Description
+#: ../bugzilla3.templates:8001
+msgid ""
+"To set up Bugzilla, run \"dpkg-reconfigure bugzilla3\" (as root) and choose "
+"\"dbconfig-config\"."
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../bugzilla3.templates:9001
+msgid "Bugzilla downtime message:"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../bugzilla3.templates:9001
+msgid ""
+"Please enter the HTML downtime message that should be displayed while "
+"Bugzilla is being reconfigured."
+msgstr ""

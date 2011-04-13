@@ -1,0 +1,8 @@
+#!/bin/sh
+# Copyright (C) 2009  Raphael Bossek <bossekr@debian.org>
+
+set -e
+
+rm -rf "$BUGZILLA_DATADIR/template/var"
+
+exit 0

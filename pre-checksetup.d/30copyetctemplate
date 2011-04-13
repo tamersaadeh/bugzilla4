@@ -1,0 +1,10 @@
+#!/bin/sh
+# Copyright (C) 2009  Raphael Bossek <bossekr@debian.org>
+
+set -e
+
+if test -d "$BUGZILLA_ETCDIR"/template; then
+	cp -a "$BUGZILLA_ETCDIR"/template "$BUGZILLA_VARDIR" || true
+fi
+
+exit 0

@@ -1,0 +1,14 @@
+#!/bin/sh
+# Set the shutdownhtml message.
+set -e
+umask 0027
+
+paramsf="$BUGZILLA_ETCDIR/params"
+shutdownhtml_set=`su www-data -c "$BUGZILLA_CONTRIBDIR/bugzparam shutdownhtml"`
+if [ -z "$BUGZILLA_CHECKSETUP_FAILED" -a -n "$shutdownhtml_set" -a -s "$BUGZILLA_DATADIR/shutdownhtml" ]; then
+	shutdownhtml=`head -n 1 "$BUGZILLA_DATADIR/shutdownhtml"`
+	# Unset shutdownhtml message only if set by us.
+	if [ "$shutdownhtml_set" = "$shutdownhtml" ]; then
+		su www-data -c "$BUGZILLA_CONTRIBDIR/bugzparam shutdownhtml ''"
+	fi
+fi

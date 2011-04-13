@@ -1,0 +1,1375 @@
+bugzilla (3.6.3.0-2) unstable; urgency=medium
+
+  * Support for noninteractive mode in Debconf. Closes: #602738
+  * Added missing package dependency against liburi-perl. Removed non exsiting
+    package option libgd-noxpm-perl.
+  * Urgency set to medium because previous version is not accepted for
+    testing.
+  * Parallel build for Makefiles is working now.
+  * Surrpress error messages for non existing template directories if
+    checksetup fails (in noninteractive mode).
+  * Extensions are not installed by default. They exist as documentation.
+
+ -- Raphael Bossek <bossekr@debian.org>  Sat, 20 Nov 2010 05:51:25 +0100
+
+bugzilla (3.6.3.0-1) unstable; urgency=medium
+
+  * New upstream release. Closes: #602420
+  * Fixed vulnerability CVE-2010-3172:
+    By inserting a certain string into a URL, it was possible
+    to inject both headers and content to any browser that
+    supported "Server Push" (mostly only Gecko-based browsers
+    like Firefox). This could lead to Cross-Site Scripting
+    vulnerabilities, and possibly other more dangerous security
+    issues as well.
+  * Fixed vulnerability CVE-2010-3764:
+    The Old Charts system generated graphs with
+    predictable names into the "graphs/" directory,
+    which also could be browsed to see its contents.
+    This allowed unauthorized users to see product
+    names and charted information about those
+    products over time.
+  * Fixed references to YUI components used by language templates.
+  * Fixed missing images.
+  * Surrpress error messages at installation stage.
+
+ -- Raphael Bossek <bossekr@debian.org>  Mon, 15 Nov 2010 10:09:20 +0100
+
+bugzilla (3.6.2.0-4) unstable; urgency=low
+
+  * Upgrade from Lenny to Squeeze fixed. Closes: #600170
+  * Password may contain special charactres. Closes: #594583
+  * Suppress cron messages for non existing directories. Closes: #595489
+  * Suppress Germzilla (German translation) version warning.
+  * [Debconf translation updates]
+    - Vietnamese (Clytie Siddall) Closes: #598479
+
+ -- Raphael Bossek <bossekr@debian.org>  Wed, 27 Oct 2010 16:41:31 +0200
+
+bugzilla (3.6.2.0-3) unstable; urgency=low
+
+  * [Debconf translation updates]
+    - Spanish (Francisco Javier Cuadrado). Closes: #594766, #595230
+    - German (Helge Kreutzmann). Closes: #595186
+    - French (Christian Perrier). Closes: #594929
+    - Russian (Yuri Kozlov). Closes: #595261
+    - Czeck (Michal Simunek). Closes: #595277
+    - Swedish (Martin Bagge). Closes: #595350
+    - Italian (Vincenzo Campanella).
+    - Danish (Joe Dalton). Closes: #595383
+    - Basque (Iñaki Larrañaga Murgoitio).
+    - Brazilian Portuguese (Adriano Rafael Gomes). Closes: #596436
+    - Portuguese (Miguel Figueiredo). Closes: #596279
+
+ -- Raphael Bossek <bossekr@debian.org>  Thu, 02 Sep 2010 09:48:42 +0200
+
+bugzilla (3.6.2.0-2) unstable; urgency=low
+
+  * Check for Bugzilla password length added; at least 6 characters are
+    required. LP: #623416
+  * Fixed build process of Bugzilla package; added missing executable bit for
+    debian/create-bugzilla-srcdir script. Closes: #593022
+  * [Debconf translation updates]
+    - German (Helge Kreutzmann). Closes: #592901
+    - Czech (Michal Simunek). Closes: #593206
+    - Russian (Yuri Kozlov). Closes: #593906
+    - Swedish (Martin Bagge). Closes: #594081
+    - French (Christian Perrier). Closes: #594308
+
+ -- Raphael Bossek <bossekr@debian.org>  Thu, 26 Aug 2010 07:36:26 +0200
+
+bugzilla (3.6.2.0-1) unstable; urgency=low
+
+  * New upstream release. Closes: #592212
+  * Increased Standards-Version to 3.9.1; no changes.
+  * Due to tons of bug reports with missconfigured database server environment
+    I've disabled the DB check at installation time ($db_check=0) and added
+    more code to handle database connect errors at installation/configuration
+    time.
+    LP: #584827, #546954, #584819
+  * Bugzilla will be disabled if configuration/installation failes.
+    Closes: #557357
+  * [Debconf translation updates]
+    - Czech (Slavko). Closes: #591943
+    - Swedish (Martin Bagge). Closes: #592036
+    - Portuguese. Closes: #592160
+
+ -- Raphael Bossek <bossekr@debian.org>  Sun, 08 Aug 2010 15:38:06 +0200
+
+bugzilla (3.6.1.0-0.1) experimental; urgency=low
+
+  * New upstream release.
+
+ -- Raphael Bossek <bossekr@debian.org>  Sun, 18 Jul 2010 22:33:21 +0200
+
+bugzilla (3.4.7.0-3) unstable; urgency=low
+
+  * Fixed permissions on /usr/share/perl5/Bugzilla for old installations.
+    Closes: #571107
+  * Fixed access rights for /etc/bugzilla3/localconfig. Closes: #571107
+  * Using database administrator account to run sanitycheck.pl from daily cron
+    job; maintainer field is not used anymore. Closes: #560140
+  * [Debconf translation updates]
+    - Czech (Jan Outrata). Closes: #590084
+    - Japanese (Hideki Yamane). Closes: #590228
+    - Portuguese (Miguel Figueiredo). Closes: #590187
+
+ -- Raphael Bossek <bossekr@debian.org>  Tue, 03 Aug 2010 15:17:46 +0200
+
+bugzilla (3.4.7.0-2) unstable; urgency=low
+
+  * Add missing package dependency on libdatetime-perl.
+    Closes: #589914, #589912
+  * [Debconf translation updates]
+    - Russian (Yuri Kozlov). Closes: #589336
+    - French (Christian Perrier). Closes: #589374
+    - Czech (typo in filename).
+    - Finnish (typo in filename).
+    - Japanese (typo in filename).
+    - Dutch (typo in filename).
+    - Portuguese (typo in filename).
+    - Swedish (Martin Bagge). Closes: #589629
+    - Ukrainian (typo in filename).
+    - Vietnamese (type in filename).
+    - German (Helge Kreutzmann). Closes: #589668
+
+ -- Raphael Bossek <bossekr@debian.org>  Sun, 18 Jul 2010 05:23:36 +0200
+
+bugzilla (3.4.7.0-1) unstable; urgency=medium
+
+  * New upstream release. Closes: #544367 LP: #415451
+  * Security fixes CVE-2010-1204 CVE-2010-0180; set urgency to medium.
+    Closes: #587663
+  * Fixed typo. Closes: #568110, #576350
+  * Fixed translations. Closes: #561518, #561517
+  * Increased Standards-Version to 3.9.0; no changes.
+  * Switch to dpkg-source 3.0 (quilt) format.
+
+ -- Raphael Bossek <bossekr@debian.org>  Tue, 13 Jul 2010 14:56:34 +0200
+
+bugzilla (3.2.5.1-2) unstable; urgency=low
+
+  * Fixed dash compatibility within ../bugzilla3/lib/checksetup.pl.
+    Closes: #558238
+
+ -- Raphael Bossek <bossekr@debian.org>  Sun, 29 Nov 2009 13:56:03 +0100
+
+bugzilla (3.2.5.1-1) unstable; urgency=low
+
+  * Do not change user/group and modes within /etc/cron.daily/bugzilla3. This
+    scripts are started with www-data user and the files are created with the
+    same security level. Closes: #556408
+  * Fixed post-checksetup.d/15restoredpkgstatoverride script. Closes: #557243
+  * Execute daily /usr/share/bugzilla3/lib/whine.pl.
+  * Surrpress stdout of whineatnews.pl and whine.pl in cron.daily/bugzilla3.
+  * If a configuration variable is missing in /etc/bugzilla3/localconfig the
+    upgrade fails; /etc/bugzilla3/params is not created and checksetup.pl
+    exit. LP: #419826 Closes: #557289, #538289
+  * Deconfigure dbcommon-config created database. Closes: #557361
+  * Added BG langauge pack.
+  * Scripts exit with error code where an error occured.
+  * Fixed/Added usage of dbconfig-common prerm scripts.
+  * Removed obsolate sym-link usr/lib/cgi-bin/bugzilla3/webdot.
+
+ -- Raphael Bossek <bossekr@debian.org>  Tue, 24 Nov 2009 08:41:13 +0100
+
+bugzilla (3.2.5.0-2) unstable; urgency=low
+
+  * Restored /usr/share/bugzilla3/debian directory; it's not a file.
+    Installation of the package from scratch failed.
+    Closes: #555418
+  * Improved processing with dbconfig-common in case of missing access rights
+    to the database. Closes: #532753
+  * Dependency graph URL fixed. Closes: #555198
+  * Fixed dependencies on libemail-mime-perl. Closes: #555800
+  * (Ubuntu) Suppress output of users/passwords. LP: #415500
+  * (Ubuntu) Installation procedure improved/fixed. LP: #419826
+  * Debconf translation updates
+    - Italian (Vincenzo Campanella) Closes: #556093
+  * Removed unnecessary rewrite rules from README.Debian. Closes: #555306
+  * Fixed default index.html file with refresh to /bugzilla3/index.cgi
+  * Add the compleate contrib content to /usr/share/bugzilla3/contrib.
+  * Removed bugzilla3.copyright & bugzilla3-doc.copyright; uses copyright
+
+  [ NEWS.Debian ]
+  * Added /usr/share/doc/bugzilla3/examples/30_unconfirmed_allways.sh script
+    as an example how to customize bugzilla3 installations.
+  * Uses dpkg-statoverride for files/directory to give the admin more control
+    over the access rights of package files. checksetup_nondebian.pl does not
+    change access rights and modes of files anymore. Please check the
+    /etc/bugzilla3/post-checksetup.d/10setdefaultdpkgstatoverride and
+    15restoredpkgstatoverride scripts. Closes: #550085
+  * Added support for custom templates (and skins); use the
+    /etc/bugzilla3/template and /etc/bugzilla3/skins directories. The
+    /etc/bugzilla3/pre-checksetup.d/30copyetcskins and 30copyetctemplate copy
+    the content to the right locations. LP: #413065
+
+ -- Raphael Bossek <bossekr@debian.org>  Sun, 15 Nov 2009 12:34:09 +0100
+
+bugzilla (3.2.5.0-1) unstable; urgency=medium
+
+  * Increased Standards-Version to 3.8.3; no changes.
+  * Fixed creation of /etc/bugzilla3/localconfig from debconf settings.
+  * In case where access to database is protected the user/password is revoked
+    und recreated again; dpkg-reconfigure -phigh bugzilla3.
+  * Removed dependency against libemail-reply-perl.
+  * Changed processing of /etc/bugzilla3/localconfig. Closes: #538286
+  * Fixed usage of skins by moving away from /cgi-bin/bugzilla3/.
+    Closes: #495107
+  * Support for new version of Germzilla added. Closes: #522401
+  * Added support for 2 digit version numbers for uscan. Closes: #539401
+  * libtemplate-plugin-gd-perl is recomended. Closes: #539440
+  * Uses Debian's YUI files for security concerns with JavaScript.
+    Closes: #544987, #544870
+  * The post-checksetup.d/10setdefaultdpkgstatoverride and
+    post-checksetup.d/15restoredpkgstatoverride script fix directory/file
+    access rights. Closes: #550045
+  * Fixed typo in checksetup(_debian).sh script. Closes: #550055
+  * Include path /usr/share/bugzilla3 added. README.Debian explains how to
+    install missing Perl modules for email_in.pl. Closes: #549700
+  * The localhost mta/smtp/email server have to accept email sending.
+    Closes: #522455
+  * Fixed SQL injection vulnerability in the Bug.create WebService function
+    CVE-2009-3165, Closes: #547132
+  * Fixed typo in recomends (imagemagick). Closes: #554965
+
+  [ NEWS.Debian ]
+  * The directory /usr/lib/cgi-bin/bugzilla3 moved to
+    /usr/share/bugzilla3/web. The /usr/share/doc/bugzilla3/examples/basic.conf
+    file show the changes mandatory for apache2.
+    This change was required to be able to install bugzilla3 for apache2
+    out-of-the box with apache2 default setup for /cgi-bin/ directory.
+    Closes: #520935
+  * New basic.conf/vh-basic.conf files fix /cgi-bin/ issues with default
+    apache2 configuration. Closes: #511839
+  * urlbase (/etc/bugzilla3/param) changed from /cgi-bin/bugzilla3/ to
+    /bugzilla3/.
+  * docs_urlbase (/etc/bugzilla3/param) changed from
+    /docs/bugzilla3-doc/%lang%/html to /doc/bugzilla3-doc/%lang%/html with
+    changed directory structure within bugzilla3-doc. Closes: #511839
+  * The directories /etc/bugzilla3/pre-checksetup.d and
+    /etc/bugzilla3/post-checksetup.d contain executables which are started in
+    alphanumerical order befor and after checksetup.pl is called. Save your
+    own scripts which should be executed if checksetup.pl is called, e.g.
+    while upgrade of the package.
+  * /usr/share/bugzilla3/lib/sanitycheck.pl added; will be executed daily.
+    Closes: #550071
+
+ -- Raphael Bossek <bossekr@debian.org>  Fri, 06 Nov 2009 20:47:23 +0100
+
+bugzilla (3.2.4.0-3+nmu1) unstable; urgency=low
+
+  * Non-maintainer upload
+  * Debconf templates and debian/control reviewed by the debian-l10n-
+    english team as part of the Smith review project. Closes: #541769
+  * Drop extra text at the end of README.Debian. Closes: #550056
+  * [Debconf translation updates]
+    - Swedish (Martin Bagge).  Closes: #543407
+    - Basque (Piarres Beobide).  Closes: #543633
+    - German (Helge Kreutzmann).  Closes: #543726
+    - Portuguese (Miguel Figueiredo).  Closes: #544153
+    - Czech (Jan Outrata).  Closes: #544211
+    - Japanese (Hideki Yamane (Debian-JP)).  Closes: #544492
+    - French (Florentin Duneau).  Closes: #544742
+    - Spanish (Francisco Javier Cuadrado).  Closes: #544881
+    - Ukrainian (Artem Ustinov).  Closes: #544952
+    - Dutch (Paul Gevers).  Closes: #545049
+    - Russian (Yuri Kozlov).  Closes: #537924, #545170
+    - Finnish (Esko Arajärvi).  Closes: #545365
+    - Vietnamese (Clytie Siddall).  Closes: #547870
+
+ -- Christian Perrier <bubulle@debian.org>  Mon, 19 Oct 2009 23:10:25 +0200
+
+bugzilla (3.2.4.0-3) unstable; urgency=medium
+
+  * Changed processing of Status/Resolution field changes. I hope this
+    modification is less disturbing for 99% of typical installations.
+  * Fixed ucf warning. Closes: #521855
+  * (Ubuntu) Fixed processing of manual checksetup.pl execution.
+    LP: #398892, #394972, #394846, #367476, #301909, #317963, #313310
+  * (Ubuntu) Installation of outstanding packages is not supported.
+    LP: #389962 
+  * (Ubuntu) perl-modules=5.10.0-24 provides the CGI package of version 3.29
+    which is not enought to bugzilla. For Perl 5.10 version 3.33 of CGI
+    package is required. LP: #386620
+  * (Ubuntu) Added cvs and imagepagick to Recommends. LP: #386598
+  * (Ubuntu) Applied example from Rolf Leggewie for vh-basic.conf. LP: #386608
+  * (Ubuntu) Restart of apache2 added. LP: #300566
+  * (Ubuntu) Processing of templates fixed by pre-checksetup.d script.
+    LP: #302192
+  * (Ubuntu) The sym-link /usr/share/bugzilla3/web/data ->
+    /var/lib/bugzilla3/data is valid. LP: #386592
+  * (Ubuntu) Sendmail support is fixed upstream. LP: #281379
+  * (Ubuntu) Change file permissions for skins after checksetup.pl call.
+    LP: #314123
+  * (Ubuntu) Fixed file permissions in /etc/bugzilla3. LP: #386604
+
+ -- Raphael Bossek <bossekr@debian.org>  Sun, 19 Jul 2009 20:30:16 +0200
+
+bugzilla (3.2.4.0-2) unstable; urgency=medium
+
+  * Fixed checksetup.pl script.
+  * Changed severity to medium for security reasons fixed with new upstream
+    release.
+
+ -- Raphael Bossek <bossekr@debian.org>  Sun, 19 Jul 2009 12:39:42 +0200
+
+bugzilla (3.2.4.0-1) unstable; urgency=low
+
+  * New upstream version. Closes: #528228
+  * Removed uploaders; nobody else maintains this package.
+    Closes: #521431, #536122
+  * Added libmail-sendmail-perl dependency. Closes: #516101
+  * Change access rights within cron's daily script. Closes: #516135
+  * Added dependency on an non-existing package libemail-reply-perl. This
+    package will RFP later but can be build with dh-make-perl in the meantime.
+    To satisfy the dependencies libemail-mime-creator-perl will be installed
+    instead and should be removed later. Closes: #528780
+  * Revert access right /usr/share/bugzilla3/lib and /usr/share/perl5/Bugzilla
+    to 0775. Closes: #533394
+  * Removed VirtualHost section from basic.conf. Closes: #511839
+  * Removed bashishm from debian/rules. Closes: #535373
+  * Updated Czech translation of bugzilla debconf messages. Closes: #535859
+  * Spanish debconf template translation for bugzilla. Closes: #515313
+  * Vietnamese debconf templates translation update. Closes: #509436
+  * Update to 3.8.2 standard without changes.
+
+ -- Raphael Bossek <bossekr@debian.org>  Fri, 17 Jul 2009 21:52:19 +0200
+
+bugzilla (3.2.0.1-1) unstable; urgency=low
+
+  * Debconf templates and debian/control reviewed by the debian-l10n-
+    english team as part of the Smith review project. Closes: #507533
+  * [Debconf translation updates]
+    - German. Closes: #507594
+    - Swedish. Closes: #506601
+    - Japanese. Closes: #507773
+    - Portuguese. Closes: #507813, #508317
+    - French. Closes: #508164
+    - Russian. Closes: #508290
+    - Italian. Closes: #508530
+    - Basque. Closes: #508892
+  * Fixed skin support. Closes: #509020
+  * checksetup.pl is now a wrapper shell script which run-parts
+    /usr/share/bugzilla3/debian/{pre,post}-checksetup.d directories. Scripts
+    in those directories take care about the configuration. The configuration
+    variable webdotbase is preset to the right value. Closes: #494091
+  * If Status/Resolution filds were modified, checksetup.pl is *not* started
+    but installation procedure is finished successful. The user have to
+    restart dpkg-reconfigure bugzilla3 after modified checksetup_nondebian.pl.
+  * If package is installed from scratch the /etc/apache2/conf.d/bugzilla3 is
+    sym-linked to /usr/share/doc/bugzilla3/examples/basic.conf. Bugzilla works
+    out of the box in this case.
+  * Support for PostgreSQL is missing right now (see bug 511331) but it's
+    possible right now to install this package without db-config support and do
+    everthing manually. Closes: #507555
+
+ -- Raphael Bossek <bossekr@debian.org>  Sat, 10 Jan 2009 16:37:54 +0100
+
+bugzilla (3.2.0.0~rc2-1) unstable; urgency=low
+
+  * Update to new release.
+
+ -- Raphael Bossek <bossekr@debian.org>  Wed, 19 Nov 2008 07:51:06 +0100
+
+bugzilla (3.0.5.0-1) unstable; urgency=low
+
+  * New upstream release.
+  * Fixed processing of dbconfig-common in postrm script.
+
+ -- Raphael Bossek <bossekr@debian.org>  Fri, 03 Oct 2008 12:21:22 +0200
+
+bugzilla (3.0.4.1-4) unstable; urgency=low
+
+  * Dropped /usr/share/bugzilla3/debian/apache.conf in place of the
+    /usr/share/doc/bugzilla3/example files.
+  * Removed debug messages for cron.daily script. (closes: #498177)
+
+ -- Raphael Bossek <bossekr@debian.org>  Tue, 09 Sep 2008 07:25:50 +0200
+
+bugzilla (3.0.4.1-3) unstable; urgency=low
+
+  * Added VirtualHost section in basic.conf example to match default apache2
+    configration. It's no easier to setup a configuration by simply copy the
+    example file to /etc/apache2/conf.d directory.
+  * Clerified installation of Graphviz in README.Debian.
+  * Added Homepage tag in control. file (closes: #494845)
+
+ -- Raphael Bossek <bossekr@debian.org>  Sat, 06 Sep 2008 03:52:58 +0200
+
+bugzilla (3.0.4.1-2) unstable; urgency=medium
+
+  * Restore "old" configuration file if installation fails. (closes: #493286)
+  * Fixed package dependencies. (closes: #492689)
+
+ -- Raphael Bossek <bossekr@debian.org>  Sun, 03 Aug 2008 11:51:43 +0200
+
+bugzilla (3.0.4.1-1) unstable; urgency=low
+
+  * Update of French, Russian and German translations. (closes: #488251)
+  * Added Bulgarian and Belarusian translations.
+
+ -- Raphael Bossek <bossekr@debian.org>  Fri, 27 Jun 2008 22:34:34 +0200
+
+bugzilla (3.0.4-4) unstable; urgency=low
+
+  * Added dependency on libxml-twig-perl so importxml.pl works.
+
+ -- Raphael Bossek <bossekr@debian.org>  Tue, 27 May 2008 09:53:18 +0200
+
+bugzilla (3.0.4-3) unstable; urgency=low
+
+  * Added further scripts introduced with bugzilla's new release.
+  * Fixed importxml.pl script.
+
+ -- Raphael Bossek <bossekr@debian.org>  Mon, 26 May 2008 13:04:46 +0200
+
+bugzilla (3.0.4-2) unstable; urgency=low
+
+  * Removed /var/www sym-links.
+
+ -- Raphael Bossek <bossekr@debian.org>  Mon, 26 May 2008 08:36:53 +0200
+
+bugzilla (3.0.4-1) unstable; urgency=low
+
+  * New upstream release. Adoption of bugzilla package.
+
+ -- Raphael Bossek <bossekr@debian.org>  Mon, 05 May 2008 13:07:36 +0200
+
+bugzilla (2.22.1-2.2) unstable; urgency=high
+
+  * Non-maintainer upload by the testing-security team
+  * Upload with the permission of the maintainer
+  * Include CVE-2007-4543.dpatch to fix vulnerability to prevent
+    injection of arbitary code in enter_bug.cgi
+    (Closes: #440106) Fixes: CVE-2007-4543
+
+ -- Steffen Joeris <white@debian.org>  Sat,  1 Sep 2007 06:37:21 +0200
+
+bugzilla (2.22.1-2.1) unstable; urgency=high
+
+  * Non-maintainer upload with the permission of the maintainer
+  * Include upstream patch to fix Cross-site scripting (XSS)
+    vulnerability in Atom, which allows remote attackers to inject
+    arbitrary web script or HTML via unspecified vectors
+    (Closes: #409824) Fixes: CVE-2007-0791
+
+ -- Steffen Joeris <white@debian.org>  Fri, 10 Aug 2007 15:30:29 +0200
+
+bugzilla (2.22.1-2) unstable; urgency=high
+
+  * Depends on mysql-client as we provide mysql support with dbconfig-common.
+    (closes: #398621)
+  * Urgency set to high to fix the etch RC bug.
+  * Updated the Bugzilla version (debian minor) in Bugzilla/Config.pm.
+
+ -- Alexis Sukrieh <sukria@debian.org>  Wed, 15 Nov 2006 07:54:08 +0100
+
+bugzilla (2.22.1-1) unstable; urgency=high
+
+  * New upstream release (2.22.1) fixes several security issues (hence the
+    high priority)
+    + CVE-2006-5455:
+      Cross-site request forgery (CSRF) vulnerability in `editversions.cgi'.
+    + CVE-2006-5454:
+      Previous versions allow remote attackers to obtain the description
+      of arbitrary attachments.
+    + CVE-2006-5453:
+      Multiple cross-site scripting (XSS) vulnerabilities.
+    (bug #395094 now affects only sarge)
+  * Depends on libtemplate-perl (>= 2.10)
+  * Depends on libmailtools-perl (>= 1.67)
+
+ -- Alexis Sukrieh <sukria@debian.org>  Sat,  4 Nov 2006 01:10:20 +0100
+
+bugzilla (2.22-7) unstable; urgency=low
+
+  * The package is now maintained by the Debian Webapps Team.
+  * bugzilla.cron.daily
+    + Make sure /etc/bugzilla/sites exists before running checkstup.pl for
+    alternate sites.
+    (closes: #395053)
+
+ -- Alexis Sukrieh <sukria@debian.org>  Wed, 25 Oct 2006 14:19:07 +0200
+
+bugzilla (2.22-6) unstable; urgency=low
+
+  * Depends on dbconfig-common (>= 1.8.27) to prevent postinst failures.
+  * Install bugzilla.dtd as well and make sur the link un bug.xml.tmpl is
+    correct (uses [% webpath %]).
+    (closes: #327063)
+
+ -- Alexis Sukrieh <sukria@debian.org>  Wed, 18 Oct 2006 09:00:55 +0200
+
+bugzilla (2.22-5) unstable; urgency=low
+
+  * Better rewrite rules in README.Debian and debian/examples/*,
+    thanks to Mathias Behrle.
+    (closes: #389714)
+  * Replaced `/usr/lib/template' by `/var/lib/template' in README.Debian to
+    reflect reality, thanks to Mathias Behrle.
+    (closes: #389552)
+  * Updated Bugzilla minor version in Bugzilla/Config.pm (2.22-debian5),
+    thanks to Mathias Behrle.
+    (closes: #389551)
+  * The postinst script runs checksetup.pl for each site found in
+    `/etc/bugzilla/sites', thanks to Mathias Behrle.
+    (closes: #389556)
+  * Upgraded to debhelper 5
+    + debian/compat set to 5.
+    + Build-Depends on debhelper (>= 5).
+  * Cleanup: migrated remaining manual changes in diff.gz to dpatch-handled patches.
+
+ -- Alexis Sukrieh <sukria@debian.org>  Wed,  4 Oct 2006 08:22:38 +0200
+
+bugzilla (2.22-4) unstable; urgency=low
+
+  * Make sure dbconfig-common is correctly installed before sourcing/using it
+    in maintainer scripts.
+    (closes: #388221)
+
+ -- Alexis Sukrieh <sukria@debian.org>  Thu, 21 Sep 2006 18:44:27 +0200
+
+bugzilla (2.22-3) unstable; urgency=low
+
+  [ The "Hey babe, I'm a Debian Developer!" upload, part #3 ]
+
+  * Fixes postinst so it passes $@ to dbconfig-common correctly (Thanks to
+    Eldon Koyle).
+    (closes: #385904)
+  * Added some information about the "urlbase" property in
+    /etc/bugzilla/params.
+    (closes: #374985)
+  * debian/patches/03_webpath
+    Added missing [% webpath %] tokens in
+    templates/en/default/global/header.html (thanks to Federico Cuello).
+    (closes: #385341)
+  * Added the padlock.png image in the package, make it reachable by the
+    style.css file.
+    (closes: #385343)
+  * Added po-debconf as a build-dependency.
+
+ -- Alexis Sukrieh <sukria@debian.org>  Sat,  9 Sep 2006 12:12:26 +0200
+
+bugzilla (2.22-2) unstable; urgency=low
+
+  * debian/patches/08_showdependencygraph.dpatch
+    Changed the call to PerformSubsts to perform_substs which has changed
+    since 2.22 relase (thanks to Veit Guna).
+    (closes: #381556)
+  * Added Portuguese translation for debconf templates (thanks to Rui Branco).
+    (closes: #381442)
+  * debian/control:
+    + depends on libmailtools-perl (>= 1.6.7).
+    + recommends perlmagick for Image::Magick module.
+    (closes: #372311, #378120)
+  * debian/patches/03_webpath.dpatch
+    + Added a [%webpath%] token for fixing a js path (thanks to Graham).
+    (closes: #372477)
+  * debian/patches/11_collectstats.pl.dpatch
+    + The full path to duplicates.cgi (thanks to Frédéric Bothamy).
+    (closes: #372810)
+  * debian/patches/04_Config.pm.dpatch
+    + Added a die statement when unable to execute $localconfig (thanks to
+    Jayen Ashar).
+    (closes: #366415)
+
+ -- Alexis Sukrieh <sukria@sukria.net>  Mon, 14 Aug 2006 16:34:25 +0200
+
+bugzilla (2.22-1) unstable; urgency=low
+
+  * New upstream release (2.22).
+    (closes: #365304)
+  * Tempaltes moved to `/var/lib/bugzilla' instead of `/usr/share/bugzilla'
+    which is more appropriate, and compliant with README.Debian.
+    (closes: #368605)
+  * Doesn't overwrite `/etc/bugzilla/localconfig' silently, uses ucf for
+    replacing this file so the local administrator can check if he wants to
+    update the DB access or not. It's then possible to upgrade from version
+    prior to 2.22 with denying to use dbconfig-common.
+    (closes: #366961)
+
+ -- Alexis Sukrieh <sukria@sukria.net>  Wed,  7 Jun 2006 12:49:53 +0200
+
+bugzilla (2.20.1-3) unstable; urgency=low
+
+  * Migrated all the remaining stuff in debian/helper/postinst-db.pl to
+    debian/bugzilla.postinst
+  * Removed the lintian ovveride about deprecated script
+    `debian/helper/postinst-db.pl'.
+  * Better handling of the update of /etc/bugzilla/localconfig
+    (closes: #366961, #366415)
+  * /etc/bugzilla/localconfig is now handled by ucf.
+  * Package cleaning (thanks to Philipp Kern)
+    + Removed dependecies on all httpd servers, uses "httpd" instead.
+    + Policy 3.7.2
+    + Cleaning in debian/rules
+    + Added comments in patches.
+
+ -- Alexis Sukrieh <sukria@sukria.net>  Tue,  2 May 2006 18:09:26 +0200
+
+bugzilla (2.20.1-2) unstable; urgency=low
+
+  * Fixed some grave issues in checksetup.pl.
+    (closes: #348014, #361446)
+  * Uses dbconfig-common in order to perform the database creation.
+    + Removed deprecated debconf templates about database creation.
+    + changed postinst/postrm/config in order to use dbconfig-common.
+    (closes: #337377, #360617)
+  * showdependencygraph.cgi now works properly and can display graphs.
+    (closes: #315526)
+  * Removed a bad change made in header.html.tmpl regarding the link to the
+    RSS file (thanks to Daniel Nilsson).
+    (closes: #337217)
+  * Added Swedish translation for the debconf templates (thanks to Daniel
+    Nylander).
+    (closes: #338754)
+  * Fixed some bad-fromated lines in debian/changelog
+  * Policy: 3.6.2
+  * installs *.pl files with 0755 mode, fixes some lintian warnings.
+
+ -- Alexis Sukrieh <sukria@sukria.net>  Sun, 23 Apr 2006 14:09:49 +0200
+
+bugzilla (2.20.1-1) unstable; urgency=low
+
+  * New upstream release.
+    (closes: #354457)
+
+ -- Alexis Sukrieh <sukria@sukria.net>  Thu, 30 Mar 2006 22:26:08 +0200
+
+bugzilla (2.20-1) unstable; urgency=low
+
+  * New upstream release.
+    (closes: #331242)
+  * New dependency: libmailtools-perl for Mail/Mailer.pm
+  * New dutch po-debconf translation (Thanks to Luk Claes).
+    (closes: #328675)
+  * New catalan po-debconf translation (Thanks to Miguel Gea Milvaques).
+    (closes: #328930)
+  * New spanish po-debconf translation (Thanks to César Gómez Martín).
+    (closes: #333900)
+  * New german po-debconf translation (Thanks to Jens Nachtigall).
+    (closes: #326794)
+  * Added debconf-2.0 dependency.
+    (closes: #331769)
+
+ -- Alexis Sukrieh <sukria@sukria.net>  Sat, 15 Oct 2005 18:55:24 +0200
+
+bugzilla (2.18.4-1) unstable; urgency=high
+
+  * New upstream minor release
+    + Fixed a security issue: It was possible to bypass the "user
+      visibility groups" restrictions if user-matching was turned on
+      in "substring" mode.
+    + Fixed a security issue: config.cgi exposed information to users who
+      weren't logged in, even when "requirelogin" was turned on in Bugzilla.
+    (closes: #331206)
+
+ -- Alexis Sukrieh <sukria@sukria.net>  Mon,  3 Oct 2005 16:51:01 +0200
+
+bugzilla (2.18.3-2) unstable; urgency=low
+
+  * Postinst script now uses temporary files in an safe way, with mktemp
+    rather than using a non-changing path. Thanks to Javier
+    Fernández-Sanguino Peña.
+    (closes: #321567)
+  * Added a RewriteRule in the virtual hosts examples for correctly handling
+    the %urlbase% tokens in the templates. Thanks to Yann Dirson.
+    (closes: #252076)
+  * showdependencygraph should not require a 64x64 inches, patch added in
+    debian/patches. Thanks to Yann Dirson.
+    (closes: #305360)
+  * Updated the cron.daily script so that extra sites are processed
+    (/etc/bugzilla/sites/*). Thanks to Yann Dirson.
+    (closes: #320004)
+  * Updated the Makefile and added a new patch for enabling a correct path to
+    the DTD file. Thanks to Yann Dirson.
+    (closes: #327063)
+  * Filling empty values for MySQL username and password is not allowed.
+    (closes: #312925)
+  * Updated and cleaned the changelog file for correct utf8 encoding.
+    (closes: #327041)
+  * Updated the README.Debian file for giving more informations on how to
+    upgrade all the BUGZILLA_SITE's located in /etc/bugzilla/sites. Thanks to
+    Yann Dirson.
+    (closes: #320005)
+
+ -- Alexis Sukrieh <sukria@sukria.net>  Tue, 13 Sep 2005 10:07:24 +0200
+
+bugzilla (2.18.3-1) unstable; urgency=low
+
+  * New upstream release: 2.18.3
+    + removed already applied patch: 00_security_287436.dpatch
+  * Updated the checksetup patch for fixing permissions on /var/lib/bugzilla
+    as well.
+    (closes: #316316)
+  * Fixed permissions on the contrib files.
+  * Added ruby and python in the suggested packages, for the contrib scripts
+    needs.
+  * Removed libchart duplicate dependency (was suggested and
+    recommanded).
+  * Added a patch for changing the "Home" link in the footer template to
+    index.cgi.
+    (closes: #315918)
+  * Added "Windows XP" in the default list of valid operating systems
+    (debian/default-files/localconfig).
+    (closes: #316489)
+
+ -- Alexis Sukrieh <sukria@sukria.net>  Mon, 11 Jul 2005 08:03:29 +0200
+
+bugzilla (2.18-7) unstable; urgency=low
+
+  * Change the datadir to /var/lib/bugzilla
+    + Add a patch for replacing $datadir with /var/lib/bugzilla
+    + Update bugzilla.postinst for fixing the permissions on /var/lib/bugzilla
+    + Update bugzilla.postrm for purging /var/lib/bugzilla
+    + data and graphs are under /var/lib/bugzilla instead of
+    /usr/share/bugzilla.
+    (closes: #308232)
+  * Add upstream security patch for closing Bugzilla's #287436
+    + debian/patches/00_security_287436.dpatch
+    (closes: #308789)
+  * Add the possibility to manage several VirtualHosts thanks to Apache
+    configuration, using mod_env.
+    + new patch for customizing Bugzilla::Config in order to read variables
+      set up by Apache configuration (Thanks to Yann Dirson).
+    + add a section in README.Debian in order to explain how to set up a
+      VirtualHost with the package.
+    + add two examples in order to help the creation of Bugzilla VirtualHosts.
+    (closes: #309227, #309236)
+  * Add debian/po/vi.po for debconf translations (thanks to Clytie Siddall).
+    (closes: #309475)
+  * New debian/po/ja.po for better debconf translations (thanks to Hideki
+    Yamane).
+    (closes: #311169)
+  * New debian/po/cs.po for better debian translations (thanks to Jan
+    Outrata).
+    (closes: #311980)
+
+ -- Alexis Sukrieh <sukria@sukria.net>  Sun, 12 Jun 2005 15:45:07 +0200
+
+bugzilla (2.18-6) unstable; urgency=low
+
+  * Added a dependency on ucf (>= 0.08).
+  * Added myself as Maintainer, moved Rémi Perrot as Uploader.
+  * Added some packages to the suggestions.
+    (closes: #305321)
+
+ -- Alexis Sukrieh <sukria@sukria.net>  Wed,  4 May 2005 11:49:10 +0200
+
+bugzilla (2.18-5) unstable; urgency=low
+
+  * Added bugzilla-doc.* in debian/, which gives content to the bugzilla-doc
+    package.
+    (closes: #305328)
+  * Huge cleaning in the sources
+    + add debian/patches/04_cookiepath.dpatch
+    + add debian/patches/05_webpath.dpatch
+    + add debian/patches/06_contrib.dpatch
+    + add debian/default-files/index.html
+    + add debian/default-files/params
+    + add debian/default-files/localconfig
+
+ -- Alexis Sukrieh <sukria@sukria.net>  Wed, 27 Apr 2005 09:31:26 +0200
+
+bugzilla (2.18-4) unstable; urgency=low
+
+  * Added patches in debian/patches to get closer to the original tarball.
+  * Added dpatch system for handling patches. 
+  * Improved the clean target in order to remove precompiled templates.
+  * Handling of the "params" file with ucf
+    + Changed the location of the "params" file to /etc/bugzilla/params
+    + New postinst, written in shellscript that handles cleanly file moves
+      with ucf.
+    + New preinst which will move any "params" file found from previous
+      packages to /etc/bugzilla/params
+    + Moved all the perl code of postinst to debian/helper/db-postinst.pl
+    + Updated postrm to purge ucf entries and to remove /usr/share/bugzilla.
+    (closes: #305327)
+
+ -- Alexis Sukrieh <sukria@sukria.net>  Tue, 26 Apr 2005 17:06:41 +0200
+
+bugzilla (2.18-3) unstable; urgency=low
+
+  * First upload of 2.18 to unstable, moved from experimental.
+    (closes: #290775, #253651, #143154, #221985, #291206)
+  * Fixed postinst so that database names can contain special characters.
+    Added a specific paragraph in the debconf question for giving details
+    about special characters in MySQL database names.
+    (closes: #303730)
+  * Added a checkpo target in debian/rules for checking po files.
+  * New nl.po file for Debconf l10n (Luk Claes).
+    (closes: #302911)
+  * New pt_BR.po file for Debconf l10n (Andre Luis Lopes).
+  * Merged changelog entries from 2.16.7.
+  * New fr.po file for debconf templates.
+  * New ca.po file for debconf templates (Miguel Gea Milvaques)
+    (closes: #305073)
+
+ -- Alexis Sukrieh <sukria@sukria.net>  Mon, 18 Apr 2005 16:46:48 +0200
+
+bugzilla (2.18-2) experimental; urgency=low
+
+  * Backport from 2.16.7-5
+    Rewrote Debconf templates for DTSG compliance (Christian Perrier).
+      - New fr.po file for Debconf l10n (Christian Perrier).
+      - New cs.po file for Debconf l10n (Jan Outrata).
+      - New pt_BR.po file for Debconf l10n (Andre Luis Lopes).
+      - New de.po file for Debconf l10n (Jens Nachtigall).
+      - New ca.po file for Debconf l10n (Miguel Gea Milvaques).
+  * Updated Bugzilla/Config.pm to fit the Debian needs (webpath =
+    '/bugzilla/').
+  * Typo in Makefile.
+  * Commented out a piece of code in checksetup.pl for preventing a .htaccess
+    creation in Bugzilla/ lib directory (no need here).
+  * debian/bugzilla.preinst - debian/bugzilla.postinst
+    We now restore 2.16 params when installing the 2.18 package.
+
+ -- Alexis Sukrieh <sukria@sukria.net>  Sat, 19 Feb 2005 16:13:31 +0100
+
+bugzilla (2.18-1) experimental; urgency=low
+
+  * New upstream release (2.18).
+    (closes: #290775)
+  * Put data in /usr/share/bugzilla/web/data
+  * Fixed preinst and postinst.
+  * Added the contrib directory to /usr/share/bugzilla/contrib
+    (closes: #221985, #143154)
+  * Removed every CVS files from the source tree and then, removed every CVS
+    files in the installation target.
+    (closes: #291206, #253651)
+  * Changed the way checksetup.pl performs chown and chmod. Used the old way
+    we made in previous package, comes from Rémi Perrot.
+  * Added preinst for saving the previous 'params' file in order to restore
+    user defined Parameters in postinst.
+  * Fixed Debconf bug, we don't ask twice the admin password in Automatic mode.
+  * Updated bugzilla.templates for a better wording, thanks to Jens
+    Nachtigall.
+    (closes: #275681)
+
+ -- Alexis Surkieh <sukria@sukria.net>  Sat, 29 Jan 2005 11:15:36 +0100
+
+bugzilla (2.16.7-5) unstable; urgency=low
+
+  * Rewrote Debconf templates for DTSG compliance (Christian Perrier).
+      - New fr.po file for Debconf l10n (Christian Perrier).
+      - New cs.po file for Debconf l10n (Jan Outrata).
+      - New pt_BR.po file for Debconf l10n (Andre Luis Lopes).
+      - New de.po file for Debconf l10n (Jens Nachtigall).
+      - New ca.po file for Debconf l10n (Miguel Gea Milvaques).
+    (closes: #294433, #294159, #294234)
+  * showdependencygraph.cgi
+    + Changed the $var_dir value in showdependencygraph.cgi to
+      /usr/share/bugzilla/web.
+    + Fixed a bug when generating the url path of the /data/webdot/*.dot.map files.
+    (closes: #300857)
+
+ -- Alexis Sukrieh <sukria@sukria.net>  Tue, 22 Mar 2005 14:35:15 +0100
+
+bugzilla (2.16.7-4) unstable; urgency=low
+
+  * Fixed the link in PutHeader() in editusers.cgi.
+    (closes: #228140)
+  * The sidebar is now fixed, the search field works (thanks to 
+    Maximiliano Pin).
+    (closes: #271790)
+  * Fixed postinst, upgrade of MySQL tables is now possible.
+    (closes: #293135)
+
+ -- Alexis Sukrieh <sukria@sukria.net>  Tue,  1 Feb 2005 13:49:22 +0100
+
+bugzilla (2.16.7-3) unstable; urgency=low
+
+  * Fixed a bugzilla.config bug, admin password won't be prompted twice in
+    Automatic mode.
+  * Added Czech translation for Debconf messages (Jan Outrata).
+    (closes: #291575)
+  * Updated French Debconf translation in debian/po/fr.po (Christian Perrier).
+    (closes: #285978, closes: #189402)
+  * Updated debian/po/ja.po to fix fuzzy and untranslated lines (Hideki
+    Yamane).
+    (closes: #286029)
+  * Added Catalan Debconf translation in debian/po/ca.po (Miguel Gea
+    Milvaques).
+    (closes: #284150)
+  * Updated Dutch Debconf translation in debian/po/nl.po (Luk Claes).
+    (closes: #285747)
+  * Updated German Debconf translation in debian/po/de.po (Jens Nachtigall).
+    (closes: #275669)
+
+ -- Alexis Sukrieh <sukria@sukria.net>  Thu, 27 Jan 2005 12:34:58 +0100
+
+bugzilla (2.16.7-2) unstable; urgency=low
+
+  * Applying upstream security patch for closing XSS issuses reported in
+    CAN-2004-1061.
+    (closes: #288245)
+  * Little bugfix in postinst, admin password was prompted twice.
+  * Updated README.Debian to explain how the bugzilla MySQL user is generated
+    in automatic installation mode.
+
+ -- Alexis Sukrieh <sukria@sukria.net>  Sat,  8 Jan 2005 12:42:25 +0100
+
+bugzilla (2.16.7-1) unstable; urgency=low
+
+  * Major rewriting of the postinst. 
+    Better process, for the automatic mode, we now create a default bugzilla
+    user instead of using debian-sys-maint.
+  * The automatic installation is now aware of existing database, if the db
+    name filled in Debconf is found, it will use it instead of creating a new one.
+    (closes: #286827)
+  * Added French translation of Debconf screens added in previous NMU.
+  * It is now not allowed to set an invalid cookie path in the preferences CGI.
+    (closes: #213420)
+  * Added debian-init.pl to perform some initialisation. Can print a small
+    error message if globals.pl is not readable.
+    (closes: #284768)
+  * Added a control of the first argument given to postinst, to fit the
+    Policy (only 'configure' will let the process go).
+  * Added a debug facility in postinst for better debugging when needed.
+  * Added Alexis Sukrieh as a co-maintainer.
+
+ -- Alexis Sukrieh <sukria@sukria.net>  Tue,  4 Jan 2005 10:56:30 +0100
+
+bugzilla (2.16.7-0.2) unstable; urgency=medium
+
+  * NMU 0-days due to serious/important bug solving which prevents
+    bugzilla entering testing.
+
+  [ Alexis Sukrieh ]
+
+  * Post-inst won't fail anymore when no MySQL server is
+    available. Added an automatic way of setting up the MySQL server if
+    /etc/mysql/debian.cnf exists, will read values from it then.
+    (closes: #250638)
+  * Using a MySQL user with '-' inside its name won't fail anymore.
+    (closes unreported bug)
+  * Better handling on DBI connection errors. When DBI complains about
+    something, user is not confused anymore by ugly error messages.
+    (closes: #154249)
+  * Running checksetup.pl by hand won't break the Bugzilla's installation
+    anymore. User can use it as he want without running dpkg-reconfigure.
+    (closes: #200707)
+
+  [ Francesco P. Lovergine ]
+
+  * Now rules removes .cvsignore file which trashes /usr/share/bugzilla/template.
+  * Added virtual package httpd to the list of web server.
+    (closes: #213784)
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Tue,  7 Dec 2004 22:54:45 +0100
+
+bugzilla (2.16.7-0.1) unstable; urgency=low
+
+  * NMU 0-days due to major security issues, solved upstream.
+  * New upstream release:
+    - Fix security relevant bug CAN-2004-0704:
+      Remote attackers were allowed to view hidden products
+      (closes: #260772)
+    - Fix security relevant bugs CAN-2004-0705:
+      Several Cross-Site-Scripting bugs allowed remote attackers
+      to execute Javascript-Code with other users' privileges
+      (closes: #260773)
+    - Fix security relevant bug CAN-2004-0707:
+      An SQL injection vulnerability allowed remote attackers which
+      had the privilege to grant group membership privileges to
+      execute arbitrary SQL commands
+      (closes: #260774)
+  * Include complete copyright statements collected from the sources
+    (closes: #253841)
+
+  Thanks Moritz Muehlenhoff for initial packaging.
+
+ -- Francesco Paolo Lovergine <frankie@debian.org>  Tue, 26 Oct 2004 16:09:03 +0200
+
+bugzilla (2.16.5-2) unstable; urgency=low
+
+  * Duplicate table creation is now also fixed in bugzilla.postinst
+    (closes: #224288)
+
+ -- Rémi Perrot <rperrot@debian.org>  Fri,  2 Apr 2004 01:13:32 +0200
+
+bugzilla (2.16.5-1) unstable; urgency=low
+
+  * New upstream version
+    - fix bug that make checksetup.pl try to create table that already
+      exists (closes: #224288).
+  * Don't print password when LDAP login failed any more (closes: #211103)
+  * No any more Arch(tla) cruft (closes: #236954)
+  * Add Japanese po-debconf template translation, thanks to Hideki Yamane
+    (closes: #239209)
+  * Add Dutch (nl) po-debconf template translation, thanks to Luk Claes
+    (closes: #240030)
+  * Change header.html.tmpl to make browser handle non iso-latin1 chars
+    (closes: #222320)
+
+ -- Rémi Perrot <rperrot@debian.org>  Wed, 31 Mar 2004 01:07:39 +0200
+
+bugzilla (2.16.4-2) unstable; urgency=low
+
+  * Fix bad default config state that makes bugzilla be
+    initially installed with LDAP enabled (closes: #221878)
+  * Convert changelog and control file to UTF-8 
+
+ -- Rémi Perrot <rperrot@debian.org>  Sat, 22 Nov 2003 18:16:11 +0100
+
+bugzilla (2.16.4-1) unstable; urgency=low
+
+  * New upstream version that mostly fix some security issue
+    To have more information have a look on upstream bug
+    - http://bugzilla.mozilla.org/show_bug.cgi?id=214290
+    - http://bugzilla.mozilla.org/show_bug.cgi?id=219044
+    - http://bugzilla.mozilla.org/show_bug.cgi?id=219690
+    - http://bugzilla.mozilla.org/show_bug.cgi?id=209376
+  * Putting debian-doc in docs section
+  * Remove dependency on roxen2 (closes: #214213)
+  * Add Brazilian translation (closes: #198437)
+
+ -- Rémi Perrot <rperrot@debian.org>  Wed, 12 Nov 2003 20:50:48 +0100
+
+bugzilla (2.16.3-1) unstable; urgency=low
+
+  * New upstream version closing some cross site scripting bug
+  * Add explanation on how to customize template in README.Debian
+    (closes: #165519).
+  * In cron.daily, test for commands before running them as cron.daily
+    stay in place if the package is uninstalled but not purged
+    (closes: #187806).
+  * French debcon templates improvement (closes: #190115).
+
+ -- Rémi Perrot <rperrot@debian.org>  Sun, 27 Apr 2003 01:01:46 +0200
+
+bugzilla (2.16.2-1) unstable; urgency=low
+
+  * New upstream version that fix some security issue (DSA-218)
+  * Fix typo in importxml.pl (closes: #173839)
+  * Fix cut and paste bug in CGI.pl (closes: #181301)
+  * Now use po-debconf for debconf template
+  * Add some missing translation in french debconf template translation
+  * Use dbh->tables() insted of deprecated _ListTables in bugzilla.postinst
+  * Change a relative path to data directory to an absolute on in global.pl 
+
+ -- Rémi Perrot <rperrot@debian.org>  Fri, 14 Mar 2003 23:51:29 +0100
+
+bugzilla (2.16.1-1) unstable; urgency=low
+
+  * New upstream version
+  * Fix wrong path for processmail (closes: #164186, #159844)
+  * Improve a little the French debconf template (closes: #166770) 
+
+ -- Rémi Perrot <rperrot@debian.org>  Thu, 31 Oct 2002 14:42:34 +0100
+
+bugzilla (2.16.0-2.1) unstable; urgency=high
+
+  * Non-maintainer upload by security team
+  * Fixed bit handling for new products to avoid errors in group handling
+    triggered by not exact Perl maths beyond 2^48.  Backport from new
+    upstream 2.14.4.
+
+ -- Martin Schulze <joey@infodrom.org>  Thu, 10 Oct 2002 12:24:37 +0200
+
+bugzilla (2.16.0-2) unstable; urgency=low
+
+  * Fix wrong path to processmail in post_bug.cgi (closes: #159312).
+  * Fix wrong path to lib votes.cgi (closes: #159551).
+  * Prevent interpretation of meta char in password.
+  * Fix bug on multi-world product when setting file
+    permission. Thanks to Nathaniel W. Turner (closes: #159353).
+  * Fix a typo in list.html.tmpl (closes: #159613).
+  * Fix unreachable bugzilla.dtd bug (closes: #159600).   
+
+ -- Rémi Perrot <rperrot@debian.org>  Thu,  5 Sep 2002 00:20:19 +0200
+
+bugzilla (2.16.0-1) unstable; urgency=low
+
+  * New upstream version (closes: #155952).
+  ** Fix trim function (closes: #155945).
+  ** Using templates makes some bugs obsolete
+     (closes: #155748)
+  * Fix some broken html links (closes: #154780).
+  * Add dependancy alternative on http server (closes: #158378).
+  * Fix a typo in debconf template (closes: #154464).
+  * Add Suggest on libnet-ldap-perl (closes: #155984).
+
+ -- Rémi Perrot <rperrot@debian.org>  Fri, 30 Aug 2002 21:34:07 +0200
+
+bugzilla (2.14.2-3) unstable; urgency=low
+
+  * Fix missing images directory in bugzilla-doc (closes: #153470).
+  * Apply Daniel Patterson patch to make LDAP support available
+    on the Debian version of Bugzilla (closes: #152583).
+
+ -- Rémi Perrot <rperrot@debian.org>  Sun, 21 Jul 2002 01:33:56 +0200
+
+bugzilla (2.14.2-2) unstable; urgency=low
+
+  * Give a chance to install a MySQL server by saying that there is
+    no server available in the configure script (closes: #145525).
+  * Fix bad link to plain HTML pages (closes: #149255).
+  * Set default urlbase to http://localhost/cgi-bin/bugzilla.
+  * Provide dummy default to answer of debconf question that
+    cause infinite loop if they are empty when the config srcipt run
+    with a non interactive fronted (closes: #149305).
+
+ -- Rémi Perrot <rperrot@debian.org>  Sun,  9 Jun 2002 21:49:46 +0200
+
+bugzilla (2.14.2-1) unstable; urgency=high
+
+  * New upstream version that fix several security hole.
+
+ -- Rémi Perrot <rperrot@debian.org>  Sun,  9 Jun 2002 10:58:44 +0200
+
+bugzilla (2.14.1-8) unstable; urgency=low
+
+  * Fix path to processmail in createattachment.cgi (closes: #147111).
+  * Same thing in importxml.pl.
+  * Fix incorrect ref on 1x1.gif in long_list.cgi (closes: #147113).
+  * Fix bad data directory path in move.pl, checksetup.pl and
+    duplicates.cgi
+
+ -- Rémi Perrot <rperrot@debian.org>  Sun, 19 May 2002 16:34:56 +0200
+
+bugzilla (2.14.1-7) unstable; urgency=low
+
+  * Fix bugzilla.postinst to make it accept quote in bugzilla admin
+    name (closes: #145035).
+  * Now recommands mysql-server.
+  * Reset some field in bugzilla.config to avoid infinit loop
+    (closes: #143456)
+
+ -- Rémi Perrot <rperrot@debian.org>  Sun,  5 May 2002 22:50:46 +0200
+
+bugzilla (2.14.1-6) unstable; urgency=low
+
+  * Fix improper handling of "rebuildkeywordcache" in sanitycheck.cgi
+    upstream bug #83474 (closes: #138174)
+  * Fix bad link to html document in bug_form.pl (closes: #139118). 
+
+ -- Rémi Perrot <rperrot@debian.org>  Wed, 20 Mar 2002 21:34:39 +0100
+
+bugzilla (2.14.1-5) unstable; urgency=low
+
+  * Checksetup.pl will not any more verify existence of Perl modules
+    (closes: 135200,135201).
+  * libxml-parser-perl is now only recommended.
+
+ -- Rémi Perrot <rperrot@debian.org>  Sat,  2 Mar 2002 17:29:25 +0100
+
+bugzilla (2.14.1-4) unstable; urgency=low
+
+  * In Bugzilla postinst, redirect sdtout of checksetup.pl in
+    stderr to prevent to confuse debconf.
+  * In Bugzilla postinst, only reset mysql 'root' password when
+    needed.
+  * Fix problem about version number of Chart::Base (closes: #132593)
+  * Fix incorrect handling of line by editparams.cgi on Mac
+    (closes: #132937).
+
+ -- Rémi Perrot <rperrot@debian.org>  Sun, 17 Feb 2002 12:02:15 +0100
+
+bugzilla (2.14.1-3) unstable; urgency=low
+
+  * Apply fix to the French template done by Denis Barbier
+    (closes: #132385).
+
+ -- Rémi Perrot <rperrot@debian.org>  Tue,  5 Feb 2002 21:34:26 +0100
+
+bugzilla (2.14.1-2) unstable; urgency=low
+
+  * Typo in description (closes: #129704).
+  * Problem in localconfig.js (closes: #129363).
+
+ -- Rémi Perrot <rperrot@debian.org>  Sun, 20 Jan 2002 17:52:11 +0100
+
+bugzilla (2.14.1-1) unstable; urgency=high
+
+  * Cleanup bugzilla postinst.
+  * Typo in bugzilla-doc descriptions (closes: #124470).
+  * New upstream that fix some security issue (closes: #128103).
+
+ -- Rémi Perrot <rperrot@debian.org>  Mon,  7 Jan 2002 19:20:33 +0100
+
+bugzilla (2.14-7) unstable; urgency=low
+
+  * Fix an infinit loop in bugzilla postinst.
+  * Typo in bugzilla-doc description. 
+
+ -- Rémi Perrot <rperrot@debian.org>  Thu, 22 Nov 2001 23:15:07 +0100
+
+bugzilla (2.14-6) unstable; urgency=low
+
+  * Fix wrong variable name in showdependencygraph.cgi
+    (closes: #120045). 
+
+ -- Rémi Perrot <rperrot@debian.org>  Sun, 18 Nov 2001 12:17:56 +0100
+
+bugzilla (2.14-5) unstable; urgency=low
+
+  * Change depends on libchart-perl into recommends.
+  * Remove depends on libgd-perl.
+  * Fix missing 'use lib' in token.cgi (closes: #119890).
+
+ -- Rémi Perrot <rperrot@debian.org>  Sat, 17 Nov 2001 22:02:02 +0100
+
+bugzilla (2.14-4) unstable; urgency=low
+
+  * Oops template upgrade have been left behind. All improvement
+    proposed by Branden Robinson should have been incorporate now.
+  * backing out Swedish translation until it has been sync with
+    new template.
+
+ -- Rémi Perrot <rperrot@debian.org>  Thu,  1 Nov 2001 00:08:48 +0100
+
+bugzilla (2.14-3) unstable; urgency=low
+
+  * Improve configuration script.
+  * Improve all Debian english text. Thanks to Branden Robinson.
+  * Bugzilla now depends on the latest version of libchart-perl. 
+  * Make graph image working.
+  * Update README.debian mostly by removing things in
+    relation with cvs snapshoot.
+
+ -- Rémi Perrot <rperrot@debian.org>  Mon, 29 Oct 2001 00:58:15 +0100
+
+bugzilla (2.14-2) unstable; urgency=low
+
+  * Remove unused and buggy field when creating
+    admin profile (closes: #115115).
+
+ -- Rémi Perrot <rperrot@debian.org>  Wed, 10 Oct 2001 19:51:54 +0200
+
+bugzilla (2.14-1) unstable; urgency=low
+
+  * New upstream version.
+  * Fix type in bugzilla admin user creation
+
+ -- Rémi Perrot <rperrot@debian.org>  Tue,  9 Oct 2001 22:34:15 +0200
+
+bugzilla (2.13+cvs20010819-1) unstable; urgency=low
+
+  * New upstream version.
+  * Update description in doc-base
+  * CGI are now in /usr/lib/cgi-bin/bugzilla
+    (closes: #104151)
+  * Try to prevent downgrade to bugzilla version that haven't
+    the same database structure. This will not be effective
+    when downgrading to version prior to this one.
+  * Change Build-Depends to Build-Depends-Indep 
+
+ -- Rémi Perrot <rperrot@debian.org>  Sun,  7 Oct 2001 20:42:31 +0200
+
+bugzilla (2.13+cvs20010709-3) unstable; urgency=low
+
+  * Improve bugzilla-doc description (closes: #108217).
+  * Fix some link in bug_form.pl (closes: #109090).
+  * Fix 'Use of uninitialized value' warning in process_bug.cgi
+    (closes: #108731).
+  * Restrict debconf depends to the newest version to make
+    installation nicely failed on potato (closes: #107282).
+  * Add German translation to debconf. Thanks to Joerg Rieger
+    (closes: #108896).
+
+ -- Rémi Perrot <rperrot@debian.org>  Mon, 20 Aug 2001 02:34:29 +0200
+
+bugzilla (2.13+cvs20010709-2) unstable; urgency=low
+
+  * Change bonsai uri link and add one that report diff
+    between upstream version in README.Debian.
+  * Fix typo in collectstats.pl
+
+ -- Rémi Perrot <rperrot@debian.org>  Mon, 16 Jul 2001 22:19:01 +0200
+
+bugzilla (2.13+cvs20010709-1) unstable; urgency=low
+
+  * New upstream version (older version has always been 2.13, 
+    1.13 number is a mistake sorry).
+  * Add dependency on libxml-parser-perl.
+  * Synchronize the Makefile with the new upstream version.
+  * /usr/share/bugzilla/web/index.html is now a link to.
+    /var/lib/bugzilla/web/index.html since as a conffile it
+    can't be in /usr.
+  * Fix broken link in editusers.cgi
+		    
+ -- Rémi Perrot <rperrot@debian.org>  Sun, 15 Jul 2001 20:39:07 +0200
+
+bugzilla (1.13+cvs20010521-9) unstable; urgency=low
+
+  * Fix postinst to deal with product with space (closes: #104477).
+  * Missing where clause that give to all previously registred user
+    admin's privilages. Thanks to Kestutis Kupciunas (closes : #104520).
+  * Fix duplicate lines in initial localconfig.
+
+ -- Rémi Perrot <rperrot@debian.org>  Sat, 14 Jul 2001 01:08:58 +0200
+
+bugzilla (1.13+cvs20010521-8) unstable; urgency=low
+
+  * Declare /usr/share/bugzilla/web/index.html as a conffile
+    (closes: #104150)
+  * Fix several links (closes: #104152)
+  * Fix a syntax error in processmail (closes: #104353)
+
+ -- Rémi Perrot <rperrot@debian.org>  Wed, 11 Jul 2001 22:28:21 +0200
+
+bugzilla (1.13+cvs20010521-7) unstable; urgency=low
+
+  * Tune files and dir perimissions in /var/lib/bugzilla
+    (closes: #103417).
+  * Add cron jobs.
+
+ -- Rémi Perrot <rperrot@debian.org>  Sun,  8 Jul 2001 01:00:00 +0200
+
+bugzilla (1.13+cvs20010521-6) unstable; urgency=low
+
+  * Fix some path that prevent mail sending and shodowdb syncing.
+  * Fix 'Use of uninitialized value' warning in CGI.pl
+  * Do not ask to check password if there is no password asked
+    before
+  * Remove explicite call to postinst in config script
+
+ -- Rémi Perrot <rperrot@debian.org>  Thu,  5 Jul 2001 23:16:34 +0200
+
+bugzilla (1.13+cvs20010521-5) unstable; urgency=low
+
+  * Add Swedish translation to debconf. Thanks Martin Sj|gren
+    (closes: #103365).
+  * Add French translation to debconf. Thanks to my wife.
+
+ -- Rémi Perrot <rperrot@debian.org>  Tue,  3 Jul 2001 22:54:41 +0200
+
+bugzilla (1.13+cvs20010521-4) unstable; urgency=low
+
+  * Use debhelp script hook in postinst
+  * Change all '|| die' by 'or die' to prevent precedence problem
+  * Add || true after all db_* in bugzilla.config (closes: #102129)
+
+ -- Rémi Perrot <rperrot@debian.org>  Sun,  1 Jul 2001 00:23:27 +0200
+
+bugzilla (1.13+cvs20010521-3) unstable; urgency=low
+
+  * Fix bugzilla-doc installation (closes: #101395).
+  * Add symlink /usr/doc/bugzilla /usr/share/doc/bugzilla.
+  * Fix broken link in enter_bug.cgi.
+  * Change some default parameters :
+     - sendmailnow On (This prevent bugs with non sendmail MTA)
+     - entryheaderhtml -> change the path.
+  * Make postinst forget mysql admin user password insted of bugzilla
+    database user one.
+
+ -- Rémi Perrot <rperrot@debian.org>  Tue, 19 Jun 2001 07:54:00 +0200
+
+bugzilla (1.13+cvs20010521-2) unstable; urgency=low
+
+  * Add suggest on bugzilla to bugzilla-doc and vice versa (closes: #101366)
+  * Correct a typo in bugzilla-doc description.
+  * Prevent conflict with viewcvs on query.cgi (closes: #101401).
+    This may break compatibility with other mozilla webtools.
+  * I miss all patches on bugzilla native source, sorry.
+
+ -- Rémi Perrot <rperrot@debian.org>  Tue, 19 Jun 2001 06:44:43 +0200
+
+bugzilla (1.13+cvs20010521-1) unstable; urgency=low
+
+  * Initial Release.
+  * Close the ITP (closes: #73038)
+
+ -- Rémi Perrot <rperrot@debian.org>  Sun, 17 Jun 2001 18:35:12 +0200

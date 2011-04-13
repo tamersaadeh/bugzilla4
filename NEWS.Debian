@@ -1,0 +1,50 @@
+bugzilla (3.4.7.0-3) unstable; urgency=low
+
+  * Fixed permissions on /usr/share/perl5/Bugzilla for old installations.
+    Closes: #571107
+  * Fixed access rights for /etc/bugzilla3/localconfig. Closes: #571107
+  * Using database administrator account to run sanitycheck.pl from daily cron
+    job; maintainer field is not used anymore. Closes: #560140
+
+ -- Raphael Bossek <bossekr@debian.org>  Tue, 03 Aug 2010 15:17:46 +0200
+
+bugzilla (3.2.5.0-2) unstable; urgency=low
+
+  * Added /usr/share/doc/bugzilla3/examples/30_unconfirmed_allways.sh script
+    as an example how to customize bugzilla3 installations.
+  * Uses dpkg-statoverride for files/directory to give the admin more control
+    over the access rights of package files. checksetup_nondebian.pl does not
+    change access rights and modes of files anymore. Please check the
+    /etc/bugzilla3/post-checksetup.d/10setdefaultdpkgstatoverride and
+    15restoredpkgstatoverride scripts. Closes: #550085
+  * Added support for custom templates and skins; use the
+    /etc/bugzilla3/template and /etc/bugzilla3/skins directories. The
+    /etc/bugzilla3/pre-checksetup.d/30copyetcskins and 30copyetctemplate copy
+    the content to the right locations. LP: #413065
+
+ -- Raphael Bossek <bossekr@debian.org>  Sun, 15 Nov 2009 12:34:09 +0100
+
+bugzilla (3.2.5.0-1) unstable; urgency=medium
+
+  * The directory /usr/lib/cgi-bin/bugzilla3 moved to
+    /usr/share/bugzilla3/web. The /usr/share/doc/bugzilla3/examples/basic.conf
+    file show the changes mandatory for apache2.
+    This change was required to be able to install bugzilla3 for apache2
+    out-of-the box with apache2 default setup for /cgi-bin/ directory.
+    Closes: #520935
+  * New basic.conf/vh-basic.conf files fix /cgi-bin/ issues with default
+    apache2 configuration. Closes: #511839
+  * urlbase (/etc/bugzilla3/param) changed from /cgi-bin/bugzilla3/ to
+    /bugzilla3/.
+  * docs_urlbase (/etc/bugzilla3/param) changed from
+    /docs/bugzilla3-doc/%lang%/html to /doc/bugzilla3-doc/%lang%/html with
+    changed directory structure within bugzilla3-doc. Closes: #511839
+  * The directories /etc/bugzilla3/pre-checksetup.d and
+    /etc/bugzilla3/post-checksetup.d contain executables which are started in
+    alphanumerical order befor and after checksetup.pl is called. Save your
+    own scripts which should be executed if checksetup.pl is called, e.g.
+    while upgrade of the package.
+  * /usr/share/bugzilla3/lib/sanitycheck.pl added; will be executed daily.
+    Closes: #550071
+
+ -- Raphael Bossek <bossekr@debian.org>  Sun, 08 Nov 2009 11:12:25 +0100

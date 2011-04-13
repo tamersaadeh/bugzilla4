@@ -1,0 +1,478 @@
+#
+#    Translators, if you are not familiar with the PO format, gettext
+#    documentation is worth reading, especially sections dedicated to
+#    this format, e.g. by running:
+#         info -n '(gettext)PO Files'
+#         info -n '(gettext)Header Entry'
+#
+#    Some information specific to po-debconf are available at
+#            /usr/share/doc/po-debconf/README-trans
+#         or http://www.debian.org/intl/l10n/po-debconf/README-trans
+#
+#    Developers do not need to manually edit POT or PO files.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: bugzilla 3.4.7.0-4\n"
+"Report-Msgid-Bugs-To: bugzilla@packages.debian.org\n"
+"POT-Creation-Date: 2010-09-02 09:43+0200\n"
+"PO-Revision-Date: 2010-08-16 11:45+0200\n"
+"Last-Translator: Michal Simunek <michal.simunek@gmail.com>\n"
+"Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: password
+#. Description
+#: ../bugzilla3.templates:2001
+msgid "Password confirmation:"
+msgstr "Potvrzení hesla:"
+
+#. Type: string
+#. Description
+#: ../bugzilla3.templates:3001
+msgid "Email address of Bugzilla administrator:"
+msgstr "Emailová adresa správce Bugzilly:"
+
+#. Type: string
+#. Description
+#: ../bugzilla3.templates:3001
+msgid ""
+"Please enter the email address of the Bugzilla administrator; all mail for "
+"the administrator will be sent to this address. This email address is also "
+"used as the administrator login for Bugzilla."
+msgstr ""
+"Zadejte prosím emailovou adresu správce Bugzilly; na tuto adresu bude "
+"zaslána veškerá pošta pro správce. Tato emailová adresa je zároveň i "
+"přihlašovacím jménem správce do Bugzilly."
+
+#. Type: string
+#. Description
+#: ../bugzilla3.templates:3001
+msgid ""
+"A valid address must contain exactly one '@', and at least one '.' after the "
+"@. You'll be able to change this setting through Bugzilla's web interface."
+msgstr ""
+"Platná adresa musí obsahovat přesně jeden znak '@' a alespoň jeden znak '.' "
+"za @. Toto nastavení budete moci změnit přes webové rozhraní Bugzilly."
+
+#. Type: string
+#. Description
+#: ../bugzilla3.templates:4001
+msgid "Real name of Bugzilla administrator:"
+msgstr "Skutečné jméno správce Bugzilly:"
+
+#. Type: password
+#. Description
+#: ../bugzilla3.templates:5001
+msgid "Password for the Bugzilla administrator account:"
+msgstr "Heslo účtu správce Bugzilly."
+
+#. Type: password
+#. Description
+#: ../bugzilla3.templates:5001
+msgid "Please enter at least 6 characters."
+msgstr ""
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:6001
+msgid "Have Status or Resolution values been customized?"
+msgstr "Byly hodnoty Status nebo Resolution upraveny?"
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:6001
+msgid ""
+"If values in the Status or Resolution fields have been customized, the "
+"checksetup procedure must be modified appropriately before installation can "
+"continue."
+msgstr ""
+"Jestliže byly hodnoty polí Status nebo Resolution upraveny, musí být "
+"procedura checksetup před pokračováním instalace patřičně upravena."
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:6001
+msgid ""
+"For each update of this package, a new version of the checksetup_nondebian."
+"pl script is installed; the /usr/share/bugzilla3/debian/pre-checksetup.d "
+"directory can be used to automatically apply your modifications before "
+"execution."
+msgstr ""
+"Během každé aktualizace tohoto balíčku je nainstalována nová verze skriptu "
+"checksetup_nondebian.pl; pro automatickou aplikaci vašich úprav, můžete před "
+"spuštěním tohoto skriptu použít adresář /usr/share/bugzilla3/debian/pre-"
+"checksetup.d."
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:7001
+msgid "Prompt about customized Status/Resolution at each update?"
+msgstr "Zeptat se na upravené Status/Resolution při každé aktualizaci?"
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:7001
+msgid ""
+"If you modified Status/Resolution fields and created a script within /usr/"
+"share/bugzilla3/debian/pre-checksetup.d to apply changes to /usr/share/"
+"bugzilla3/lib/checksetup_nondebian.pl, you may want to avoid being prompted "
+"at each package upgrade."
+msgstr ""
+"Jestliže jste upravili pole Status/Resolution a vytvořili skript v /usr/"
+"share/bugzilla3/debian/pre-checksetup.d pro aplikaci změn ve skriptu /usr/"
+"share/bugzilla3/lib/checksetup_nondebian.pl, můžete chtít nebýt dotazováni "
+"při každé aktualizaci balíčku."
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:7001
+msgid ""
+"If you accept being prompted, you will have to call /usr/share/bugzilla3/lib/"
+"checksetup.pl yourself, at each package upgrade, before using Bugzilla."
+msgstr ""
+"Pokud odsouhlasíte dotazování, budete muset před používáním Bugzilly při "
+"každé aktualizaci spustit /usr/share/bugzilla3/lib/checksetup.pl sami."
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:7001
+msgid ""
+"If you did not modify Status/Resolution, you should skip prompting as "
+"checksetup.pl will be started automatically (together with the {pre,post}-"
+"checksetup.d scripts)."
+msgstr ""
+"Pokud jste neupravovali Status/Resolution, měli byste dotazování přeskočit, "
+"protože checksetup.pl bude spouštěn automaticky (společně se skripty {pre,"
+"post}-checksetup.d)."
+
+#. Type: error
+#. Description
+#: ../bugzilla3.templates:8001
+msgid "Setup of Bugzilla failed and needs further investigation"
+msgstr "Nastavení Bugzilly selhalo a je třeba zjistit proč"
+
+#. Type: error
+#. Description
+#: ../bugzilla3.templates:8001
+msgid ""
+"Bugzilla has the \"shutdownhtml\" configuration parameter set, putting it "
+"offline (with logins disabled) until configured."
+msgstr ""
+
+#. Type: error
+#. Description
+#: ../bugzilla3.templates:8001
+msgid ""
+"To set up Bugzilla, run \"dpkg-reconfigure bugzilla3\" (as root) and choose "
+"\"dbconfig-config\"."
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../bugzilla3.templates:9001
+#, fuzzy
+#| msgid "Bugzilla database owner name:"
+msgid "Bugzilla downtime message:"
+msgstr "Jméno vlastníka databáze Bugzilly:"
+
+#. Type: string
+#. Description
+#: ../bugzilla3.templates:9001
+msgid ""
+"Please enter the HTML downtime message that should be displayed while "
+"Bugzilla is being reconfigured."
+msgstr ""
+
+#~ msgid ""
+#~ "Setup of Bugzilla could not be finished. Please restart the setup with "
+#~ "'dpkg-reconfigure -p low bugzilla3' as root user."
+#~ msgstr ""
+#~ "Nastavení Bugzilly nelze dokončit. Spusťte prosím nastavení znovu pomocí "
+#~ "'dpkg-reconfigure -p low bugzilla3' pod uživatelem root."
+
+#~ msgid ""
+#~ "As long as the setup is not finished login is disabled and 'shutdownhtml' "
+#~ "configuration parameter is set. In this case Bugzilla is offline."
+#~ msgstr ""
+#~ "Dokud nebude nastavení dokončeno, přihlašování bude zakázáno a a bude v "
+#~ "nastavení bude nastaven parametr 'shutdownhtml'. V tomto případě je "
+#~ "Bugzilla offline."
+
+#~ msgid "Show this message if setup of Bugzilla is ongoing or not finished:"
+#~ msgstr ""
+#~ "Zobrazit tuto zprávu, pokud již nastavení Bugzilly probíhá, nebo nebylo "
+#~ "dokončeno:"
+
+#~ msgid "Manual Bugzilla configuration"
+#~ msgstr "Ruční nastavení Bugzilly"
+
+#~ msgid ""
+#~ "To setup Bugzilla please run /usr/share/bugzilla3/lib/checksetup.pl as "
+#~ "root user or start 'dpkg-reconfigure -p low bugzilla3' and choose "
+#~ "'dbconfig-config' to assist you."
+#~ msgstr ""
+#~ "Pro nastavení Bugzilly spusťte prosím pod uživatelem root /usr/share/"
+#~ "bugzilla3/lib/checksetup.pl, nebo 'dpkg-reconfigure -p low bugzilla3' a "
+#~ "zvolte 'dbconfig-config', který vás nastavením provede."
+
+#~| msgid "Did you customize the Status/Resolutions values?"
+#~ msgid "Do you want to be asked for customized Status/Resolution again?"
+#~ msgstr "Upravili jste hodnoty Status/Resolution?"
+
+#~ msgid "New location for Bugzilla CGI scripts"
+#~ msgstr "Nové umístění CGI skriptů Bugzilly"
+
+#~ msgid ""
+#~ "All CGI scripts have been moved to /usr/lib/cgi-bin/bugzilla and the "
+#~ "script \"bgz_query.cgi\" has been renamed as \"query.cgi\"."
+#~ msgstr ""
+#~ "Všechny CGI skripty byly přesunuty do /usr/lib/cgi-bin/bugzilla a skript "
+#~ "\"bgz_query.cgi\" byl přejmenován na \"query.cgi\"."
+
+#~ msgid ""
+#~ "If you have made changes to /var/lib/bugzilla/web/index.html, the install "
+#~ "process will not overwrite this file. You may thus need to update all "
+#~ "links to the CGI scripts."
+#~ msgstr ""
+#~ "Pokud jste provedli změny v souboru /var/lib/bugzilla/web/index.html, "
+#~ "instalační proces je nepřepíše, takže může být potřeba aktualizovat "
+#~ "všechny odkazy na CGI skripty."
+
+#~ msgid "Template now used for the Bugzilla index"
+#~ msgstr "Pro index Bugzilly je nyní používána šablona"
+
+#~ msgid ""
+#~ "If you have made changes to /var/lib/bugzilla/web/index.html, you should "
+#~ "report them in a copy of /usr/share/bugzilla/template/en/default/index."
+#~ "html.tmpl and put it in /var/lib/bugzilla/template/en/custom/."
+#~ msgstr ""
+#~ "Pokud jste provedli změny v souboru /var/lib/bugzilla/web/index.html, "
+#~ "měli byste je zopakovat v kopii souboru /usr/share/bugzilla/template/en/"
+#~ "default/index.html.tmpl a uložit ji do /var/lib/bugzilla/template/en/"
+#~ "custom/."
+
+#~ msgid ""
+#~ "The /var/lib/bugzilla/web/index.html file will be saved as /var/lib/"
+#~ "bugzilla/web/index.html.dpkg-bak."
+#~ msgstr ""
+#~ "Soubor /var/lib/bugzilla/web/index.html bude uložen jako /var/lib/"
+#~ "bugzilla/web/index.html.dpkg-bak."
+
+#~ msgid "No MySQL server found. Do you want to continue?"
+#~ msgstr "Nebyl nalezen žádný MySQL server. Chcete pokračovat?"
+
+#~ msgid "A local or remote MySQL server is mandatory for using Bugzilla."
+#~ msgstr ""
+#~ "Pro provozování Bugzilly je nezbytný lokální nebo vzdálený MySQL server."
+
+#~ msgid ""
+#~ "The Bugzilla package does not depend on the MySQL server package, since "
+#~ "Bugzilla can use a remote MySQL database.  To complete Bugzilla "
+#~ "configuration, access to a MySQL server is required."
+#~ msgstr ""
+#~ "Balíček Bugzilla nezávisí na balíčku serveru MySQL, protože Bugzilla umí "
+#~ "používat vzdálenou MySQL databázi. Pro dokončení konfigurace Bugzilly je "
+#~ "vyžadován přístup k serveru MySQL."
+
+#~ msgid "If you do not continue, the Bugzilla package will not be configured."
+#~ msgstr "Pokud nebudete pokračovat, balíček Bugzilly nebude nastaven."
+
+#~ msgid "Do you need to create a new database or a new user?"
+#~ msgstr "Potřebujete vytvořit novou databázi nebo nového uživatele?"
+
+#~ msgid ""
+#~ "If no MySQL database or no MySQL database user exist, they should be "
+#~ "created."
+#~ msgstr ""
+#~ "Pokud MySQL databáze nebo uživatel MySQL databáze neexitují, měli by se "
+#~ "vytvořit."
+
+#~ msgid "Both may however be created manually later."
+#~ msgstr "Obojí ale mohou být vytvořeni ručně později."
+
+#~ msgid "Database server administrator username:"
+#~ msgstr "Uživatelské jméno správce databázového serveru:"
+
+#~ msgid ""
+#~ "Please enter the username of a database user with database and users "
+#~ "creation privileges in the MySQL database server."
+#~ msgstr ""
+#~ "Zadejte uživatelské jméno databázového uživatele s právy na vytváření "
+#~ "databází a uživatelů na databázovém serveru MySQL."
+
+#~ msgid "Database server administrator password:"
+#~ msgstr "Heslo správce databázového serveru:"
+
+#~ msgid "Please enter the password of the database server administrator."
+#~ msgstr "Zadejte heslo správce databázového serveru."
+
+#~ msgid ""
+#~ "This password will be not be stored permanently by debconf; it is "
+#~ "forgotten once the database and database user are created."
+#~ msgstr ""
+#~ "Toto heslo nebude programem debconf uloženo natrvalo; hned po vytvoření "
+#~ "databáze a uživatele bude zapomenuto."
+
+#~ msgid "Database server host name:"
+#~ msgstr "Jméno počítače s databázovým serverem:"
+
+#~ msgid ""
+#~ "Please enter the hostname of the database server which will host the "
+#~ "Bugzilla database."
+#~ msgstr ""
+#~ "Zadejte jméno databázového serveru, na kterém bude databáze Bugzilly."
+
+#~ msgid "Database server listening port:"
+#~ msgstr "Port, na kterém databázový server naslouchá:"
+
+#~ msgid ""
+#~ "Please enter the port number on which the MySQL database server can be "
+#~ "accessed."
+#~ msgstr ""
+#~ "Zadejte číslo portu, na kterém lze přistupovat k databázovému serveru "
+#~ "MySQL."
+
+#~ msgid "Database name:"
+#~ msgstr "Jméno databáze:"
+
+#~ msgid ""
+#~ "Please enter the name of the MySQL database where Bugzilla data will be "
+#~ "stored."
+#~ msgstr "Zadejte jméno MySQL databáze, ve které budou uložena data Bugzilly."
+
+#~ msgid ""
+#~ "Note that if you want to use a database name with special characters,  "
+#~ "you need at least a 3.23.6 MySQL server. If you plan to use an older "
+#~ "MySQL server, please don't put special characters in the database name. "
+#~ "See section 9.2.2 in the  MySQL documentation for details about database "
+#~ "identifiers."
+#~ msgstr ""
+#~ "Pokud chcete použít jméno databáze se speciálními znaky, musíte mít MySQL "
+#~ "server verze alespoň 3.23.6. Pokud tedy máte starší MySQL server, "
+#~ "nedávejte speciální znaky do jména databáze. Pro detaily o "
+#~ "identifikátorech databází viz část 9.2.2 v dokumentaci MySQL."
+
+#~ msgid ""
+#~ "Please enter the database user name which will own the Bugzilla database."
+#~ msgstr ""
+#~ "Zadejte jméno databázového uživatele, který bude vlastnit databázi "
+#~ "Bugzilly."
+
+#~ msgid "Bugzilla database owner password:"
+#~ msgstr "Heslo vlastníka databáze Bugzilly:"
+
+#~ msgid ""
+#~ "Please enter the password of the user which will own the Bugzilla "
+#~ "database."
+#~ msgstr "Zadejte heslo uživatele, který bude vlastnit databázi Bugzilly."
+
+#~ msgid ""
+#~ "As you don't have a MySQL server installed locally, only a manual "
+#~ "installation is possible."
+#~ msgstr ""
+#~ "Jelikož nemáte server MySQL instalován lokálně, je možná jen ruční "
+#~ "instalace."
+
+#~ msgid "Automatic"
+#~ msgstr "Automatický"
+
+#~ msgid "Manual"
+#~ msgstr "Manuální"
+
+#~ msgid "Later"
+#~ msgstr "Později"
+
+#~ msgid "Please choose your preferred installation mode."
+#~ msgstr "Vyberte si režim instalace."
+
+#~ msgid ""
+#~ "Choosing \"Automatic\" needs  a locally installed MySQL server. This "
+#~ "setup mode will try to use as many default values as possible."
+#~ msgstr ""
+#~ "Automatická instalace vyžaduje lokálně nainstalovaný server MySQL. Tento "
+#~ "režim nastavení se pokusí použít co nejvíc výchozích hodnot."
+
+#~ msgid ""
+#~ "Choosing \"Manual\" will let you enter all the preferences for the MySQL "
+#~ "server you want to use (either local or remote)."
+#~ msgstr ""
+#~ "Ruční instalace vás nechá zadat všechny volby pro server MySQL, který "
+#~ "chcete použít (ať už lokální nebo na síti)."
+
+#~ msgid ""
+#~ "Choosing \"Later\" means that you don't have yet a MySQL server up for "
+#~ "Bugzilla. This choice will abort the installation process."
+#~ msgstr ""
+#~ "Později znamená, že ještě nemáte nastavený server MySQL pro Bugzillu. Ta "
+#~ "volba instalační proces zastaví."
+
+#~ msgid "Bugzilla CGI scripts have been moved."
+#~ msgstr "CGI skripty Bugzilly byly přesunuty."
+
+#~ msgid "Bugzilla use template for index."
+#~ msgstr "Bugzilla používá šablonu pro index."
+
+#~ msgid ""
+#~ "You need a mysql server installed on your local machine, or accessable on "
+#~ "your network."
+#~ msgstr ""
+#~ "Potřebujete mít nainstalován mysql server na tomto stroji, nebo přístupný "
+#~ "na síti."
+
+#~ msgid "Answering no to this question will stop the Bugzilla configuration."
+#~ msgstr "Záporná odpověď na tuto otázku zastaví konfiguraci Bugzilly."
+
+#~ msgid ""
+#~ "It is not mandatory to let the configure process create the Bugzilla "
+#~ "database and the database user that will be used by Bugzilla to access to "
+#~ "this database. If you have no Bugzilla database and no Bugzilla database "
+#~ "user, you may create them both by hand."
+#~ msgstr ""
+#~ "Není povinné nechat konfigurační proces vytvořit databázi Bugzilly a "
+#~ "uživatele, pod kterým bude Bugzilla přistupovat k této databázi. Pokud "
+#~ "nemáte žádnou databázi Bugzilly ani uživatele, můžete obojí vytvořit "
+#~ "ručně."
+
+#~ msgid "root"
+#~ msgstr "root"
+
+#~ msgid "localhost"
+#~ msgstr "localhost"
+
+#~ msgid "Enter the database hostname."
+#~ msgstr "Zadejte jméno počítače s databází."
+
+#~ msgid ""
+#~ "Please enter the hostname on which the MySQL database server to be used "
+#~ "by Bugzilla runs."
+#~ msgstr ""
+#~ "Zadejte jméno počítače, na kterém běží databázový server MySQL, který "
+#~ "bude Bugzilla používat."
+
+#~ msgid "3306"
+#~ msgstr "3306"
+
+#~ msgid "Enter the database port."
+#~ msgstr "Zadejte port databáze."
+
+#~ msgid "Enter the name of the database."
+#~ msgstr "Zadejte jméno databáze."
+
+#~ msgid "Enter the the database username for the Bugzilla database."
+#~ msgstr "Zadejte jméno databázového uživatele pro databázi Bugzilly."
+
+#~ msgid "Enter the password for the Bugzilla database user."
+#~ msgstr "Zadejte heslo uživatele databáze Bugzilly."
+
+#~ msgid "Please retype the password to confirm it."
+#~ msgstr "Napište heslo znova pro potvrzení."
+
+#~ msgid "Choose the way you want to configure bugzilla:"
+#~ msgstr "Vyberte způsob, jakým chcete Bugzillu nastavit:"
+
+#~ msgid "bugs"
+#~ msgstr "bugs"

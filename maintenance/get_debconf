@@ -1,0 +1,55 @@
+#!/bin/sh
+# This scripts helps me to analyse the current status of debconf for bugzilla3 package
+
+. /usr/share/debconf/confmodule
+
+tmpf=`tempfile`
+
+trap "rm $tmpf" QUIT EXIT
+
+echo >&2 "D: Looking for debconf variables..."
+# Extract all debconf value pairs including dbconfig-common
+for f in bugzilla3.config bugzilla3.postinst /usr/share/dbconfig-common/dpkg/*; do
+    grep 'db_.*\(\$dbc_package\|bugzilla3\)/[^*[:space:]]\+' "$f" | \
+    sed -e 's,$dbc_package,bugzilla3,g;s,$dbc_dbtype,mysql,g;s,.*\(bugzilla3/[^"$[:space:]]\+\).*,\1,g;s,.*$.*,,g' >>"$tmpf"
+done
+echo >&2 "D: Query debconf variables..."
+# Query all debconf value pairs
+for k in `sort -i "$tmpf" | uniq`; do
+    test "$k" || continue
+    db_get $k || true
+    echo "$k: $RET"
+done
+
+if test -e /usr/share/dbconfig-common/dpkg/postinst.mysql; then
+    echo >&2 "D: Start dbconfig-common"
+    . /etc/dbconfig-common/bugzilla3.conf
+    echo >&2 "D: dbc_go bugzilla3 config"
+    . /usr/share/dbconfig-common/dpkg/config.mysql
+    echo >&2 "D: dbc_go bugzilla3 reconfigure"
+    dbvars_file="/etc/bugzilla3/dbconfig-params"
+    dbc_generate_include="sh:$dbvars_file"
+    dbc_go bugzilla3 reconfigure
+    #dbc_go bugzilla3 config
+    test -e /etc/bugzilla3/dbconfig-params && . /etc/bugzilla3/dbconfig-params
+    echo >&2 "D: $dbc_dropuser_cmd"
+    $dbc_dropuser_cmd
+    echo >&2 "D: $dbc_createuser_cmd"
+    $dbc_createuser_cmd
+    echo >&2 "D: dbc_dbadmin='$dbc_dbadmin' to connect dbc_dbtype='$dbc_dbtype'@dbc_dbserver='$dbc_dbserver':dbc_dbport='$dbc_dbport'"
+    echo >&2 "D: dbc_dbuser='$dbc_dbuser'/dbc_dbpass='$dbc_dbpass' to connect dbc_dbname='$dbc_dbname'"
+    test "$dbc_dbserver" || dbc_dbserver="localhost"
+    test "$dbc_dbport" || dbc_dbport="3306"
+    sed \
+     -e "s,^\$db_host[[:space:]]*=.*,\$db_host = '$dbc_dbserver';,g" \
+     -e "s,^\$db_port[[:space:]]*=.*,\$db_port = $dbc_dbport;,g" \
+     -e "s,^\$db_name[[:space:]]*=.*,\$db_name = '$dbc_dbname';,g" \
+     -e "s,^\$db_user[[:space:]]*=.*,\$db_user = '$dbc_dbuser';,g" \
+     -e "s,^\$db_pass[[:space:]]*=.*,\$db_pass = '$dbc_dbpass';,g" \
+     -e "s,^\$create_htaccess[[:space:]]*=.*,\$create_htaccess = 0;,g" /etc/bugzilla3/localconfig >"$tmpf"
+    cat "$tmpf" >/etc/bugzilla3/localconfig
+    echo >&2 "D: checksetup.pl"
+    /usr/share/bugzilla3/lib/checksetup.pl
+fi
+
+# vim:ts=4 et sw=4

@@ -1,0 +1,33 @@
+#!/bin/sh
+# Copyright (C) 2010  Raphael Bossek <bossekr@debian.org>
+
+# The libdatetime-timezone-perl library may not work if the /etc/localtime
+# file match 1:1 to one of /usr/share/zoneinfo files.
+# (http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=473493)
+
+set -e
+
+tmpfile=`tempfile`
+trap "rm $tmpfile" QUIT EXIT
+
+cat >"$tmpfile" <<__EOF__
+use DateTime::TimeZone;
+my \$tz = DateTime::TimeZone::Local->TimeZone();
+__EOF__
+if ! perl $tmpfile; then
+    match=0
+    echo "Search a file in /usr/share/zoneinfo which match /etc/localtime..."
+    for i in `find /usr/share/zoneinfo -type f`; do
+        if cmp -s "$i" /etc/localtime; then
+            match=1
+            break
+        fi
+    done
+
+    if test "x$match" = "x0"; then
+        echo >&2 "Please start `dpkg-reconfigure tzdata` to fix timezone configuration of your system."
+        dpkg-reconfigure tzdata || true
+    fi
+fi
+
+# vim:ts=4 et sw=4

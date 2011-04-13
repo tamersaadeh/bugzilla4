@@ -1,0 +1,2 @@
+etc/bugzilla3/index.html usr/share/bugzilla3/web/index.html
+var/lib/bugzilla3/data usr/share/bugzilla3/web/data

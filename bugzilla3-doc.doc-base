@@ -1,0 +1,13 @@
+Document: bugzilla3
+Title: The Bugzilla Guide
+Author: Matthew P. Barnson
+Abstract: This guide describes administration and maintenace task in Bugzilla.
+ It provinde some help on using Bugzilla
+Section: Project Management
+
+Format: text
+Files: /usr/share/doc/bugzilla3-doc/en/txt/Bugzilla-Guide.txt.gz
+
+Format: HTML
+Index: /usr/share/doc/bugzilla3-doc/en/html/index.html
+Files: /usr/share/doc/bugzilla3-doc/en/html/*.html

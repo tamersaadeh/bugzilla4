@@ -1,0 +1,11 @@
+#!/bin/sh
+# Copyright (C) 2009  Raphael Bossek <bossekr@debian.org>
+
+set -e
+
+for d in `find "$BUGZILLA_WEBDIR" -type d -name "yui"`; do
+	rm -rf "$d"
+	ln -sf /usr/share/javascript/yui "$d"
+done
+
+exit 0

@@ -1,0 +1,23 @@
+#!/bin/sh
+# Copyright (C) 2009  Raphael Bossek <bossekr@debian.org>
+# This scirpt check your webdot configuration.
+
+set -e
+
+c="/etc/bugzilla3/params"
+
+# We assume if GraphViz is installed the webdot support should be enabled.
+if test -x /usr/bin/dot && test -s "$c"; then
+	if ! grep -q "webdotbase.*=>.*/usr/bin/dot" "$c"; then
+		echo "W: To make sure GraphViz works with Bugzilla successfully please"
+		echo "   edit the $c configuration file and add/edit the line with the"
+		echo "   configuration paremter 'webdotbase' and set it's value"
+		echo "   to '/usr/bin/dot'. The line should look like:"
+		echo ""
+		echo "   'webdotbase' => '/usr/bin/dot',"
+		echo ""
+		echo "   Do not forget the , (comma) at the end of the line!"
+	fi
+fi
+
+exit 0

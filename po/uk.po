@@ -1,0 +1,183 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Bugzilla\n"
+"Report-Msgid-Bugs-To: bugzilla@packages.debian.org\n"
+"POT-Creation-Date: 2010-09-02 09:43+0200\n"
+"PO-Revision-Date: 2010-07-18 05:55+0200\n"
+"Last-Translator: Artem Ustinov <artem@ustinov.org.ua>\n"
+"Language-Team: \n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Ukrainian\n"
+"X-Poedit-Country: UKRAINE\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#. Type: password
+#. Description
+#: ../bugzilla3.templates:2001
+msgid "Password confirmation:"
+msgstr "Підтвердження паролю:"
+
+#. Type: string
+#. Description
+#: ../bugzilla3.templates:3001
+msgid "Email address of Bugzilla administrator:"
+msgstr "Адреса адміністратора Bugzilla:"
+
+#. Type: string
+#. Description
+#: ../bugzilla3.templates:3001
+msgid ""
+"Please enter the email address of the Bugzilla administrator; all mail for "
+"the administrator will be sent to this address. This email address is also "
+"used as the administrator login for Bugzilla."
+msgstr ""
+"Будь-ласка, вкажіть електронну адресу адміністратора Bugzilla; усі листи до "
+"адміністратора надсилатимуться на цю адресу. Дана адреса також є "
+"адміністративним логіном до Bugzilla."
+
+#. Type: string
+#. Description
+#: ../bugzilla3.templates:3001
+msgid ""
+"A valid address must contain exactly one '@', and at least one '.' after the "
+"@. You'll be able to change this setting through Bugzilla's web interface."
+msgstr ""
+"Дійсна адреса має містити принаймні один символ '@' та щонайменше одну "
+"крапку після @. Це можна змінити у веб-інтерфейсі Bugzilla."
+
+#. Type: string
+#. Description
+#: ../bugzilla3.templates:4001
+msgid "Real name of Bugzilla administrator:"
+msgstr "Справжнє ім'я адміністратора Bugzilla:"
+
+#. Type: password
+#. Description
+#: ../bugzilla3.templates:5001
+msgid "Password for the Bugzilla administrator account:"
+msgstr "Пароль адміністратора Bugzilla:"
+
+#. Type: password
+#. Description
+#: ../bugzilla3.templates:5001
+msgid "Please enter at least 6 characters."
+msgstr ""
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:6001
+msgid "Have Status or Resolution values been customized?"
+msgstr "Чи налаштовувалися значення «Стан» або «Вирішення»?"
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:6001
+msgid ""
+"If values in the Status or Resolution fields have been customized, the "
+"checksetup procedure must be modified appropriately before installation can "
+"continue."
+msgstr ""
+"Якщо значення у полях «Стан» або «Вирішення» налаштовувалися то необхідно "
+"відповідним чином змінити процедуру checksetup перш ніж продовжувати "
+"інсталяцію."
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:6001
+msgid ""
+"For each update of this package, a new version of the checksetup_nondebian."
+"pl script is installed; the /usr/share/bugzilla3/debian/pre-checksetup.d "
+"directory can be used to automatically apply your modifications before "
+"execution."
+msgstr ""
+"Для кожного оновлення цього пакунку встановлюється нова версія скрипта "
+"checksetup_nondebian.pl; директорія /usr/share/bugzilla3/debian/pre-"
+"checksetup.d може вживатися для автоматичного застосування ваших змін перед "
+"виконанням."
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:7001
+msgid "Prompt about customized Status/Resolution at each update?"
+msgstr "Повідомляти про змінені Стан/Вирішення при кожному оновленні?"
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:7001
+msgid ""
+"If you modified Status/Resolution fields and created a script within /usr/"
+"share/bugzilla3/debian/pre-checksetup.d to apply changes to /usr/share/"
+"bugzilla3/lib/checksetup_nondebian.pl, you may want to avoid being prompted "
+"at each package upgrade."
+msgstr ""
+"Якщо ви змінили поля Стан/Вирішення та створили скрипт у /usr/share/"
+"bugzilla3/debian/pre-checksetup.d для застосування змін у /usr/share/"
+"bugzilla3/lib/checksetup_nondebian.pl ви можете забажати не одержувати "
+"запитань при кожному оновленні."
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:7001
+msgid ""
+"If you accept being prompted, you will have to call /usr/share/bugzilla3/lib/"
+"checksetup.pl yourself, at each package upgrade, before using Bugzilla."
+msgstr ""
+"Якщо ви згодні отримувати запитання, вам необхідно буде запускати /usr/share/"
+"bugzilla3/lib/checksetup.pl власноруч при кожному оновленні перш, ніж "
+"використовувати Bugzilla."
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:7001
+msgid ""
+"If you did not modify Status/Resolution, you should skip prompting as "
+"checksetup.pl will be started automatically (together with the {pre,post}-"
+"checksetup.d scripts)."
+msgstr ""
+"Якщо ви не змінювали Стан/Вирішення, ви маєте пропустити запитання бо "
+"checksetup.pl запускатиметься автоматично (разом зі скриптами {pre,post}-"
+"checksetup.d)."
+
+#. Type: error
+#. Description
+#: ../bugzilla3.templates:8001
+msgid "Setup of Bugzilla failed and needs further investigation"
+msgstr ""
+
+#. Type: error
+#. Description
+#: ../bugzilla3.templates:8001
+msgid ""
+"Bugzilla has the \"shutdownhtml\" configuration parameter set, putting it "
+"offline (with logins disabled) until configured."
+msgstr ""
+
+#. Type: error
+#. Description
+#: ../bugzilla3.templates:8001
+msgid ""
+"To set up Bugzilla, run \"dpkg-reconfigure bugzilla3\" (as root) and choose "
+"\"dbconfig-config\"."
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../bugzilla3.templates:9001
+msgid "Bugzilla downtime message:"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../bugzilla3.templates:9001
+msgid ""
+"Please enter the HTML downtime message that should be displayed while "
+"Bugzilla is being reconfigured."
+msgstr ""

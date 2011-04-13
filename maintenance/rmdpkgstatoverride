@@ -1,0 +1,8 @@
+#!/bin/sh
+
+set -e
+
+for f in `dpkg-statoverride --list "*/bugzilla3*"|cut -d ' ' -f 4`; do
+	echo "$f"
+	dpkg-statoverride --remove "$f"
+done

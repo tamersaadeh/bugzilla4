@@ -1,0 +1,10 @@
+How to maintain maintainer's changes
+------------------------------------
+
+  Modification on sources are done while build the package. The scripts
+  in debian/maintenance are executed in alphabetical order.
+
+  Call `./debian/rules help` for further tools simplify maintenance.
+
+ -- Raphael Bossek <bossekr@debian.org>  Fri, 27 Jun 2008 22:34:34 +0200
+

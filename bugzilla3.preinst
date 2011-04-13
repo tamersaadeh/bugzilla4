@@ -1,0 +1,133 @@
+#!/bin/sh
+
+# summary of how this script can be called:
+#  * <new-preinst> `install'
+#  * <new-preinst> `install' <old-version>
+#  * <new-preinst> `upgrade' <old-version>
+#  * <old-preinst> `abort-upgrade' <new-version>
+# for details, see http://www.debian.org/doc/debian-policy/ch-maintainerscripts.html
+
+set -e
+
+mode="$1"
+version="$2"
+
+# Make sure it's the same in
+# + debian/rules
+# + maintenance/checksetup_debian.sh
+# + debian/bugzilla3.{pre,post}{inst,rm}
+std_exports()
+{
+    export BUGZILLA_ETCDIR="/etc/bugzilla3"
+    export BUGZILLA_VARDIR="/var/lib/bugzilla3"
+    export BUGZILLA_DATADIR="$BUGZILLA_VARDIR/data"
+    export BUGZILLA_SHAREDIR="/usr/share/bugzilla3"
+    export BUGZILLA_WEBDIR="$BUGZILLA_SHAREDIR/web"
+    export BUGZILLA_CONTRIBDIR="$BUGZILLA_SHAREDIR/contrib"
+    export BUGZILLA_TEMPLATEDIR="$BUGZILLA_VARDIR/template"
+    export BUGZILLA_COMPILEDTEMPLATEDIR="$BUGZILLA_DATADIR/template"
+    export BUGZILLA_EXTENSIONSDIR="$BUGZILLA_VARDIR/extensions"
+}
+
+# A copy of this function is the following scripts:
+# * bugzilla3.{pre,post}{inst,rm}
+# * bugzilla3.config
+start_dbc()
+{
+    local _class="$1"
+    local _mode="$2"
+    local _version="$3"
+    # The preinst stage is not supported by dbconfig-common and result
+    # in an error message. We skip this call to supress the error output.
+    if [ "$_class" = "preinst" ]; then
+        return 0
+    # If dbconfig-common and bugzilla3 are installed first time
+    # these file is not avaialabe at config stage.
+    elif [ -f /usr/share/dbconfig-common/dpkg/${_class}.mysql ]; then
+        . /usr/share/dbconfig-common/dpkg/${_class}.mysql
+        dbc_go bugzilla3 $_mode $_version
+        case $_class in
+        config|postinst)
+            if [ "$_version" ]; then
+                [ "$dbc_upgrade" = "true" ] \
+                || return 1
+            else
+                [ "$dbc_install" = "true" ] \
+                || return 1
+            fi
+            ;;
+        prerm|postrm)
+            [ "$dbc_remove" = "true" ] \
+            || return 1
+            ;;
+        esac
+    # For all other stages then config it's a error if the file is missing.
+    elif [ "$_class" != "config" ]; then
+        return 1;
+    fi
+}
+
+tmpf=`mktemp`
+trap "rm $tmpf" EXIT QUIT
+umask 0027
+std_exports
+start_dbc preinst $* || true
+
+if [ "$mode" = "upgrade" ]; then
+    if [ -n "$version" -a -e "$BUGZILLA_ETCDIR/pre-checksetup.d/55localyui" ] && dpkg --compare-versions "$version" lt 3.2.5.0-2; then
+        if [ ! -e "$BUGZILLA_ETCDIR/post-checksetup.d/55localyui" ]; then
+            mv -f "$BUGZILLA_ETCDIR/pre-checksetup.d/55localyui" "$BUGZILLA_ETCDIR/post-checksetup.d/55localyui"
+        else
+            rm "$BUGZILLA_ETCDIR/pre-checksetup.d/55localyui"
+        fi
+    fi
+
+    # Migrate $BUGZILLA_ETCDIR/params:
+    # urlbase: /cgi-bin/bugzilla3 -> /bugzilla3
+    # url_docbase: /docs/bugzilla3-doc/%lang%/html -> /doc/bugzilla3-doc/%lang%/html
+    if test -s "$BUGZILLA_ETCDIR/params" && dpkg --compare-versions "$version" lt "3.0.10.0-1" || ( dpkg --compare-versions "$version" ge "3.2" && dpkg --compare-versions "$version" lt "3.2.5.0-1" ); then
+        sed -e 's,/cgi-bin/bugzilla3,/bugzilla3,g' \
+            -e 's,/docs/bugzilla3-doc/%lang%/html/,/doc/bugzilla3-doc/%lang%/html/,g' \
+            "$BUGZILLA_ETCDIR/params" >"$tmpf"
+        cat "$tmpf" >"$BUGZILLA_ETCDIR/params"
+    fi
+
+    # Introduction of dpkg-statsoverride support:
+    # Revert previous file access rights/modes.
+    if dpkg --compare-versions "$version" lt "3.0.10.0-1" || ( dpkg --compare-versions "$version" ge "3.2" && dpkg --compare-versions "$version" lt "3.2.5.0-3" ); then
+        chown -R root:root "$BUGZILLA_VARDIR"
+        chmod -R 0755 "$BUGZILLA_VARDIR"
+    fi
+
+    # http://bugs.debian.org/571107 : Fix access rights for /usr/share/perl5/Bugzilla
+    if dpkg --compare-versions "$version" lt "3.4.7.0-3"; then
+        d="/usr/share/perl5/Bugzilla"
+        # Modify the access rights only if group is of type www-data.
+        f=`find $d -maxdepth 0 -group www-data 2>/dev/null`
+        if [ "$f" = "$d" ]; then
+            chown -R root: "$d"
+            find "$d" -type d -exec chmod 755 {} \;
+            find "$d" -type f -exec chmod 644 {} \;
+        fi
+    fi
+
+    # http://bugs.debian.org/571107 : Fix access rights for /etc/bugzilla3/localconfig
+    # Fix also access rights for /etc/bugzilla3/dbconfig-parms and /etc/bugzilla3/parms
+    # Only remove the old/wrong information. /usr/share/bugzilla3/lib/checksetup.pl will fix it later on.
+    if dpkg --compare-versions "$version" le "3.6.2.0-1"; then
+        for f in "$BUGZILLA_ETCDIR/localconfig" "$BUGZILLA_ETCDIR/dbconfig-params" "$BUGZILLA_ETCDIR/params"; do
+            dpkg-statoverride --remove "$f" >/dev/null 2>&1 || true
+        done
+        for d in "$BUGZILLA_WEBDIR/skins" "$BUGZILLA_TEMPLATEDIR"; do
+            for f in `dpkg-statoverride --list "$d*" 2>/dev/null | cut -d ' ' -f 4`; do 
+                dpkg-statoverride --remove "$f" >/dev/null 2>&1 || true
+            done
+        done
+        rm -f "$BUGZILLA_ETCDIR/dbconfig-params"
+        ucf --purge "$BUGZILLA_ETCDIR/dbconfig-params"
+    fi
+fi
+
+#DEBHELPER#
+
+# vim:ts=4 et sw=4

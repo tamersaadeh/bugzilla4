@@ -1,0 +1,129 @@
+#!/usr/bin/make -f
+# Sample debian/rules that uses debhelper. 
+# GNU copyright 1997 by Joey Hess.
+#
+# This version is for a hypothetical package that builds an
+# architecture-dependant package, as well as an architecture-independent
+# package.
+
+# Uncomment this to turn on verbose mode. 
+#export DH_VERBOSE=1
+
+INSTALL = /usr/bin/install
+LN_S = ln -s
+RM_RF = rm -rf
+BUGZILLA_SRCDIR := $(CURDIR)/bugzilla-srcdir
+
+# Make sure it's the same in
+# + debian/rules
+# + debian/Makefile
+# + maintenance/checksetup_debian.sh
+# + debian/bugzilla3.{pre,post}{inst,rm}
+export BUGZILLA_PKGDIR := $(CURDIR)/debian/bugzilla3
+export BUGZILLA_ETCDIR := $(BUGZILLA_PKGDIR)/etc/bugzilla3
+export BUGZILLA_VARDIR := $(BUGZILLA_PKGDIR)/var/lib/bugzilla3
+export BUGZILLA_DATADIR := $(BUGZILLA_VARDIR)/data
+export BUGZILLA_SHAREDIR := $(BUGZILLA_PKGDIR)/usr/share/bugzilla3
+export BUGZILLA_WEBDIR := $(BUGZILLA_PKGDIR)/usr/share/bugzilla3/web
+export BUGZILLA_CONTRIBDIR := $(BUGZILLA_SHAREDIR)/contrib
+export BUGZILLA_TEMPLATEDIR := $(BUGZILLA_VARDIR)/template
+export BUGZILLA_COMPILEDTEMPLATEDIR := $(BUGZILLA_DATADIR)/template
+export BUGZILLA_EXTENSIONSDIR := $(BUGZILLA_VARDIR)/extensions
+
+V1 := $(shell dpkg-parsechangelog |grep-dctrl -s "Version" -n -|sed -e 's,\.[[:digit:]]\.[[:digit:]]\+-[[:digit:]]\+.*,,g')
+V2 := $(shell dpkg-parsechangelog |grep-dctrl -s "Version" -n -|sed -e 's,\.[[:digit:]]\+-[[:digit:]]\+.*,,g')
+
+
+help:
+	@echo "Dear maintainer. This debian/rules-file supports you in maintaining Bugzilla package."
+	@echo "Following options exists:"
+	@echo "  ./debian/rules maintainer_translate -- Developer's Reference Section 6.5.2 requests, contact translators"
+	@echo "  ./debian/rules maintainer_fixpatch -- Help maintain debian/maintenance/*.sh patch files; set the STOPATPATCH environment variable e.g. to 30_exit1onerror.sh in order to fix this patch."
+	@echo "  ./debian/rules maintainer_updateja -- Update Japanese $(V2) translation from SVN to a tarball."
+
+# http://www.debian.org/doc/developers-reference/best-pkging-practices.html#s6.5.2
+maintainer_translate:
+	debconf-updatepo
+	cd debian/po && podebconf-report-po --call --languageteam --withtranslators --deadline="+10 days"
+
+maintainer_fixpatch:
+	test ! -e bugzilla-srcdir.orig
+	test -e "$(CURDIR)/debian/maintenance/$$STOPATPATCH"
+	$(MAKE) -f debian/rules clean
+	BUGZILLA_STOPATPATCH="$(CURDIR)/debian/maintenance/$$STOPATPATCH" $(MAKE) -f debian/rules override_dh_auto_configure
+	mv bugzilla-srcdir bugzilla-srcdir.orig
+	$(MAKE) -f debian/rules override_dh_auto_configure
+	@echo "Start fixing rejected files in bugzilla-srcdir directory followed by"
+	@echo "  $$ find bugzilla-src -name "*.rej" -or -name "*.orig" -exec rm {} \;"
+	@echo "  $$ (sed -n 'N;/^\n$$/q;P;D' $(CURDIR)/debian/maintenance/$$STOPATPATCH; diff -Naur bugzilla-srcdir.orig bugzilla-srcdir) > new.sh"
+	@echo "Check the new.sh script. If it's ok for you"
+	@echo "  $$ mv -f new.sh $(CURDIR)/debian/maintenance/$$STOPATPATCH"
+	@echo "  $$ rm -rf bugzilla-srcdir.orig"
+
+maintainer_updateja:	bugzilla-ja-$(V2).tar.bz2
+bugzilla-ja-$(V2).tar.bz2:
+	svn checkout "http://svn.bug-ja.org/bugzilla/bugzilla-l10n-ja-$(V1)/tags/$(V2)-ja"
+	test -d "$(V2)-ja/template/ja"
+	tar -C "$(V2)-ja/template" --exclude "^\.svn\$$" --owner 0 --group 0 -cjf bugzilla-ja-$(V2).tar.bz2 "ja"
+	rm -rf "$(V2)-ja"
+
+%:
+	dh --with quilt --sourcedirectory=$(BUGZILLA_SRCDIR) $@
+
+override_dh_auto_configure:
+	$(MAKE) -f debian/Makefile extractsrc
+	set -e; for i in $(CURDIR)/debian/maintenance/??_*.sh; do \
+		test "$$BUGZILLA_STOPATPATCH" = "$$i" && exit 0; \
+		chmod a+x $$i; \
+		$$i $(BUGZILLA_SRCDIR); \
+		chmod a-x $$i; \
+	done
+
+override_dh_auto_clean:
+	test ! -e bugzilla-srcdir.orig
+	chmod a-x $(CURDIR)/debian/maintenance/*.sh
+	$(MAKE) -f debian/Makefile clean
+	debconf-updatepo
+	set -e; LANG=C; for f in $(CURDIR)/debian/po/*.po; do \
+		msgfmt -o /dev/null --statistics $$f 2>&1 | grep -q "fuzzy\|untrans" || continue; \
+		echo "Incompleate translation in $$f"; \
+	done
+
+override_dh_auto_install:
+	# Work in progress
+	# building the -fr package
+	$(MAKE) -f debian/Makefile install CURDIR=$(CURDIR)
+	# We install our debian helpers
+	$(INSTALL) -d -m 0755 -o root -g root $(CURDIR)/debian/bugzilla3/etc/bugzilla3/pre-checksetup.d
+	cd $(CURDIR)/debian/pre-checksetup.d && for f in *; do \
+		$(INSTALL) -m 0755 -o root -g root $$f $(CURDIR)/debian/bugzilla3/etc/bugzilla3/pre-checksetup.d/$$f; \
+	done
+	$(INSTALL) -d -m 0755 -o root -g root $(CURDIR)/debian/bugzilla3/etc/bugzilla3/post-checksetup.d
+	cd $(CURDIR)/debian/post-checksetup.d && for f in *; do \
+		$(INSTALL) -m 0755 -o root -g root $$f $(CURDIR)/debian/bugzilla3/etc/bugzilla3/post-checksetup.d/$$f; \
+	done
+	$(INSTALL) -d -m 0755 -o root -g root $(CURDIR)/debian/bugzilla3/usr/share/bugzilla3/debian
+	$(INSTALL)    -m 0644 -o root -g root debian/default-files/params $(CURDIR)/debian/bugzilla3/usr/share/bugzilla3/debian
+	$(INSTALL)    -m 0644 -o root -g root debian/default-files/localconfig $(CURDIR)/debian/bugzilla3/usr/share/bugzilla3/debian
+	# Installing exemples 
+	$(INSTALL) -d -m 0755 -o root -g root $(CURDIR)/debian/bugzilla3/usr/share/doc/bugzilla3/examples
+	$(INSTALL)    -m 0755 -o root -g root debian/examples/*.sh $(CURDIR)/debian/bugzilla3/usr/share/doc/bugzilla3/examples
+	$(INSTALL)    -m 0644 -o root -g root debian/examples/*.conf $(CURDIR)/debian/bugzilla3/usr/share/doc/bugzilla3/examples
+	# Install default configuration files
+	$(INSTALL) -d -m 0755 -o root -g root $(CURDIR)/debian/bugzilla3/etc/bugzilla3
+	$(INSTALL) -m 0644 -o root -g root debian/default-files/index.html $(CURDIR)/debian/bugzilla3/etc/bugzilla3
+	# preparing the vhost conf dir
+	$(INSTALL) -d -m 0755 -o root -g root $(CURDIR)/debian/bugzilla3/etc/bugzilla3/sites
+	# replace checksetup.pl script by Debian modification
+	mv $(CURDIR)/debian/bugzilla3/usr/share/bugzilla3/lib/checksetup.pl $(CURDIR)/debian/bugzilla3/usr/share/bugzilla3/lib/checksetup_nondebian.pl
+	$(INSTALL)    -m 0755 -o root -g root $(CURDIR)/debian/maintenance/checksetup_debian.sh $(CURDIR)/debian/bugzilla3/usr/share/bugzilla3/lib/checksetup.pl
+	# use YUI (Yahoo User Interface Library) package instead of bugzilla's version
+	sh $(CURDIR)/debian/post-checksetup.d/55localyui
+	# added support for reportbug
+	#$(INSTALL) -d $(CURDIR)/debian/bugzilla3/usr/share/bug
+	#$(INSTALL) -m 0755 -o root -g root $(CURDIR)/debian/maintenance/reportbug.sh $(CURDIR)/debian/bugzilla3/usr/share/bug/bugzilla3
+	# Additional tools
+	$(INSTALL)    -m 755 -o root -g root $(CURDIR)/debian/maintenance/bugzparam $(CURDIR)/debian/bugzilla3/usr/share/bugzilla3/contrib/bugzparam
+	$(INSTALL)    -m 755 -o root -g root $(CURDIR)/debian/maintenance/dumpanswerfile $(CURDIR)/debian/bugzilla3/usr/share/bugzilla3/contrib/dumpanswerfile
+
+.PHONY:	help maintainer_translate maintainer_fixpatch maintainer_updateja

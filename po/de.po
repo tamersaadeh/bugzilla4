@@ -1,0 +1,431 @@
+# Translation of bugzilla debconf templates to German
+# Copyright (C) Jens Nachtigall <nachtigall@web.de>, 2004, 2005.
+# Copyright (C) Helge Kreutzmann <debian@helgefjell.de>, 2008-2010.
+# This file is distributed under the same license as the bugzilla package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: bugzilla 3.6.2.0-2\n"
+"Report-Msgid-Bugs-To: bugzilla@packages.debian.org\n"
+"POT-Creation-Date: 2010-09-02 09:43+0200\n"
+"PO-Revision-Date: 2010-09-01 21:12+0200\n"
+"Last-Translator: Helge Kreutzmann <debian@helgefjell.de>\n"
+"Language-Team: German <debian-l10n-german@lists.debian.org>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms:  nplurals=2; plural=(n != 1);\n"
+
+#. Type: password
+#. Description
+#: ../bugzilla3.templates:2001
+msgid "Password confirmation:"
+msgstr "Passwort-Bestätigung:"
+
+#. Type: string
+#. Description
+#: ../bugzilla3.templates:3001
+msgid "Email address of Bugzilla administrator:"
+msgstr "E-Mail-Adresse des Bugzilla-Administrators:"
+
+#. Type: string
+#. Description
+#: ../bugzilla3.templates:3001
+msgid ""
+"Please enter the email address of the Bugzilla administrator; all mail for "
+"the administrator will be sent to this address. This email address is also "
+"used as the administrator login for Bugzilla."
+msgstr ""
+"Bitte geben Sie die E-Mail-Adresse des Bugzilla-Administrators ein. Alle E-"
+"Mails für den Administrator werden an diese Adresse geschickt. Diese E-Mail-"
+"Adresse wird auch als Administrator-Login für Bugzilla verwendet."
+
+#. Type: string
+#. Description
+#: ../bugzilla3.templates:3001
+msgid ""
+"A valid address must contain exactly one '@', and at least one '.' after the "
+"@. You'll be able to change this setting through Bugzilla's web interface."
+msgstr ""
+"Eine gültige Adresse muss genau ein »@« und wenigstens einen ».« nach dem @ "
+"enthalten. Sie können diese E-Mail-Adresse später über die Web-Oberfläche "
+"von Bugzilla ändern."
+
+#. Type: string
+#. Description
+#: ../bugzilla3.templates:4001
+msgid "Real name of Bugzilla administrator:"
+msgstr "Tatsächlicher Name des Bugzilla-Administrators:"
+
+#. Type: password
+#. Description
+#: ../bugzilla3.templates:5001
+msgid "Password for the Bugzilla administrator account:"
+msgstr "Passwort für das Konto des Bugzilla-Administrators:"
+
+#. Type: password
+#. Description
+#: ../bugzilla3.templates:5001
+msgid "Please enter at least 6 characters."
+msgstr "Bitte geben Sie wenigstens sechs Zeichen ein."
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:6001
+msgid "Have Status or Resolution values been customized?"
+msgstr "Wurden Werte in »Status« oder »Resolution« angepasst?"
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:6001
+msgid ""
+"If values in the Status or Resolution fields have been customized, the "
+"checksetup procedure must be modified appropriately before installation can "
+"continue."
+msgstr ""
+"Falls Werte in den Feldern »Status« oder »Resolution« angepasst wurden, muss "
+"die Prozedur checksetup entsprechend angepasst werden, bevor die "
+"Installation fortfahren kann."
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:6001
+msgid ""
+"For each update of this package, a new version of the checksetup_nondebian."
+"pl script is installed; the /usr/share/bugzilla3/debian/pre-checksetup.d "
+"directory can be used to automatically apply your modifications before "
+"execution."
+msgstr ""
+"Bei jeder Aktualisierung des Pakets wird eine neue Version des Skripts "
+"checksetup_nondebian.pl installiert. Das Verzeichnis /usr/share/bugzilla3/"
+"debian/pre-checksetup.d kann dazu benutzt werden, vor der Ausführung "
+"automatisch Ihre Änderungen anzuwenden."
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:7001
+msgid "Prompt about customized Status/Resolution at each update?"
+msgstr ""
+"Bei jeder Aktualisierung nach angepassten Werten in Status/Resolution fragen?"
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:7001
+msgid ""
+"If you modified Status/Resolution fields and created a script within /usr/"
+"share/bugzilla3/debian/pre-checksetup.d to apply changes to /usr/share/"
+"bugzilla3/lib/checksetup_nondebian.pl, you may want to avoid being prompted "
+"at each package upgrade."
+msgstr ""
+"Falls Sie die Felder Status/Resolution verändert haben und ein Skript "
+"innerhalb von /usr/share/bugzilla3/debian/pre-checksetup.pl erstellt haben, "
+"das Änderungen an /usr/share/bugzilla3/lib/checksetup_nondebian.pl vornimmt, "
+"möchten Sie eventuell vermeiden, bei jedem Upgrade des Pakets danach gefragt "
+"zu werden."
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:7001
+msgid ""
+"If you accept being prompted, you will have to call /usr/share/bugzilla3/lib/"
+"checksetup.pl yourself, at each package upgrade, before using Bugzilla."
+msgstr ""
+"Falls Sie der Abfrage zustimmen, müssen Sie bei jedem Paket-Upgrade selbst /"
+"usr/share/bugzilla3/lib/checksetup.pl aufrufen, bevor Sie Bugzilla verwenden."
+
+#. Type: boolean
+#. Description
+#: ../bugzilla3.templates:7001
+msgid ""
+"If you did not modify Status/Resolution, you should skip prompting as "
+"checksetup.pl will be started automatically (together with the {pre,post}-"
+"checksetup.d scripts)."
+msgstr ""
+"Falls Sie Status/Resolution nicht bearbeitet haben, sollten Sie die Abfrage "
+"überspringen, da checksetup.pl automatisch (zusammen mit den {pre,post}-"
+"checksetup.d-Skripten) gestartet wird."
+
+#. Type: error
+#. Description
+#: ../bugzilla3.templates:8001
+msgid "Setup of Bugzilla failed and needs further investigation"
+msgstr ""
+"Einrichtung von Bugzilla fehlgeschlagen und weitere Untersuchungen notwendig"
+
+#. Type: error
+#. Description
+#: ../bugzilla3.templates:8001
+msgid ""
+"Bugzilla has the \"shutdownhtml\" configuration parameter set, putting it "
+"offline (with logins disabled) until configured."
+msgstr ""
+"Der Konfigurationsparameter »shutdownhtml« von Bugzilla wurde gesetzt. Bis "
+"zur Neukonfiguration ist Bugzilla offline und Anmeldungen sind deaktiviert."
+
+#. Type: error
+#. Description
+#: ../bugzilla3.templates:8001
+msgid ""
+"To set up Bugzilla, run \"dpkg-reconfigure bugzilla3\" (as root) and choose "
+"\"dbconfig-config\"."
+msgstr ""
+"Um Bugzilla einzurichten, führen Sie (als root) »dpkg-reconfigure bugzilla3« "
+"aus und wählen »dbconfig-config«."
+
+#. Type: string
+#. Description
+#: ../bugzilla3.templates:9001
+msgid "Bugzilla downtime message:"
+msgstr "Wartungsmeldung für Bugzilla:"
+
+#. Type: string
+#. Description
+#: ../bugzilla3.templates:9001
+msgid ""
+"Please enter the HTML downtime message that should be displayed while "
+"Bugzilla is being reconfigured."
+msgstr ""
+"Bitte geben Sie die HTML-Wartungsmeldung an, die während der "
+"Neukonfiguration von Bugzilla angezeigt werden soll."
+
+#~ msgid ""
+#~ "Setup of Bugzilla could not be finished. Please restart the setup with "
+#~ "'dpkg-reconfigure -p low bugzilla3' as root user."
+#~ msgstr ""
+#~ "Die Einrichtung von Bugzilla konnte nicht fertiggestellt werden. Bitte "
+#~ "starten Sie die Einrichtung als root mit »dpkg-reconfigure -p low "
+#~ "bugzilla3« erneut."
+
+#~ msgid ""
+#~ "As long as the setup is not finished login is disabled and 'shutdownhtml' "
+#~ "configuration parameter is set. In this case Bugzilla is offline."
+#~ msgstr ""
+#~ "Solange die Einrichtung nicht fertiggestellt ist, ist die Anmeldung "
+#~ "deaktiviert und der Konfigurationsparameter »shutdownhtml« gesetzt. In "
+#~ "diesem Fall ist Bugzilla offline."
+
+#~ msgid "Show this message if setup of Bugzilla is ongoing or not finished:"
+#~ msgstr ""
+#~ "Diese Nachricht anzeigen, falls die Einrichtung von Bugzilla läuft oder "
+#~ "nicht beendet wurde."
+
+#~ msgid "Manual Bugzilla configuration"
+#~ msgstr "Manuelle Bugzilla-Konfiguration:"
+
+#~ msgid ""
+#~ "To setup Bugzilla please run /usr/share/bugzilla3/lib/checksetup.pl as "
+#~ "root user or start 'dpkg-reconfigure -p low bugzilla3' and choose "
+#~ "'dbconfig-config' to assist you."
+#~ msgstr ""
+#~ "Um Bugzilla einzurichten, führen Sie bitte als root-Benutzer /usr/share/"
+#~ "bugzilla3/lib/checksetup.pl aus oder starten Sie »dpkg-reconfigure -p low "
+#~ "bugzilla3 und wählen Sie »dbconfig-config«, um Unterstützung zu erhalten."
+
+#~ msgid "Do you want to be asked for customized Status/Resolution again?"
+#~ msgstr ""
+#~ "Möchten Sie erneut nach angepasste Werten von »Status/Resolutions« "
+#~ "gefragt werden?"
+
+#~ msgid "New location for Bugzilla CGI scripts"
+#~ msgstr "Neuer Ort für Bugzillas CGI-Skripte"
+
+#~ msgid ""
+#~ "All CGI scripts have been moved to /usr/lib/cgi-bin/bugzilla and the "
+#~ "script \"bgz_query.cgi\" has been renamed as \"query.cgi\"."
+#~ msgstr ""
+#~ "Alle CGI-Skripte wurden nach /usr/lib/cgi-bin/bugzilla verschoben und das "
+#~ "Skript »bgz_query.cgi« wurde in »query.cgi« umbenannt."
+
+#~ msgid ""
+#~ "If you have made changes to /var/lib/bugzilla/web/index.html, the install "
+#~ "process will not overwrite this file. You may thus need to update all "
+#~ "links to the CGI scripts."
+#~ msgstr ""
+#~ "Falls Sie an /var/lib/bugzilla/web/index.html Veränderungen vorgenommen "
+#~ "haben, dann wird der Installations-Prozess diese Datei nicht "
+#~ "überschreiben. Deshalb müssen Sie unter Umständen alle Links zu den CGI-"
+#~ "Skripten anpassen."
+
+#~ msgid "Template now used for the Bugzilla index"
+#~ msgstr "Bugzilla-Startseite verwendet nun Vorlage"
+
+#~ msgid ""
+#~ "If you have made changes to /var/lib/bugzilla/web/index.html, you should "
+#~ "report them in a copy of /usr/share/bugzilla/template/en/default/index."
+#~ "html.tmpl and put it in /var/lib/bugzilla/template/en/custom/."
+#~ msgstr ""
+#~ "Falls Sie an /var/lib/bugzilla/web/index.html Veränderungen vorgenommen "
+#~ "haben, sollten Sie diese in eine Kopie von /usr/share/bugzilla/template/"
+#~ "en/default/index.html.tmpl einarbeiten, welche anschließend in /var/lib/"
+#~ "bugzilla/template/en/custom/ landen sollte."
+
+#~ msgid ""
+#~ "The /var/lib/bugzilla/web/index.html file will be saved as /var/lib/"
+#~ "bugzilla/web/index.html.dpkg-bak."
+#~ msgstr ""
+#~ "Die Datei /var/lib/bugzilla/web/index.html wird als /var/lib/bugzilla/web/"
+#~ "index.html.dpkg-bak gespeichert."
+
+#~ msgid "No MySQL server found. Do you want to continue?"
+#~ msgstr "Kein MySQL-Server gefunden. Trotzdem weitermachen?"
+
+#~ msgid "A local or remote MySQL server is mandatory for using Bugzilla."
+#~ msgstr ""
+#~ "Ein lokaler oder entfernter MySQL-Server ist zwingend notwendig, um "
+#~ "Bugzilla zu verwenden."
+
+#~ msgid ""
+#~ "The Bugzilla package does not depend on the MySQL server package, since "
+#~ "Bugzilla can use a remote MySQL database.  To complete Bugzilla "
+#~ "configuration, access to a MySQL server is required."
+#~ msgstr ""
+#~ "Das Bugzilla-Paket ist nicht vom MySQL-Server-Paket abhängig, da Bugzilla "
+#~ "auch eine entfernte MySQL-Datenbank nutzen kann. Um das Einrichten von "
+#~ "Bugzilla zu vervollständigen, wird ein Zugriff auf einen MySQL-Server "
+#~ "benötigt."
+
+#~ msgid "If you do not continue, the Bugzilla package will not be configured."
+#~ msgstr ""
+#~ "Falls Sie nicht fortfahren, wird das Bugzilla-Paket nicht eingerichtet "
+#~ "sein."
+
+#~ msgid "Do you need to create a new database or a new user?"
+#~ msgstr ""
+#~ "Möchten Sie eine neue Datenbank oder einen neuen Benutzer erstellen?"
+
+#~ msgid ""
+#~ "If no MySQL database or no MySQL database user exist, they should be "
+#~ "created."
+#~ msgstr ""
+#~ "Falls keine MySQL-Datenbank oder kein MySQL-Datenbank-Benutzer existiert, "
+#~ "dann müssen diese erstellt werden."
+
+#~ msgid "Both may however be created manually later."
+#~ msgstr "Beide können später jedoch auch noch manuell erstellt werden."
+
+#~ msgid "Database server administrator username:"
+#~ msgstr "Benutzername des Datenbank-Administrators:"
+
+#~ msgid ""
+#~ "Please enter the username of a database user with database and users "
+#~ "creation privileges in the MySQL database server."
+#~ msgstr ""
+#~ "Geben Sie bitte den Datenbank-Benutzer ein, der berechtigt ist, auf dem "
+#~ "MySQL-Server Datenbanken und Benutzer anzulegen."
+
+#~ msgid "Database server administrator password:"
+#~ msgstr "Passwort des Datenbank-Administrators:"
+
+#~ msgid "Please enter the password of the database server administrator."
+#~ msgstr ""
+#~ "Bitte geben das Passwort für den Administrator des Datenbank-Servers ein."
+
+#~ msgid ""
+#~ "This password will be not be stored permanently by debconf; it is "
+#~ "forgotten once the database and database user are created."
+#~ msgstr ""
+#~ "Dieses Passwort wird nicht dauerhaft von Debconf gespeichert. Es wird "
+#~ "vergessen, sobald die Datenbank und der Datenbank-Benutzer erstellt "
+#~ "wurden."
+
+#~ msgid "Database server host name:"
+#~ msgstr "Host-Name des Datenbank-Servers:"
+
+#~ msgid ""
+#~ "Please enter the hostname of the database server which will host the "
+#~ "Bugzilla database."
+#~ msgstr ""
+#~ "Bitte geben Sie den Host-Namen des Datenbank-Servers ein, auf dem die "
+#~ "Bugzilla-Datenbank laufen wird."
+
+#~ msgid "Database server listening port:"
+#~ msgstr "Port des Datenbank-Servers:"
+
+#~ msgid ""
+#~ "Please enter the port number on which the MySQL database server can be "
+#~ "accessed."
+#~ msgstr ""
+#~ "Bitte geben Sie die Port-Nummer an, unter der der MySQL-Datenbank-Server "
+#~ "erreichbar ist."
+
+#~ msgid "Database name:"
+#~ msgstr "Datenbankname:"
+
+#~ msgid ""
+#~ "Please enter the name of the MySQL database where Bugzilla data will be "
+#~ "stored."
+#~ msgstr ""
+#~ "Bitte geben Sie den Namen der MySQL-Datenbank ein, in welcher die "
+#~ "Bugzilla-Daten gespeichert werden."
+
+#~ msgid ""
+#~ "Note that if you want to use a database name with special characters,  "
+#~ "you need at least a 3.23.6 MySQL server. If you plan to use an older "
+#~ "MySQL server, please don't put special characters in the database name. "
+#~ "See section 9.2.2 in the  MySQL documentation for details about database "
+#~ "identifiers."
+#~ msgstr ""
+#~ "Wollen Sie einen Datenbanknamen verwenden, der besondere Zeichen enthält, "
+#~ "dann brauchen Sie einen MySQL-Server ab Version 3.23.6. Falls Sie einen "
+#~ "älteren MySQL-Server verwenden wollen, dann darf der Datenbank-Name keine "
+#~ "besonderen Zeichen beinhalten. Genauere Informationen zu Datenbank-"
+#~ "Bezeichnern enthält Abschnitt 9.2.2 der MySQL-Dokumentation."
+
+#~ msgid ""
+#~ "Please enter the database user name which will own the Bugzilla database."
+#~ msgstr ""
+#~ "Bitte geben Sie den Datenbank-Benutzernamen ein, welcher der Eigentümer "
+#~ "der Bugzilla-Datenbank sein wird."
+
+#~ msgid "Bugzilla database owner password:"
+#~ msgstr "Passwort des Bugzilla-Datenbank-Eigentümers:"
+
+#~ msgid ""
+#~ "Please enter the password of the user which will own the Bugzilla "
+#~ "database."
+#~ msgstr ""
+#~ "Bitte geben Sie das Passwort des Benutzers ein, welcher der Eigentümer "
+#~ "der Bugzilla-Datenbank sein wird."
+
+#~ msgid ""
+#~ "As you don't have a MySQL server installed locally, only a manual "
+#~ "installation is possible."
+#~ msgstr ""
+#~ "Da Sie lokal keinen MySQL-Server installiert haben, ist lediglich eine "
+#~ "manuelle Installation möglich."
+
+#~ msgid "Automatic"
+#~ msgstr "Automatisch"
+
+#~ msgid "Manual"
+#~ msgstr "Manuell"
+
+#~ msgid "Later"
+#~ msgstr "Später"
+
+#~ msgid "Please choose your preferred installation mode."
+#~ msgstr "Bitte wählen Sie den bevorzugten Installationsweg."
+
+#~ msgid ""
+#~ "Choosing \"Automatic\" needs  a locally installed MySQL server. This "
+#~ "setup mode will try to use as many default values as possible."
+#~ msgstr ""
+#~ "Wählen Sie »Automatisch«, dann benötigen Sie einen lokal (d.h. auf diesem "
+#~ "Rechner) installierten MySQL-Server. Dieser Installationsweg wird "
+#~ "versuchen, soviele Vorgabewerte wie möglich zu verwenden."
+
+#~ msgid ""
+#~ "Choosing \"Manual\" will let you enter all the preferences for the MySQL "
+#~ "server you want to use (either local or remote)."
+#~ msgstr ""
+#~ "Wählen Sie »Manuell«, dann können Sie alle Einstellungen für den zu "
+#~ "verwendenden MySQL-Server selbst eingeben. Der MySQL-Server kann dann "
+#~ "sowohl lokal als auch entfernt installiert sein."
+
+#~ msgid ""
+#~ "Choosing \"Later\" means that you don't have yet a MySQL server up for "
+#~ "Bugzilla. This choice will abort the installation process."
+#~ msgstr ""
+#~ "Wählen Sie »Später«, dann bedeutet das, dass für Bugzilla noch kein MySQL-"
+#~ "Server vorhanden ist. Diese Wahl wird die Installation abbrechen."

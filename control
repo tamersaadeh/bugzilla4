@@ -1,0 +1,83 @@
+Source: bugzilla
+Section: web
+Priority: optional
+Maintainer: Raphael Bossek <bossekr@debian.org>
+Build-Depends: po-debconf, debhelper (>= 7.0.50), python-central (>= 0.5), quilt (>= 0.46-7~), fakeroot, gettext
+Build-Depends-Indep: debconf (>= 0.9.95) | debconf-2.0
+XS-Python-Version: all
+Standards-Version: 3.9.1
+
+Package: bugzilla3
+Architecture: all
+Section: web
+Homepage: http://www.bugzilla.org
+Depends: debconf (>= 0.9.95), 
+         libtemplate-perl (>= 2.22),
+         libappconfig-perl (>= 1.56-2),
+         libtimedate-perl (>= 1.1600-9),
+         libdatetime-perl,
+         libdatetime-timezone-perl (>= 0.71-1),
+         libemail-send-perl (>= 2.192-1),
+         libmail-sendmail-perl,
+         libemail-mime-perl (>= 1.901) | libemail-mime-modifier-perl (>= 1.442-2),
+         libemail-mime-perl (>= 1.901) | libemail-mime-creator-perl,
+         liburi-perl,
+         libcgi-pm-perl (>= 3.33),
+         libdbd-mysql-perl (>= 1.56-2) | libdbd-pg-perl, 
+         apache2 | httpd,
+         exim4 | mail-transport-agent,
+         ucf (>= 0.08), patch, dbconfig-common (>= 1.8.27),
+         mysql-client | postgresql-client,
+         libjs-yui,
+         ${python:Depends},
+         ${misc:Depends}
+Suggests: bugzilla3-doc,
+          libnet-ldap-perl,
+          libgd-text-perl,
+          libgd-graph-perl, libgd-gd2-perl,
+          libmailtools-perl (>= 1.77-1),
+          libmime-tools-perl (>= 5.425-2),
+          libhtml-parser-perl,
+          libhtml-scrubber-perl,
+          libxml-twig-perl,
+          libauthen-radius-perl,
+          graphviz,
+          libsoap-lite-perl,
+          patchutils,
+          libwww-perl,
+          ruby
+Recommends: libchart-perl (>= 0.99c.pre3-0.1),
+            libtemplate-plugin-gd-perl,
+            libxml-parser-perl,
+            perlmagick,
+            mysql-server | postgresql,
+            cvs,
+            imagemagick
+Conflicts: bugzilla (<< 3.0.0)
+Replaces: bugzilla (<< 3.0.0)
+XB-Python-Version: ${python:Versions}
+Description: web-based bug tracking system
+ Bugzilla is a Bug Tracking System accessible through a web interface,
+ with which you can:
+  * report bugs;
+  * assign bugs to the appropriate developers;
+  * prioritize bugs;
+  * set bug dependencies;
+  * arrange bugs by product and component.
+ It can also be used as a todo list manager.
+ .
+ This package provides a web application that lets users make and look
+ up bug reports. Interested users are automatically informed about
+ changes to a bug's status.
+
+Package: bugzilla3-doc
+Section: doc
+Architecture: all
+Suggests: bugzilla3
+Depends: ${misc:Depends}
+Homepage: http://www.bugzilla.org
+XB-Python-Version: ${python:Versions}
+Description: comprehensive guide to Bugzilla
+ The Bugzilla Guide is a document (in ASCII text, HTML, and SGML format)
+ discussing Bugzilla administration, maintenance, and use.
+
