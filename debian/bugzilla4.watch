@@ -18,5 +18,6 @@ version=3
 
 # Uncomment to find new files on sourceforge, for debscripts >= 2.9
 # http://sf.net/bkbuild/bkbuild-(.*)\.tar\.gz
+## need to check if these are still true for version 4.0
 http://ftp.mozilla.org/pub/mozilla.org/webtools/bugzilla-(\d+)\.(\d+)\.(\d+).tar.gz
 http://ftp.mozilla.org/pub/mozilla.org/webtools/bugzilla-(\d+)\.(\d+)\.tar.gz
