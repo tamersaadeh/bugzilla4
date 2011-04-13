@@ -3,6 +3,7 @@
 # This file is distributed under the same license as the bugzilla package.
 #
 # Martin Bagge <brother@bsnet.se>, 2009, 2010
+# Tamer Saadeh <tamer@tamersaadeh.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: bugzilla 2.18.3-2\n"
@@ -20,124 +21,124 @@ msgstr ""
 
 #. Type: password
 #. Description
-#: ../bugzilla3.templates:2001
+#: ../bugzilla4.templates:2001
 msgid "Password confirmation:"
 msgstr "Bekräfta lösenord:"
 
 #. Type: string
 #. Description
-#: ../bugzilla3.templates:3001
+#: ../bugzilla4.templates:3001
 msgid "Email address of Bugzilla administrator:"
 msgstr "E-postaddressen till Bugzilla-administratören:"
 
 #. Type: string
 #. Description
-#: ../bugzilla3.templates:3001
+#: ../bugzilla4.templates:3001
 msgid "Please enter the email address of the Bugzilla administrator; all mail for the administrator will be sent to this address. This email address is also used as the administrator login for Bugzilla."
 msgstr "Ange e-postadressen för Bugzilla-administratören, alla e-postmeddelanden till administratören kommer att skickas till denna adress. Adressen används också för inloggning av administratören i Bugzilla."
 
 #. Type: string
 #. Description
-#: ../bugzilla3.templates:3001
+#: ../bugzilla4.templates:3001
 msgid "A valid address must contain exactly one '@', and at least one '.' after the @. You'll be able to change this setting through Bugzilla's web interface."
 msgstr "En giltig address får bara innehålla ett \"@\" och ska ha minst en \".\" efter @. Du har möjligheten att ändra denna inställning genom Bugzillas webbgränssnitt."
 
 #. Type: string
 #. Description
-#: ../bugzilla3.templates:4001
+#: ../bugzilla4.templates:4001
 msgid "Real name of Bugzilla administrator:"
 msgstr "Riktiga namnet för Bugzilla-administratören:"
 
 #. Type: password
 #. Description
-#: ../bugzilla3.templates:5001
+#: ../bugzilla4.templates:5001
 msgid "Password for the Bugzilla administrator account:"
 msgstr "Lösenord för Bugzilla-administratörens konto:"
 
 #. Type: password
 #. Description
-#: ../bugzilla3.templates:5001
+#: ../bugzilla4.templates:5001
 msgid "Please enter at least 6 characters."
 msgstr "Ange åtminstone sex tecken."
 
 #. Type: boolean
 #. Description
-#: ../bugzilla3.templates:6001
+#: ../bugzilla4.templates:6001
 msgid "Have Status or Resolution values been customized?"
 msgstr "Ska värdena för Status och Lösningsanledning ändras?"
 
 #. Type: boolean
 #. Description
-#: ../bugzilla3.templates:6001
+#: ../bugzilla4.templates:6001
 msgid "If values in the Status or Resolution fields have been customized, the checksetup procedure must be modified appropriately before installation can continue."
 msgstr "Om du ändrade värdena på fälten för Status eller Stängningsanledning måste proceduren checksetup modifieras i enlighet med förändringen innan installationen kan fortsätta."
 
 #. Type: boolean
 #. Description
-#: ../bugzilla3.templates:6001
-msgid "For each update of this package, a new version of the checksetup_nondebian.pl script is installed; the /usr/share/bugzilla3/debian/pre-checksetup.d directory can be used to automatically apply your modifications before execution."
-msgstr "Vid varje uppdatering av detta paket installeras en ny version av skriptet checksetup_nondebian.pl. Katalogen /usr/share/bugzilla3/debian/pre-checksetup.d kan användas för att automatiskt lägga till dina ändringar före exekvering."
+#: ../bugzilla4.templates:6001
+msgid "For each update of this package, a new version of the checksetup_nondebian.pl script is installed; the /usr/share/bugzilla4/debian/pre-checksetup.d directory can be used to automatically apply your modifications before execution."
+msgstr "Vid varje uppdatering av detta paket installeras en ny version av skriptet checksetup_nondebian.pl. Katalogen /usr/share/bugzilla4/debian/pre-checksetup.d kan användas för att automatiskt lägga till dina ändringar före exekvering."
 
 #. Type: boolean
 #. Description
-#: ../bugzilla3.templates:7001
+#: ../bugzilla4.templates:7001
 msgid "Prompt about customized Status/Resolution at each update?"
 msgstr "Fråga om förändrad Status/Stängningsanledning vid varje uppdatering?"
 
 #. Type: boolean
 #. Description
-#: ../bugzilla3.templates:7001
-msgid "If you modified Status/Resolution fields and created a script within /usr/share/bugzilla3/debian/pre-checksetup.d to apply changes to /usr/share/bugzilla3/lib/checksetup_nondebian.pl, you may want to avoid being prompted at each package upgrade."
-msgstr "Om du ändrade värde för Status/Stängningsanledning och la till ett skript i /usr/share/bugzilla3/debian/pre-checksetup.d för att automatiskt ändra /usr/share/bugzilla3/lib/checksetup-nondebian.pl vill du troligen inte påminnas om ändringen vid varje uppdatering av paketet."
+#: ../bugzilla4.templates:7001
+msgid "If you modified Status/Resolution fields and created a script within /usr/share/bugzilla4/debian/pre-checksetup.d to apply changes to /usr/share/bugzilla4/lib/checksetup_nondebian.pl, you may want to avoid being prompted at each package upgrade."
+msgstr "Om du ändrade värde för Status/Stängningsanledning och la till ett skript i /usr/share/bugzilla4/debian/pre-checksetup.d för att automatiskt ändra /usr/share/bugzilla4/lib/checksetup-nondebian.pl vill du troligen inte påminnas om ändringen vid varje uppdatering av paketet."
 
 #. Type: boolean
 #. Description
-#: ../bugzilla3.templates:7001
-msgid "If you accept being prompted, you will have to call /usr/share/bugzilla3/lib/checksetup.pl yourself, at each package upgrade, before using Bugzilla."
-msgstr "Om du väljer att bli påmind om ändringen måste du köra /usr/share/bugzilla3/lib/checksetup.pl själv vid varje uppdatering av paketet innan Bugzilla kan användas."
+#: ../bugzilla4.templates:7001
+msgid "If you accept being prompted, you will have to call /usr/share/bugzilla4/lib/checksetup.pl yourself, at each package upgrade, before using Bugzilla."
+msgstr "Om du väljer att bli påmind om ändringen måste du köra /usr/share/bugzilla4/lib/checksetup.pl själv vid varje uppdatering av paketet innan Bugzilla kan användas."
 
 #. Type: boolean
 #. Description
-#: ../bugzilla3.templates:7001
+#: ../bugzilla4.templates:7001
 msgid "If you did not modify Status/Resolution, you should skip prompting as checksetup.pl will be started automatically (together with the {pre,post}-checksetup.d scripts)."
 msgstr "Om du inte ändrade Status/Stängningsanledning ska du avaktivera frågan eftersom checksetup.pl kommer att köras automatisk (tillsammans med förkontroller och efterkontroller i checksetup.d-skripten)."
 
 #. Type: error
 #. Description
-#: ../bugzilla3.templates:8001
+#: ../bugzilla4.templates:8001
 msgid "Setup of Bugzilla failed and needs further investigation"
 msgstr "Installationen av Bugzilla misslyckades och behöver undersökas"
 
 #. Type: error
 #. Description
-#: ../bugzilla3.templates:8001
+#: ../bugzilla4.templates:8001
 msgid "Bugzilla has the \"shutdownhtml\" configuration parameter set, putting it offline (with logins disabled) until configured."
 msgstr "Bugzilla har inställningen \"shutdownhtml\" aktiverad vilket innebär att systemet kommer att sättas i avstängt läge och inaktivera inloggning tills intällningarna är korrekt på plats."
 
 #. Type: error
 #. Description
-#: ../bugzilla3.templates:8001
-msgid "To set up Bugzilla, run \"dpkg-reconfigure bugzilla3\" (as root) and choose \"dbconfig-config\"."
-msgstr "För att installera Bugzilla kör \"dpkg-reconfigure bugzilla3\" (som root) och välj \"dbconfig-config\"."
+#: ../bugzilla4.templates:8001
+msgid "To set up Bugzilla, run \"dpkg-reconfigure bugzilla4\" (as root) and choose \"dbconfig-config\"."
+msgstr "För att installera Bugzilla kör \"dpkg-reconfigure bugzilla4\" (som root) och välj \"dbconfig-config\"."
 
 #. Type: string
 #. Description
-#: ../bugzilla3.templates:9001
+#: ../bugzilla4.templates:9001
 msgid "Bugzilla downtime message:"
 msgstr "Meddelande om nertid:"
 
 #. Type: string
 #. Description
-#: ../bugzilla3.templates:9001
+#: ../bugzilla4.templates:9001
 msgid "Please enter the HTML downtime message that should be displayed while Bugzilla is being reconfigured."
 msgstr "Ange nertidsmeddelandet i HTML som ska visas när Bugzilla installeras."
 
 #~ msgid ""
 #~ "Setup of Bugzilla could not be finished. Please restart the setup with "
-#~ "'dpkg-reconfigure -p low bugzilla3' as root user."
+#~ "'dpkg-reconfigure -p low bugzilla4' as root user."
 #~ msgstr ""
 #~ "Installationen av Bugzilla kunde inte slutföras. Vänligen stara "
-#~ "installationen med \"dpkg-reconfigure -p low bugzilla3\" som root-"
+#~ "installationen med \"dpkg-reconfigure -p low bugzilla4\" som root-"
 #~ "användare."
 #~ msgid ""
 #~ "As long as the setup is not finished login is disabled and 'shutdownhtml' "
@@ -153,11 +154,11 @@ msgstr "Ange nertidsmeddelandet i HTML som ska visas när Bugzilla installeras."
 #~ msgid "Manual Bugzilla configuration"
 #~ msgstr "Ange inställningarna för Bugzilla manuellt"
 #~ msgid ""
-#~ "To setup Bugzilla please run /usr/share/bugzilla3/lib/checksetup.pl as "
-#~ "root user or start 'dpkg-reconfigure -p low bugzilla3' and choose "
+#~ "To setup Bugzilla please run /usr/share/bugzilla4/lib/checksetup.pl as "
+#~ "root user or start 'dpkg-reconfigure -p low bugzilla4' and choose "
 #~ "'dbconfig-config' to assist you."
 #~ msgstr ""
-#~ "För att installera Bugzilla kör /usr/share/bugzilla3/lib/checksetup.pl "
-#~ "som root-användaren eller \"dpkg-reconfigure -p low bugzilla3\" och välj "
+#~ "För att installera Bugzilla kör /usr/share/bugzilla4/lib/checksetup.pl "
+#~ "som root-användaren eller \"dpkg-reconfigure -p low bugzilla4\" och välj "
 #~ "\"dbconfig-config\" att hjälpa dig."
 

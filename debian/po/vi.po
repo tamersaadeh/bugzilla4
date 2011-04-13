@@ -2,6 +2,7 @@
 # Copyright © 2010 Free Software Foundation, Inc.
 # This file is distributed under the same license as the bugzilla package.
 # Clytie Siddall <clytie@riverland.net.au>, 2005-2010.
+# Tamer Saadeh <tamer@tamersaadeh.com>, 2011.
 #
 msgid ""
 msgstr ""
@@ -18,19 +19,19 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: LocFactoryEditor 1.8\n"
 
-#: ../bugzilla3.templates:2001
+#: ../bugzilla4.templates:2001
 #. Type: password
 #. Description
 msgid "Password confirmation:"
 msgstr "Xác nhận mật khẩu :"
 
-#: ../bugzilla3.templates:3001
+#: ../bugzilla4.templates:3001
 #. Type: string
 #. Description
 msgid "Email address of Bugzilla administrator:"
 msgstr "Địa chỉ thư của quản trị Bugzilla:"
 
-#: ../bugzilla3.templates:3001
+#: ../bugzilla4.templates:3001
 #. Type: string
 #. Description
 msgid ""
@@ -42,7 +43,7 @@ msgstr ""
 "trị thì được gửi cho địa chỉ này. Địa chỉ này cũng được dùng để đăng nhập "
 "quản trị vào Bugzilla."
 
-#: ../bugzilla3.templates:3001
+#: ../bugzilla4.templates:3001
 #. Type: string
 #. Description
 msgid ""
@@ -54,31 +55,31 @@ msgstr ""
 "tên_dùng@máy_chủ.công_ty.vn\n"
 "Bạn cũng có thể sửa đổi thiết lập này thông qua giao diện Web của Bugzilla."
 
-#: ../bugzilla3.templates:4001
+#: ../bugzilla4.templates:4001
 #. Type: string
 #. Description
 msgid "Real name of Bugzilla administrator:"
 msgstr "Tên thật của quản trị Bugzilla:"
 
-#: ../bugzilla3.templates:5001
+#: ../bugzilla4.templates:5001
 #. Type: password
 #. Description
 msgid "Password for the Bugzilla administrator account:"
 msgstr "Mật khẩu cho tài khoản quản trị Bugzilla:"
 
-#: ../bugzilla3.templates:5001
+#: ../bugzilla4.templates:5001
 #. Type: password
 #. Description
 msgid "Please enter at least 6 characters."
 msgstr "Hãy gõ ít nhất 6 ký tự."
 
-#: ../bugzilla3.templates:6001
+#: ../bugzilla4.templates:6001
 #. Type: boolean
 #. Description
 msgid "Have Status or Resolution values been customized?"
 msgstr "Giá trị Trạng thái hay Giải quyết bị tùy chỉnh không?"
 
-#: ../bugzilla3.templates:6001
+#: ../bugzilla4.templates:6001
 #. Type: boolean
 #. Description
 msgid ""
@@ -90,53 +91,53 @@ msgstr ""
 "bị tùy chỉnh thì thủ tục checksetup phải được sửa đổi thích hợp trước khi "
 "tiếp tục cài đặt."
 
-#: ../bugzilla3.templates:6001
+#: ../bugzilla4.templates:6001
 #. Type: boolean
 #. Description
 msgid ""
 "For each update of this package, a new version of the checksetup_nondebian."
-"pl script is installed; the /usr/share/bugzilla3/debian/pre-checksetup.d "
+"pl script is installed; the /usr/share/bugzilla4/debian/pre-checksetup.d "
 "directory can be used to automatically apply your modifications before "
 "execution."
 msgstr ""
 "Đối với mỗi bản cập nhật gói này, cũng cài đặt một phiên bản mới của văn "
-"lệnh « checksetup_nondebian.pl ». Thư mục « /usr/share/bugzilla3/debian/pre-"
+"lệnh « checksetup_nondebian.pl ». Thư mục « /usr/share/bugzilla4/debian/pre-"
 "checksetup.d » có thể được sử dụng để tự động áp dụng các thay đổi trước khi "
 "thực hiện."
 
-#: ../bugzilla3.templates:7001
+#: ../bugzilla4.templates:7001
 #. Type: boolean
 #. Description
 msgid "Prompt about customized Status/Resolution at each update?"
 msgstr "Nhắc về Trạng thái/Giải quyết bị sửa đổi vào mỗi lúc cập nhật không?"
 
-#: ../bugzilla3.templates:7001
+#: ../bugzilla4.templates:7001
 #. Type: boolean
 #. Description
 msgid ""
 "If you modified Status/Resolution fields and created a script within /usr/"
-"share/bugzilla3/debian/pre-checksetup.d to apply changes to /usr/share/"
-"bugzilla3/lib/checksetup_nondebian.pl, you may want to avoid being prompted "
+"share/bugzilla4/debian/pre-checksetup.d to apply changes to /usr/share/"
+"bugzilla4/lib/checksetup_nondebian.pl, you may want to avoid being prompted "
 "at each package upgrade."
 msgstr ""
 "Nếu bạn đã sửa đổi trường Trạng thái (Status) hay Giải quyết (Resolution) và "
-"tạo một văn lệnh bên trong thư mục « /usr/share/bugzilla3/debian/pre-"
-"checksetup.d » để áp dụng thay đổi cho văn lệnh « /usr/share/bugzilla3/lib/"
+"tạo một văn lệnh bên trong thư mục « /usr/share/bugzilla4/debian/pre-"
+"checksetup.d » để áp dụng thay đổi cho văn lệnh « /usr/share/bugzilla4/lib/"
 "checksetup_nondebian.pl », trong trường hợp đó bạn có thể muốn tránh bị nhắc "
 "vào mỗi lúc nâng cấp gói."
 
-#: ../bugzilla3.templates:7001
+#: ../bugzilla4.templates:7001
 #. Type: boolean
 #. Description
 msgid ""
-"If you accept being prompted, you will have to call /usr/share/bugzilla3/lib/"
+"If you accept being prompted, you will have to call /usr/share/bugzilla4/lib/"
 "checksetup.pl yourself, at each package upgrade, before using Bugzilla."
 msgstr ""
 "Nếu bạn đồng ý với trường hợp bị nhắc thì bạn cần phải tự gọi văn lệnh « /"
-"usr/share/bugzilla3/lib/checksetup.pl » vào mỗi lúc nâng cấp gói này, trước "
+"usr/share/bugzilla4/lib/checksetup.pl » vào mỗi lúc nâng cấp gói này, trước "
 "khi sử dụng Bugzilla."
 
-#: ../bugzilla3.templates:7001
+#: ../bugzilla4.templates:7001
 #. Type: boolean
 #. Description
 msgid ""
@@ -148,13 +149,13 @@ msgstr ""
 "« checksetup.pl » sẽ được tự động khởi chạy (cùng với các văn lệnh chạy "
 "trước/sau « checksetup.d »)."
 
-#: ../bugzilla3.templates:8001
+#: ../bugzilla4.templates:8001
 #. Type: error
 #. Description
 msgid "Setup of Bugzilla failed and needs further investigation"
 msgstr "Thiết lập Bugzilla bị lỗi thì yêu cầu xem xét thêm nữa"
 
-#: ../bugzilla3.templates:8001
+#: ../bugzilla4.templates:8001
 #. Type: error
 #. Description
 msgid ""
@@ -162,21 +163,21 @@ msgid ""
 "offline (with logins disabled) until configured."
 msgstr "Bugzilla đã lập tham số cấu hình « shutdownhtml » thì ngoại tuyến (đăng nhập cũng bị tắt) đến khi được cấu hình."
 
-#: ../bugzilla3.templates:8001
+#: ../bugzilla4.templates:8001
 #. Type: error
 #. Description
 msgid ""
-"To set up Bugzilla, run \"dpkg-reconfigure bugzilla3\" (as root) and choose "
+"To set up Bugzilla, run \"dpkg-reconfigure bugzilla4\" (as root) and choose "
 "\"dbconfig-config\"."
-msgstr "Để thiết lập Bugzilla, hãy chạy câu lệnh « dpkg-reconfigure bugzilla3 » như người chủ, và chọn « dbconfig-config »."
+msgstr "Để thiết lập Bugzilla, hãy chạy câu lệnh « dpkg-reconfigure bugzilla4 » như người chủ, và chọn « dbconfig-config »."
 
-#: ../bugzilla3.templates:9001
+#: ../bugzilla4.templates:9001
 #. Type: string
 #. Description
 msgid "Bugzilla downtime message:"
 msgstr "Thông điệp Bugzilla tạm thời không hoạt động:"
 
-#: ../bugzilla3.templates:9001
+#: ../bugzilla4.templates:9001
 #. Type: string
 #. Description
 msgid ""

@@ -2,6 +2,7 @@
 # This file is distributed under the same license as the bugzilla package.
 #
 # Esko Arajärvi <edu@iki.fi>, 2009.
+# Tamer Saadeh <tamer@tamersaadeh.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: bugzilla\n"
@@ -19,19 +20,19 @@ msgstr ""
 
 #. Type: password
 #. Description
-#: ../bugzilla3.templates:2001
+#: ../bugzilla4.templates:2001
 msgid "Password confirmation:"
 msgstr "Salasanan varmistus:"
 
 #. Type: string
 #. Description
-#: ../bugzilla3.templates:3001
+#: ../bugzilla4.templates:3001
 msgid "Email address of Bugzilla administrator:"
 msgstr "Bugzillan ylläpitäjän sähköpostiosoite:"
 
 #. Type: string
 #. Description
-#: ../bugzilla3.templates:3001
+#: ../bugzilla4.templates:3001
 msgid ""
 "Please enter the email address of the Bugzilla administrator; all mail for "
 "the administrator will be sent to this address. This email address is also "
@@ -43,7 +44,7 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../bugzilla3.templates:3001
+#: ../bugzilla4.templates:3001
 msgid ""
 "A valid address must contain exactly one '@', and at least one '.' after the "
 "@. You'll be able to change this setting through Bugzilla's web interface."
@@ -53,31 +54,31 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../bugzilla3.templates:4001
+#: ../bugzilla4.templates:4001
 msgid "Real name of Bugzilla administrator:"
 msgstr "Bugzillan ylläpitäjän nimi:"
 
 #. Type: password
 #. Description
-#: ../bugzilla3.templates:5001
+#: ../bugzilla4.templates:5001
 msgid "Password for the Bugzilla administrator account:"
 msgstr "Bugzillan ylläpitotunnuksen salasana:"
 
 #. Type: password
 #. Description
-#: ../bugzilla3.templates:5001
+#: ../bugzilla4.templates:5001
 msgid "Please enter at least 6 characters."
 msgstr ""
 
 #. Type: boolean
 #. Description
-#: ../bugzilla3.templates:6001
+#: ../bugzilla4.templates:6001
 msgid "Have Status or Resolution values been customized?"
 msgstr "Onko Status- tai Resolution-arvoja muokattu?"
 
 #. Type: boolean
 #. Description
-#: ../bugzilla3.templates:6001
+#: ../bugzilla4.templates:6001
 msgid ""
 "If values in the Status or Resolution fields have been customized, the "
 "checksetup procedure must be modified appropriately before installation can "
@@ -88,52 +89,52 @@ msgstr ""
 
 #. Type: boolean
 #. Description
-#: ../bugzilla3.templates:6001
+#: ../bugzilla4.templates:6001
 msgid ""
 "For each update of this package, a new version of the checksetup_nondebian."
-"pl script is installed; the /usr/share/bugzilla3/debian/pre-checksetup.d "
+"pl script is installed; the /usr/share/bugzilla4/debian/pre-checksetup.d "
 "directory can be used to automatically apply your modifications before "
 "execution."
 msgstr ""
 "Komentosarjasta checksetup_nondebian.pl asennetaan uusi versio aina, kun "
 "tämä paketti päivittyy. Paikalliset muutokset voidaan automaattisesti ottaa "
 "käyttöön ennen komentosarjan ajamista lisäämällä hakemistoon /usr/share/"
-"bugzilla3/debian/pre-checksetup.d sopiva komentosarja."
+"bugzilla4/debian/pre-checksetup.d sopiva komentosarja."
 
 #. Type: boolean
 #. Description
-#: ../bugzilla3.templates:7001
+#: ../bugzilla4.templates:7001
 msgid "Prompt about customized Status/Resolution at each update?"
 msgstr ""
 "Kysytäänkö Status- ja Resolution-kenttien muokkauksista aina päivitettäessä?"
 
 #. Type: boolean
 #. Description
-#: ../bugzilla3.templates:7001
+#: ../bugzilla4.templates:7001
 msgid ""
 "If you modified Status/Resolution fields and created a script within /usr/"
-"share/bugzilla3/debian/pre-checksetup.d to apply changes to /usr/share/"
-"bugzilla3/lib/checksetup_nondebian.pl, you may want to avoid being prompted "
+"share/bugzilla4/debian/pre-checksetup.d to apply changes to /usr/share/"
+"bugzilla4/lib/checksetup_nondebian.pl, you may want to avoid being prompted "
 "at each package upgrade."
 msgstr ""
 "Jos Status- tai Resolution-kenttää on muokattu ja hakemistoon /usr/share/"
-"bugzilla3/debian/pre-checksetup.d on luotu komentosarja, joka päivittää "
-"muutokset komentosarjaan /usr/share/bugzilla3/lib/checksetup_nondebian.pl, "
+"bugzilla4/debian/pre-checksetup.d on luotu komentosarja, joka päivittää "
+"muutokset komentosarjaan /usr/share/bugzilla4/lib/checksetup_nondebian.pl, "
 "tätä kyselyä ei ehkä tarvitse tehdä jokaisen päivityksen yhteydessä."
 
 #. Type: boolean
 #. Description
-#: ../bugzilla3.templates:7001
+#: ../bugzilla4.templates:7001
 msgid ""
-"If you accept being prompted, you will have to call /usr/share/bugzilla3/lib/"
+"If you accept being prompted, you will have to call /usr/share/bugzilla4/lib/"
 "checksetup.pl yourself, at each package upgrade, before using Bugzilla."
 msgstr ""
-"Jos kysymys tehdään, komentosarja /usr/share/bugzilla3/lib/checksetup.pl "
+"Jos kysymys tehdään, komentosarja /usr/share/bugzilla4/lib/checksetup.pl "
 "tulee ajaa aina, kun paketti päivitetään, ennen Bugzillan käyttöä."
 
 #. Type: boolean
 #. Description
-#: ../bugzilla3.templates:7001
+#: ../bugzilla4.templates:7001
 msgid ""
 "If you did not modify Status/Resolution, you should skip prompting as "
 "checksetup.pl will be started automatically (together with the {pre,post}-"
@@ -145,13 +146,13 @@ msgstr ""
 
 #. Type: error
 #. Description
-#: ../bugzilla3.templates:8001
+#: ../bugzilla4.templates:8001
 msgid "Setup of Bugzilla failed and needs further investigation"
 msgstr ""
 
 #. Type: error
 #. Description
-#: ../bugzilla3.templates:8001
+#: ../bugzilla4.templates:8001
 msgid ""
 "Bugzilla has the \"shutdownhtml\" configuration parameter set, putting it "
 "offline (with logins disabled) until configured."
@@ -159,21 +160,21 @@ msgstr ""
 
 #. Type: error
 #. Description
-#: ../bugzilla3.templates:8001
+#: ../bugzilla4.templates:8001
 msgid ""
-"To set up Bugzilla, run \"dpkg-reconfigure bugzilla3\" (as root) and choose "
+"To set up Bugzilla, run \"dpkg-reconfigure bugzilla4\" (as root) and choose "
 "\"dbconfig-config\"."
 msgstr ""
 
 #. Type: string
 #. Description
-#: ../bugzilla3.templates:9001
+#: ../bugzilla4.templates:9001
 msgid "Bugzilla downtime message:"
 msgstr ""
 
 #. Type: string
 #. Description
-#: ../bugzilla3.templates:9001
+#: ../bugzilla4.templates:9001
 msgid ""
 "Please enter the HTML downtime message that should be displayed while "
 "Bugzilla is being reconfigured."

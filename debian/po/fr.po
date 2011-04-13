@@ -1,6 +1,6 @@
-# french translation of bugzilla3 debconf templates
+# french translation of bugzilla4 debconf templates
 # Copyright (C) 2007-2009 Debian French l10n team <debian-l10n-french@lists.debian.org>
-# This file is distributed under the same license as the bugzilla3 package.
+# This file is distributed under the same license as the bugzilla4 package.
 #
 # Translators:
 #
@@ -8,9 +8,10 @@
 # Jean Guillou <guillou.jean@free.fr>, 2008, 2009.
 # Christian Perrier <bubulle@debian.org>, 2008, 2010.
 # Florentin Duneau <fduneau@gmail.com>, 2009.
+# Tamer Saadeh <tamer@tamersaadeh.com>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version: bugzilla3\n"
+"Project-Id-Version: bugzilla4\n"
 "Report-Msgid-Bugs-To: bugzilla@packages.debian.org\n"
 "POT-Creation-Date: 2010-09-02 09:43+0200\n"
 "PO-Revision-Date: 2010-08-30 22:22+0200\n"
@@ -25,19 +26,19 @@ msgstr ""
 
 #. Type: password
 #. Description
-#: ../bugzilla3.templates:2001
+#: ../bugzilla4.templates:2001
 msgid "Password confirmation:"
 msgstr "Confirmation du mot de passe :"
 
 #. Type: string
 #. Description
-#: ../bugzilla3.templates:3001
+#: ../bugzilla4.templates:3001
 msgid "Email address of Bugzilla administrator:"
 msgstr "Adresse électronique de l'administrateur de Bugzilla :"
 
 #. Type: string
 #. Description
-#: ../bugzilla3.templates:3001
+#: ../bugzilla4.templates:3001
 msgid ""
 "Please enter the email address of the Bugzilla administrator; all mail for "
 "the administrator will be sent to this address. This email address is also "
@@ -49,7 +50,7 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../bugzilla3.templates:3001
+#: ../bugzilla4.templates:3001
 msgid ""
 "A valid address must contain exactly one '@', and at least one '.' after the "
 "@. You'll be able to change this setting through Bugzilla's web interface."
@@ -60,31 +61,31 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../bugzilla3.templates:4001
+#: ../bugzilla4.templates:4001
 msgid "Real name of Bugzilla administrator:"
 msgstr "Nom réel de l'administrateur de Bugzilla :"
 
 #. Type: password
 #. Description
-#: ../bugzilla3.templates:5001
+#: ../bugzilla4.templates:5001
 msgid "Password for the Bugzilla administrator account:"
 msgstr "Mot de passe de l'administrateur de Bugzilla :"
 
 #. Type: password
 #. Description
-#: ../bugzilla3.templates:5001
+#: ../bugzilla4.templates:5001
 msgid "Please enter at least 6 characters."
 msgstr "Veuillez utiliser au moins 6 caractères."
 
 #. Type: boolean
 #. Description
-#: ../bugzilla3.templates:6001
+#: ../bugzilla4.templates:6001
 msgid "Have Status or Resolution values been customized?"
 msgstr "Faut-il modifier la valeur des champs « Status/Resolution » ?"
 
 #. Type: boolean
 #. Description
-#: ../bugzilla3.templates:6001
+#: ../bugzilla4.templates:6001
 msgid ""
 "If values in the Status or Resolution fields have been customized, the "
 "checksetup procedure must be modified appropriately before installation can "
@@ -96,21 +97,21 @@ msgstr ""
 
 #. Type: boolean
 #. Description
-#: ../bugzilla3.templates:6001
+#: ../bugzilla4.templates:6001
 msgid ""
 "For each update of this package, a new version of the checksetup_nondebian."
-"pl script is installed; the /usr/share/bugzilla3/debian/pre-checksetup.d "
+"pl script is installed; the /usr/share/bugzilla4/debian/pre-checksetup.d "
 "directory can be used to automatically apply your modifications before "
 "execution."
 msgstr ""
 "Pour chaque mise à jour de Bugzilla, une nouvelle version du script "
 "« checksetup_nondebian.pl » est installée ; le répertoire /usr/share/"
-"bugzilla3/debian/pre-checksetup.d peut être utilisé pour automatiquement "
+"bugzilla4/debian/pre-checksetup.d peut être utilisé pour automatiquement "
 "appliquer vos modifications avant l'exécution."
 
 #. Type: boolean
 #. Description
-#: ../bugzilla3.templates:7001
+#: ../bugzilla4.templates:7001
 msgid "Prompt about customized Status/Resolution at each update?"
 msgstr ""
 "Demander la tenue à jour des champs « Status/Resolution » à chaque mise à "
@@ -118,32 +119,32 @@ msgstr ""
 
 #. Type: boolean
 #. Description
-#: ../bugzilla3.templates:7001
+#: ../bugzilla4.templates:7001
 msgid ""
 "If you modified Status/Resolution fields and created a script within /usr/"
-"share/bugzilla3/debian/pre-checksetup.d to apply changes to /usr/share/"
-"bugzilla3/lib/checksetup_nondebian.pl, you may want to avoid being prompted "
+"share/bugzilla4/debian/pre-checksetup.d to apply changes to /usr/share/"
+"bugzilla4/lib/checksetup_nondebian.pl, you may want to avoid being prompted "
 "at each package upgrade."
 msgstr ""
 "Si vous modifiez les champs « Status/Resolution » et créez un script dans /"
-"usr/share/bugzilla3/debian/pre-checksetup.d pour appliquer des changements à "
-"« /usr/share/bugzilla3/lib/checksetup_nondebian.pl », vous pouvez préférer "
+"usr/share/bugzilla4/debian/pre-checksetup.d pour appliquer des changements à "
+"« /usr/share/bugzilla4/lib/checksetup_nondebian.pl », vous pouvez préférer "
 "ne pas être consulté(e) à chaque mise à jour."
 
 #. Type: boolean
 #. Description
-#: ../bugzilla3.templates:7001
+#: ../bugzilla4.templates:7001
 msgid ""
-"If you accept being prompted, you will have to call /usr/share/bugzilla3/lib/"
+"If you accept being prompted, you will have to call /usr/share/bugzilla4/lib/"
 "checksetup.pl yourself, at each package upgrade, before using Bugzilla."
 msgstr ""
 "Si vous choisissez d'être consulté(e) sur la mise à jour, vous devrez "
-"exécuter le script « /usr/share/bugzilla3/lib/checksetup.pl » vous-même lors "
+"exécuter le script « /usr/share/bugzilla4/lib/checksetup.pl » vous-même lors "
 "de chaque mise à jour avant de redémarrer Bugzilla."
 
 #. Type: boolean
 #. Description
-#: ../bugzilla3.templates:7001
+#: ../bugzilla4.templates:7001
 msgid ""
 "If you did not modify Status/Resolution, you should skip prompting as "
 "checksetup.pl will be started automatically (together with the {pre,post}-"
@@ -155,13 +156,13 @@ msgstr ""
 
 #. Type: error
 #. Description
-#: ../bugzilla3.templates:8001
+#: ../bugzilla4.templates:8001
 msgid "Setup of Bugzilla failed and needs further investigation"
 msgstr "Échec de la configuration de Bugzilla"
 
 #. Type: error
 #. Description
-#: ../bugzilla3.templates:8001
+#: ../bugzilla4.templates:8001
 msgid ""
 "Bugzilla has the \"shutdownhtml\" configuration parameter set, putting it "
 "offline (with logins disabled) until configured."
@@ -172,23 +173,23 @@ msgstr ""
 
 #. Type: error
 #. Description
-#: ../bugzilla3.templates:8001
+#: ../bugzilla4.templates:8001
 msgid ""
-"To set up Bugzilla, run \"dpkg-reconfigure bugzilla3\" (as root) and choose "
+"To set up Bugzilla, run \"dpkg-reconfigure bugzilla4\" (as root) and choose "
 "\"dbconfig-config\"."
 msgstr ""
 "Pour configurer Bugzilla, veuillez exécuter la commande « dpkg-reconfigure "
-"bugzilla3 » et choisissez « dbconfig-config »."
+"bugzilla4 » et choisissez « dbconfig-config »."
 
 #. Type: string
 #. Description
-#: ../bugzilla3.templates:9001
+#: ../bugzilla4.templates:9001
 msgid "Bugzilla downtime message:"
 msgstr "Message de mise hors-ligne de Bugzilla :"
 
 #. Type: string
 #. Description
-#: ../bugzilla3.templates:9001
+#: ../bugzilla4.templates:9001
 msgid ""
 "Please enter the HTML downtime message that should be displayed while "
 "Bugzilla is being reconfigured."
@@ -198,10 +199,10 @@ msgstr ""
 
 #~ msgid ""
 #~ "Setup of Bugzilla could not be finished. Please restart the setup with "
-#~ "'dpkg-reconfigure -p low bugzilla3' as root user."
+#~ "'dpkg-reconfigure -p low bugzilla4' as root user."
 #~ msgstr ""
 #~ "La configuration de Bugzilla ne s'est pas terminée. Veuillez la "
-#~ "recommencer avec la commande « dpkg-reconfigure -p low bugzilla3 » avec "
+#~ "recommencer avec la commande « dpkg-reconfigure -p low bugzilla4 » avec "
 #~ "les privilèges du superutilisateur."
 
 #~ msgid ""
@@ -219,12 +220,12 @@ msgstr ""
 #~ msgstr "Configuration manuelle de Bugzilla"
 
 #~ msgid ""
-#~ "To setup Bugzilla please run /usr/share/bugzilla3/lib/checksetup.pl as "
-#~ "root user or start 'dpkg-reconfigure -p low bugzilla3' and choose "
+#~ "To setup Bugzilla please run /usr/share/bugzilla4/lib/checksetup.pl as "
+#~ "root user or start 'dpkg-reconfigure -p low bugzilla4' and choose "
 #~ "'dbconfig-config' to assist you."
 #~ msgstr ""
 #~ "Pour configurer Bugzilla, veuillez exécuter la commande « /usr/share/"
-#~ "bugzilla3/lib/checksetup.pl » avec les privilèges du superutilisateur ou "
-#~ "bien utilisez la commande « dpkg-reconfigure -p low bugzilla3 » et "
+#~ "bugzilla4/lib/checksetup.pl » avec les privilèges du superutilisateur ou "
+#~ "bien utilisez la commande « dpkg-reconfigure -p low bugzilla4 » et "
 #~ "choisissez l'option « dbconfig-config » pour une configuration assistée "
 #~ "de la base de données."
