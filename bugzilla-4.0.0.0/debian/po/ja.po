@@ -10,158 +10,160 @@
 #         or http://www.debian.org/intl/l10n/po-debconf/README-trans
 #
 #    Developers do not need to manually edit POT or PO files.
-#
-# Luk Claes <luk.claes@ugent.be>, 2005
 # Tamer Saadeh <tamer@tamersaadeh.com>, 2011.
+#
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: bugzilla 3.4.7.0-2\n"
+"Project-Id-Version: bugzilla 3.4.7.0-1\n"
 "Report-Msgid-Bugs-To: bugzilla@packages.debian.org\n"
-"POT-Creation-Date: 2010-09-02 09:43+0200\n"
-"PO-Revision-Date: 2009-07-18 05:55+0200\n"
-"Last-Translator: Paul Gevers <paul@climbing.nl>\n"
-"Language-Team: Debian l10n Dutch <debian-l10n-dutch@lists.debian.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2011-04-13 21:37+0300\n"
+"PO-Revision-Date: 2010-07-25 14:19+0900\n"
+"Last-Translator: Hideki Yamane <henrich@debian.org>\n"
+"Language-Team: Japanese <debian-japanese@lists.debian.org>\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #. Type: password
 #. Description
-#: ../bugzilla4.templates:2001
+#: ../bugzilla4.templates:1001
 msgid "Password confirmation:"
-msgstr "Bevestiging van het wachtwoord:"
+msgstr "パスワードの確認:"
 
 #. Type: string
 #. Description
-#: ../bugzilla4.templates:3001
+#: ../bugzilla4.templates:2001
 msgid "Email address of Bugzilla administrator:"
-msgstr "E-mailadres van de Bugzilla-beheerder:"
+msgstr "Bugzilla 管理者のメールアドレス:"
 
 #. Type: string
 #. Description
-#: ../bugzilla4.templates:3001
+#: ../bugzilla4.templates:2001
 msgid ""
 "Please enter the email address of the Bugzilla administrator; all mail for "
 "the administrator will be sent to this address. This email address is also "
 "used as the administrator login for Bugzilla."
 msgstr ""
-"Wat is het e-mailadres van de Bugzilla-beheerder? Alle post voor de "
-"beheerder zal naar dit adres worden verzonden. Dit e-mailadres wordt ook "
-"gebruikt als de loginnaam voor de Bugzilla-beheerder."
+"Bugzilla の管理者メールアドレスを入力してください。管理者へのメールは全てこの"
+"アドレスへ送られます。このメールアドレスは Bugzilla への管理者ログインにも利"
+"用されます。"
 
 #. Type: string
 #. Description
-#: ../bugzilla4.templates:3001
+#: ../bugzilla4.templates:2001
 msgid ""
 "A valid address must contain exactly one '@', and at least one '.' after the "
 "@. You'll be able to change this setting through Bugzilla's web interface."
 msgstr ""
-"Een correct adres moet precies ????n '@' en ten minste ????n '.' achter de @ "
-"bevatten. U kunt deze instelling later aanpassen in de webinterface van "
-"Bugzilla."
+"正しいアドレスは必ず一つの '@' とその後に少なくとも一つの '.' を含んでいなく"
+"てはなりません。この設定は、後ほど Bugzilla のウェブインターフェイスで変更可"
+"能です。"
 
 #. Type: string
 #. Description
-#: ../bugzilla4.templates:4001
+#: ../bugzilla4.templates:3001
 msgid "Real name of Bugzilla administrator:"
-msgstr "Echte naam van de Bugzilla-beheerder:"
+msgstr "Bugzilla 管理者の本名:"
 
 #. Type: password
 #. Description
-#: ../bugzilla4.templates:5001
+#: ../bugzilla4.templates:4001
 msgid "Password for the Bugzilla administrator account:"
-msgstr "Geef het wachtwoord van de Bugzilla-beheerdersaccount."
+msgstr "Bugzilla 管理者アカウントのパスワード:"
 
 #. Type: password
 #. Description
-#: ../bugzilla4.templates:5001
+#: ../bugzilla4.templates:4001
 msgid "Please enter at least 6 characters."
 msgstr ""
 
 #. Type: boolean
 #. Description
-#: ../bugzilla4.templates:6001
+#: ../bugzilla4.templates:5001
 msgid "Have Status or Resolution values been customized?"
-msgstr "Zijn \"Status\" of \"Resolution\" waarden aangepast?"
+msgstr "ステータス(Status)/解決方法(Resolutions) 欄の値を変更しましたか?"
 
 #. Type: boolean
 #. Description
-#: ../bugzilla4.templates:6001
+#: ../bugzilla4.templates:5001
 msgid ""
 "If values in the Status or Resolution fields have been customized, the "
 "checksetup procedure must be modified appropriately before installation can "
 "continue."
 msgstr ""
-"Als er \"Status\" of \"Resolution\" velden zijn aangepast, dan moet de "
-"checksetup procedure navenant worden aangepast voordat de installatie verder "
-"kan gaan."
+"ステータス(Status)/解決方法(Resolutions) 欄の値をカスタマイズした場合は、イン"
+"ストールを継続する前に checksetup プログラムを正しく編集する必要があります。"
 
 #. Type: boolean
 #. Description
-#: ../bugzilla4.templates:6001
+#: ../bugzilla4.templates:5001
 msgid ""
 "For each update of this package, a new version of the checksetup_nondebian."
 "pl script is installed; the /usr/share/bugzilla4/debian/pre-checksetup.d "
 "directory can be used to automatically apply your modifications before "
 "execution."
 msgstr ""
-"Voor elke bijwerking van dit pakket wordt een nieuwe versie van het "
-"checksetup_nondebian.pl script ge??nstalleerd. U kunt de /usr/share/"
-"bugzilla4/debian/pre-checksetup.d map gebruiken om automatisch uw "
-"wijzigingen toe te passen v????r uitvoering."
+"このパッケージをアップデートするたびに、新しいバージョンの "
+"checksetup_nondebian.pl スクリプトがインストールされます。/usr/share/"
+"bugzilla4/debian/pre-checksetup.d ディレクトリは、実行前に変更した箇所を自動"
+"的に適用するのに利用されます。"
 
 #. Type: boolean
 #. Description
-#: ../bugzilla4.templates:7001
+#: ../bugzilla4.templates:6001
 msgid "Prompt about customized Status/Resolution at each update?"
-msgstr "Vraag naar Status/Resolution aanpassingen bij iedere bijwerking?"
+msgstr ""
+"ステータス(Status)/解決方法(Resolutions) 欄のカスタマイズをアップデートごとに"
+"確認しますか?"
 
 #. Type: boolean
 #. Description
-#: ../bugzilla4.templates:7001
+#: ../bugzilla4.templates:6001
 msgid ""
 "If you modified Status/Resolution fields and created a script within /usr/"
 "share/bugzilla4/debian/pre-checksetup.d to apply changes to /usr/share/"
 "bugzilla4/lib/checksetup_nondebian.pl, you may want to avoid being prompted "
 "at each package upgrade."
 msgstr ""
-"Als u Status/Resolution velden aan heeft gepast en een script aan heeft "
-"gemaakt in /usr/share/bugzilla4/debian/pre-checksetup.d om wijzigingen te "
-"doen aan /usr/share/bugzilla4/lib/checksetup_nondebian.pl, dan wilt u "
-"misschien vragen tijdens iedere bijwerking van dit pakket vermijden."
+"ステータス(Status)/解決方法(Resolutions)欄を変更して、 /usr/share/bugzilla4/"
+"lib/checksetup_nondebian.pl にある変更を適用するよう /usr/share/bugzilla4/"
+"debian/pre-checksetup.d にスクリプトを作成した場合は、パッケージのアップグ"
+"レードのたびに質問されるのを無効にして良いでしょう。"
 
 #. Type: boolean
 #. Description
-#: ../bugzilla4.templates:7001
+#: ../bugzilla4.templates:6001
 msgid ""
 "If you accept being prompted, you will have to call /usr/share/bugzilla4/lib/"
 "checksetup.pl yourself, at each package upgrade, before using Bugzilla."
 msgstr ""
-"Als u vragen accepteert, dan zult u /usr/share/bugzilla4/lib/checksetup.pl "
-"zelf moeten aanroepen na iedere bijwerking, voordat u Bugzilla gebruikt."
+"この質問を有効にした場合は、パッケージのアップグレードのたびに Bugzilla を使"
+"う前に /usr/share/bugzilla4/lib/checksetup.pl を自分で呼び出す必要がありま"
+"す。"
 
 #. Type: boolean
 #. Description
-#: ../bugzilla4.templates:7001
+#: ../bugzilla4.templates:6001
 msgid ""
 "If you did not modify Status/Resolution, you should skip prompting as "
 "checksetup.pl will be started automatically (together with the {pre,post}-"
 "checksetup.d scripts)."
 msgstr ""
-"Als u Status/Resolution niet heeft aangepast, dan dient u vragen te "
-"vermijden, aangezien checksetup.pl automatisch gestart zal worden "
-"(tegelijkertijd met de {pre,post}-checksetup.d scripts)."
+"ステータス(Status)/解決方法(Resolutions) 欄を変更していない場合は、"
+"checksetup.pl が ({pre,post}-checksetup.d スクリプトと共に) 自動的に実行する"
+"よう勧める質問を飛ばしてください。"
 
 #. Type: error
 #. Description
-#: ../bugzilla4.templates:8001
+#: ../bugzilla4.templates:7001
 msgid "Setup of Bugzilla failed and needs further investigation"
 msgstr ""
 
 #. Type: error
 #. Description
-#: ../bugzilla4.templates:8001
+#: ../bugzilla4.templates:7001
 msgid ""
 "Bugzilla has the \"shutdownhtml\" configuration parameter set, putting it "
 "offline (with logins disabled) until configured."
@@ -169,7 +171,7 @@ msgstr ""
 
 #. Type: error
 #. Description
-#: ../bugzilla4.templates:8001
+#: ../bugzilla4.templates:7001
 msgid ""
 "To set up Bugzilla, run \"dpkg-reconfigure bugzilla4\" (as root) and choose "
 "\"dbconfig-config\"."
@@ -177,13 +179,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../bugzilla4.templates:9001
+#: ../bugzilla4.templates:8001
 msgid "Bugzilla downtime message:"
 msgstr ""
 
 #. Type: string
 #. Description
-#: ../bugzilla4.templates:9001
+#: ../bugzilla4.templates:8001
 msgid ""
 "Please enter the HTML downtime message that should be displayed while "
 "Bugzilla is being reconfigured."

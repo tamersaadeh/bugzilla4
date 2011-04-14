@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bugzilla 3.6.2.0-2\n"
 "Report-Msgid-Bugs-To: bugzilla@packages.debian.org\n"
-"POT-Creation-Date: 2010-09-02 09:43+0200\n"
+"POT-Creation-Date: 2011-04-13 21:37+0300\n"
 "PO-Revision-Date: 2010-09-01 21:12+0200\n"
 "Last-Translator: Helge Kreutzmann <debian@helgefjell.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
@@ -20,19 +20,19 @@ msgstr ""
 
 #. Type: password
 #. Description
-#: ../bugzilla4.templates:2001
+#: ../bugzilla4.templates:1001
 msgid "Password confirmation:"
 msgstr "Passwort-Bestätigung:"
 
 #. Type: string
 #. Description
-#: ../bugzilla4.templates:3001
+#: ../bugzilla4.templates:2001
 msgid "Email address of Bugzilla administrator:"
 msgstr "E-Mail-Adresse des Bugzilla-Administrators:"
 
 #. Type: string
 #. Description
-#: ../bugzilla4.templates:3001
+#: ../bugzilla4.templates:2001
 msgid ""
 "Please enter the email address of the Bugzilla administrator; all mail for "
 "the administrator will be sent to this address. This email address is also "
@@ -44,7 +44,7 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../bugzilla4.templates:3001
+#: ../bugzilla4.templates:2001
 msgid ""
 "A valid address must contain exactly one '@', and at least one '.' after the "
 "@. You'll be able to change this setting through Bugzilla's web interface."
@@ -55,31 +55,31 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../bugzilla4.templates:4001
+#: ../bugzilla4.templates:3001
 msgid "Real name of Bugzilla administrator:"
 msgstr "Tatsächlicher Name des Bugzilla-Administrators:"
 
 #. Type: password
 #. Description
-#: ../bugzilla4.templates:5001
+#: ../bugzilla4.templates:4001
 msgid "Password for the Bugzilla administrator account:"
 msgstr "Passwort für das Konto des Bugzilla-Administrators:"
 
 #. Type: password
 #. Description
-#: ../bugzilla4.templates:5001
+#: ../bugzilla4.templates:4001
 msgid "Please enter at least 6 characters."
 msgstr "Bitte geben Sie wenigstens sechs Zeichen ein."
 
 #. Type: boolean
 #. Description
-#: ../bugzilla4.templates:6001
+#: ../bugzilla4.templates:5001
 msgid "Have Status or Resolution values been customized?"
 msgstr "Wurden Werte in »Status« oder »Resolution« angepasst?"
 
 #. Type: boolean
 #. Description
-#: ../bugzilla4.templates:6001
+#: ../bugzilla4.templates:5001
 msgid ""
 "If values in the Status or Resolution fields have been customized, the "
 "checksetup procedure must be modified appropriately before installation can "
@@ -91,7 +91,7 @@ msgstr ""
 
 #. Type: boolean
 #. Description
-#: ../bugzilla4.templates:6001
+#: ../bugzilla4.templates:5001
 msgid ""
 "For each update of this package, a new version of the checksetup_nondebian."
 "pl script is installed; the /usr/share/bugzilla4/debian/pre-checksetup.d "
@@ -105,14 +105,14 @@ msgstr ""
 
 #. Type: boolean
 #. Description
-#: ../bugzilla4.templates:7001
+#: ../bugzilla4.templates:6001
 msgid "Prompt about customized Status/Resolution at each update?"
 msgstr ""
 "Bei jeder Aktualisierung nach angepassten Werten in Status/Resolution fragen?"
 
 #. Type: boolean
 #. Description
-#: ../bugzilla4.templates:7001
+#: ../bugzilla4.templates:6001
 msgid ""
 "If you modified Status/Resolution fields and created a script within /usr/"
 "share/bugzilla4/debian/pre-checksetup.d to apply changes to /usr/share/"
@@ -127,7 +127,7 @@ msgstr ""
 
 #. Type: boolean
 #. Description
-#: ../bugzilla4.templates:7001
+#: ../bugzilla4.templates:6001
 msgid ""
 "If you accept being prompted, you will have to call /usr/share/bugzilla4/lib/"
 "checksetup.pl yourself, at each package upgrade, before using Bugzilla."
@@ -137,7 +137,7 @@ msgstr ""
 
 #. Type: boolean
 #. Description
-#: ../bugzilla4.templates:7001
+#: ../bugzilla4.templates:6001
 msgid ""
 "If you did not modify Status/Resolution, you should skip prompting as "
 "checksetup.pl will be started automatically (together with the {pre,post}-"
@@ -149,14 +149,14 @@ msgstr ""
 
 #. Type: error
 #. Description
-#: ../bugzilla4.templates:8001
+#: ../bugzilla4.templates:7001
 msgid "Setup of Bugzilla failed and needs further investigation"
 msgstr ""
 "Einrichtung von Bugzilla fehlgeschlagen und weitere Untersuchungen notwendig"
 
 #. Type: error
 #. Description
-#: ../bugzilla4.templates:8001
+#: ../bugzilla4.templates:7001
 msgid ""
 "Bugzilla has the \"shutdownhtml\" configuration parameter set, putting it "
 "offline (with logins disabled) until configured."
@@ -166,7 +166,7 @@ msgstr ""
 
 #. Type: error
 #. Description
-#: ../bugzilla4.templates:8001
+#: ../bugzilla4.templates:7001
 msgid ""
 "To set up Bugzilla, run \"dpkg-reconfigure bugzilla4\" (as root) and choose "
 "\"dbconfig-config\"."
@@ -176,13 +176,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../bugzilla4.templates:9001
+#: ../bugzilla4.templates:8001
 msgid "Bugzilla downtime message:"
 msgstr "Wartungsmeldung für Bugzilla:"
 
 #. Type: string
 #. Description
-#: ../bugzilla4.templates:9001
+#: ../bugzilla4.templates:8001
 msgid ""
 "Please enter the HTML downtime message that should be displayed while "
 "Bugzilla is being reconfigured."
