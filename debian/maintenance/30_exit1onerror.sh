@@ -600,7 +600,7 @@ diff -Naur bugzilla-srcdir.orig//editcomponents.cgi bugzilla-srcdir/editcomponen
 diff -Naur bugzilla-srcdir.orig//editflagtypes.cgi bugzilla-srcdir/editflagtypes.cgi
 --- bugzilla-srcdir.orig//editflagtypes.cgi	2010-11-12 10:26:39.456938968 +0100
 +++ bugzilla-srcdir/editflagtypes.cgi	2010-11-12 10:28:19.721916586 +0100
-@@ -73,7 +73,7 @@
+@@ -76,5 +76,5 @@
  if (@categoryActions = grep(/^categoryAction-.+/, $cgi->param())) {
      $categoryActions[0] =~ s/^categoryAction-//;
      processCategoryChange($categoryActions[0], $token);
@@ -609,7 +609,7 @@ diff -Naur bugzilla-srcdir.orig//editflagtypes.cgi bugzilla-srcdir/editflagtypes
  }
  
  if    ($action eq 'list')           { list();           }
-@@ -89,7 +89,7 @@
+@@ -92,1 +92,1 @@
      ThrowCodeError("action_unrecognized", { action => $action });
  }
  
