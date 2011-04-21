@@ -705,7 +705,7 @@ diff -Naur bugzilla-srcdir.orig//editgroups.cgi bugzilla-srcdir/editgroups.cgi
 diff -Naur bugzilla-srcdir.orig//editkeywords.cgi bugzilla-srcdir/editkeywords.cgi
 --- bugzilla-srcdir.orig//editkeywords.cgi	2010-11-12 10:26:24.000917760 +0100
 +++ bugzilla-srcdir/editkeywords.cgi	2010-11-12 10:28:19.721916586 +0100
-@@ -62,7 +62,7 @@
+@@ -65,5 +65,5 @@
      $template->process("admin/keywords/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
  
@@ -714,7 +714,7 @@ diff -Naur bugzilla-srcdir.orig//editkeywords.cgi bugzilla-srcdir/editkeywords.c
  }
      
  
-@@ -74,7 +74,7 @@
+@@ -77,5 +77,5 @@
      $template->process("admin/keywords/create.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
  
@@ -723,7 +723,7 @@ diff -Naur bugzilla-srcdir.orig//editkeywords.cgi bugzilla-srcdir/editkeywords.c
  }
  
  #
-@@ -98,7 +98,7 @@
+@@ -101,5 +101,5 @@
  
      $template->process("admin/keywords/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -732,7 +732,7 @@ diff -Naur bugzilla-srcdir.orig//editkeywords.cgi bugzilla-srcdir/editkeywords.c
  }
  
  
-@@ -118,7 +118,7 @@
+@@ -121,5 +121,5 @@
      print $cgi->header();
      $template->process("admin/keywords/edit.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -741,7 +741,7 @@ diff -Naur bugzilla-srcdir.orig//editkeywords.cgi bugzilla-srcdir/editkeywords.c
  }
  
  
-@@ -148,7 +148,7 @@
+@@ -151,5 +151,5 @@
  
      $template->process("admin/keywords/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -750,7 +750,7 @@ diff -Naur bugzilla-srcdir.orig//editkeywords.cgi bugzilla-srcdir/editkeywords.c
  }
  
  if ($action eq 'del') {
-@@ -161,7 +161,7 @@
+@@ -164,5 +164,5 @@
      print $cgi->header();
      $template->process("admin/keywords/confirm-delete.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -759,7 +759,7 @@ diff -Naur bugzilla-srcdir.orig//editkeywords.cgi bugzilla-srcdir/editkeywords.c
  }
  
  if ($action eq 'delete') {
-@@ -181,7 +181,7 @@
+@@ -184,5 +184,5 @@
  
      $template->process("admin/keywords/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
