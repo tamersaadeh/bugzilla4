@@ -441,51 +441,51 @@ diff -Naur bugzilla-srcdir.orig//contrib/sendbugmail.pl bugzilla-srcdir/contrib/
 diff -Naur bugzilla-srcdir.orig//contrib/syncLDAP.pl bugzilla-srcdir/contrib/syncLDAP.pl
 --- bugzilla-srcdir.orig//contrib/syncLDAP.pl	2010-11-12 10:26:25.208930927 +0100
 +++ bugzilla-srcdir/contrib/syncLDAP.pl	2010-11-12 10:28:19.721916586 +0100
-@@ -70,7 +70,7 @@
-          print " -c No create, don't create users, which are in LDAP but not in Bugzilla\n";
-          print " -q Quiet mode, give less output\n";
-          print "\n";
+@@ -73,10 +73,10 @@
+         print " -c No create, don't create users, which are in LDAP but not in Bugzilla\n";
+         print " -q Quiet mode, give less output\n";
+         print "\n";
 -         exit;
 +         exit(1);
-    }
- }
- 
-@@ -94,7 +94,7 @@
- my $LDAPserver = Bugzilla->params->{"LDAPserver"};
- if ($LDAPserver eq "") {
-    print "No LDAP server defined in bugzilla preferences.\n";
+   }
+}
+
+@@ -97,4 +97,4 @@
+my $LDAPserver = Bugzilla->params->{"LDAPserver"};
+if ($LDAPserver eq "") {
+   print "No LDAP server defined in bugzilla preferences.\n";
 -   exit;
 +   exit(1);
- }
- 
- my $LDAPconn;
-@@ -111,7 +111,7 @@
- 
- if(!$LDAPconn) {
-    print "Connecting to LDAP server failed. Check LDAPserver setting.\n";
+}
+
+my $LDAPconn;
+@@ -114,4 +114,4 @@
+
+if(!$LDAPconn) {
+   print "Connecting to LDAP server failed. Check LDAPserver setting.\n";
 -   exit;
 +   exit(1);
- }
- my $mesg;
- if (Bugzilla->params->{"LDAPbinddn"}) {
-@@ -123,7 +123,7 @@
- }
- if($mesg->code) {
-    print "Binding to LDAP server failed: " . $mesg->error . "\nCheck LDAPbinddn setting.\n";
+}
+my $mesg;
+if (Bugzilla->params->{"LDAPbinddn"}) {
+@@ -126,4 +126,4 @@
+}
+if($mesg->code) {
+   print "Binding to LDAP server failed: " . $mesg->error . "\nCheck LDAPbinddn setting.\n";
 -   exit;
 +   exit(1);
- }
+}
+
+# We've got our anonymous bind;  let's look up the users.
+@@ -138,4 +138,4 @@
  
- # We've got our anonymous bind;  let's look up the users.
-@@ -135,7 +135,7 @@
- 
- if(! $mesg->count) {
-    print "LDAP lookup failure. Check LDAPBaseDN setting.\n";
+if(! $mesg->count) {
+   print "LDAP lookup failure. Check LDAPBaseDN setting.\n";
 -   exit;
 +   exit(1);
- }
-    
- my %val = %{ $mesg->as_struct };
+}
+   
+my %val = %{ $mesg->as_struct };
 diff -Naur bugzilla-srcdir.orig//createaccount.cgi bugzilla-srcdir/createaccount.cgi
 --- bugzilla-srcdir.orig//createaccount.cgi	2010-11-12 10:26:23.609427775 +0100
 +++ bugzilla-srcdir/createaccount.cgi	2010-11-12 10:28:19.721916586 +0100
