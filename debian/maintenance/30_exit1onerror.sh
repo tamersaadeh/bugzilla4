@@ -154,7 +154,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/Auth/Login/CGI.pm bugzilla-srcdir/Bugz
 diff -Naur bugzilla-srcdir.orig//Bugzilla/Bug.pm bugzilla-srcdir/Bugzilla/Bug.pm
 --- bugzilla-srcdir.orig//Bugzilla/Bug.pm	2010-10-28 17:35:01.000000000 +0200
 +++ bugzilla-srcdir/Bugzilla/Bug.pm	2010-11-12 10:28:19.709917012 +0100
-@@ -1379,7 +1379,7 @@
+@@ -1581,13 +1581,13 @@
              print $cgi->header();
              $template->process("bug/process/confirm-duplicate.html.tmpl", $vars)
                || ThrowTemplateError($template->error());
@@ -163,7 +163,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/Bug.pm bugzilla-srcdir/Bugzilla/Bug.pm
          }
      }
  
-@@ -2037,7 +2037,7 @@
+@@ -2460,13 +2460,13 @@
              my $template = Bugzilla->template;
              $template->process("bug/process/verify-new-product.html.tmpl",
                  \%vars) || ThrowTemplateError($template->error());
