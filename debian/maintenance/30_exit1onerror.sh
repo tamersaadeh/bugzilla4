@@ -489,7 +489,7 @@ my %val = %{ $mesg->as_struct };
 diff -Naur bugzilla-srcdir.orig//createaccount.cgi bugzilla-srcdir/createaccount.cgi
 --- bugzilla-srcdir.orig//createaccount.cgi	2010-11-12 10:26:23.609427775 +0100
 +++ bugzilla-srcdir/createaccount.cgi	2010-11-12 10:28:19.721916586 +0100
-@@ -74,7 +74,7 @@
+@@ -77,5 +77,5 @@
  
      $template->process("account/created.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
