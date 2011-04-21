@@ -501,7 +501,7 @@ diff -Naur bugzilla-srcdir.orig//createaccount.cgi bugzilla-srcdir/createaccount
 diff -Naur bugzilla-srcdir.orig//describecomponents.cgi bugzilla-srcdir/describecomponents.cgi
 --- bugzilla-srcdir.orig//describecomponents.cgi	2010-11-12 10:26:23.441434910 +0100
 +++ bugzilla-srcdir/describecomponents.cgi	2010-11-12 10:28:19.721916586 +0100
-@@ -70,7 +70,7 @@
+@@ -73,9 +73,9 @@
  
          $template->process("global/choose-product.html.tmpl", $vars)
            || ThrowTemplateError($template->error());
@@ -513,7 +513,7 @@ diff -Naur bugzilla-srcdir.orig//describecomponents.cgi bugzilla-srcdir/describe
 diff -Naur bugzilla-srcdir.orig//editclassifications.cgi bugzilla-srcdir/editclassifications.cgi
 --- bugzilla-srcdir.orig//editclassifications.cgi	2010-11-12 10:26:24.104928811 +0100
 +++ bugzilla-srcdir/editclassifications.cgi	2010-11-12 10:28:19.721916586 +0100
-@@ -51,7 +51,7 @@
+@@ -54,5 +54,5 @@
      print $cgi->header();
      $template->process("admin/classifications/$action.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -525,7 +525,7 @@ diff -Naur bugzilla-srcdir.orig//editclassifications.cgi bugzilla-srcdir/editcla
 diff -Naur bugzilla-srcdir.orig//editcomponents.cgi bugzilla-srcdir/editcomponents.cgi
 --- bugzilla-srcdir.orig//editcomponents.cgi	2010-11-12 10:26:24.920955767 +0100
 +++ bugzilla-srcdir/editcomponents.cgi	2010-11-12 10:28:19.721916586 +0100
-@@ -80,7 +80,7 @@
+@@ -83,5 +83,5 @@
  
      $template->process("admin/components/select-product.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -534,7 +534,7 @@ diff -Naur bugzilla-srcdir.orig//editcomponents.cgi bugzilla-srcdir/editcomponen
  }
  
  my $product = $user->check_can_admin_product($product_name);
-@@ -94,7 +94,7 @@
+@@ -97,5 +97,5 @@
      $vars->{'product'} = $product;
      $template->process("admin/components/list.html.tmpl", $vars)
          || ThrowTemplateError($template->error());
@@ -543,7 +543,7 @@ diff -Naur bugzilla-srcdir.orig//editcomponents.cgi bugzilla-srcdir/editcomponen
  }
  
  #
-@@ -108,7 +108,7 @@
+@@ -111,5 +111,5 @@
      $vars->{'product'} = $product;
      $template->process("admin/components/create.html.tmpl", $vars)
          || ThrowTemplateError($template->error());
@@ -552,7 +552,7 @@ diff -Naur bugzilla-srcdir.orig//editcomponents.cgi bugzilla-srcdir/editcomponen
  }
  
  #
-@@ -148,7 +148,7 @@
+@@ -151,5 +151,5 @@
  
      $template->process("admin/components/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -561,7 +561,7 @@ diff -Naur bugzilla-srcdir.orig//editcomponents.cgi bugzilla-srcdir/editcomponen
  }
  
  #
-@@ -165,7 +165,7 @@
+@@ -168,5 +168,5 @@
  
      $template->process("admin/components/confirm-delete.html.tmpl", $vars)
          || ThrowTemplateError($template->error());
@@ -570,7 +570,7 @@ diff -Naur bugzilla-srcdir.orig//editcomponents.cgi bugzilla-srcdir/editcomponen
  }
  
  #
-@@ -187,7 +187,7 @@
+@@ -190,5 +190,5 @@
  
      $template->process("admin/components/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -579,7 +579,7 @@ diff -Naur bugzilla-srcdir.orig//editcomponents.cgi bugzilla-srcdir/editcomponen
  }
  
  #
-@@ -209,7 +209,7 @@
+@@ -212,5 +212,5 @@
  
      $template->process("admin/components/edit.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -588,7 +588,7 @@ diff -Naur bugzilla-srcdir.orig//editcomponents.cgi bugzilla-srcdir/editcomponen
  }
  
  #
-@@ -249,7 +249,7 @@
+@@ -252,5 +252,5 @@
  
      $template->process("admin/components/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
