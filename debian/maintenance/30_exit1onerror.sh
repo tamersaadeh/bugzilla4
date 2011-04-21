@@ -1152,32 +1152,36 @@ diff -Naur bugzilla-srcdir.orig//index.cgi bugzilla-srcdir/index.cgi
 diff -Naur bugzilla-srcdir.orig//install-module.pl bugzilla-srcdir/install-module.pl
 --- bugzilla-srcdir.orig//install-module.pl	2010-04-21 00:17:50.000000000 +0200
 +++ bugzilla-srcdir/install-module.pl	2010-11-12 10:28:19.725914769 +0100
-@@ -54,7 +54,7 @@
- if (ON_WINDOWS) {
-     print "\nYou cannot run this script on Windows. Please follow instructions\n";
-     print "given by checksetup.pl to install missing Perl modules.\n\n";
+@@ -60,5 +60,5 @@
+if (ON_ACTIVESTATE) {
+    print <<END;
+You cannot run this script when using ActiveState Perl. Please follow
+the instructions given by checksetup.pl to install missing Perl modules.
+
+END
 -    exit;
 +    exit(1);
- }
- 
- pod2usage({ -verbose => 0 }) if (!%switch && !@ARGV);
-@@ -63,14 +63,14 @@
- 
- if ($switch{'show-config'}) {
-     print Dumper($CPAN::Config);
+}
+
+pod2usage({ -verbose => 0 }) if (!%switch && !@ARGV);
+@@ -69,5 +69,5 @@
+set_cpan_config($switch{'global'});
+
+if ($switch{'show-config'}) {
+    print Dumper($CPAN::Config);
 -    exit;
 +    exit(0);
- }
- 
- check_cpan_requirements($original_dir, \@original_args);
- 
- if ($switch{'shell'}) {
-     CPAN::shell();
+}
+
+check_cpan_requirements($original_dir, \@original_args);
+
+if ($switch{'shell'}) {
+    CPAN::shell();
 -    exit;
 +    exit(0);
- }
- 
- if ($switch{'all'} || $switch{'upgrade-all'}) {
+}
+
+if ($switch{'all'} || $switch{'upgrade-all'}) {
 diff -Naur bugzilla-srcdir.orig//post_bug.cgi bugzilla-srcdir/post_bug.cgi
 --- bugzilla-srcdir.orig//post_bug.cgi	2010-11-12 10:26:39.724915541 +0100
 +++ bugzilla-srcdir/post_bug.cgi	2010-11-12 10:28:19.725914769 +0100
