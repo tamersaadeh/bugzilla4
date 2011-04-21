@@ -205,45 +205,48 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/DB/Mysql.pm bugzilla-srcdir/Bugzilla/D
              }
              else {
                  print "         Press Enter to continue or Ctrl-C to exit...";
-diff -Naur bugzilla-srcdir.orig//Bugzilla/DB.pm bugzilla-srcdir/Bugzilla/DB.pm
---- bugzilla-srcdir.orig//Bugzilla/DB.pm	2010-08-02 03:34:28.000000000 +0200
-+++ bugzilla-srcdir/Bugzilla/DB.pm	2010-11-12 10:28:19.713916614 +0100
-@@ -155,7 +155,7 @@
-     $command
- 
- EOT
--        exit;
-+        exit(1);
-     }
- 
-     # We don't try to connect to the actual database if $db_check is
-@@ -185,7 +185,7 @@
- newer version.
- 
- EOT
--        exit;
-+        exit(1);
-     }
- 
-     print "\n" if $output;
-@@ -216,7 +216,7 @@
-             print STDERR  "The '$db_name' database could not be created.",
-                           " The error returned was:\n\n    $error\n\n",
-                           _bz_connect_error_reasons();
--            exit;
-+            exit(1);
-         }
-     }
- 
-@@ -239,7 +239,7 @@
-         chomp($error);
-         print STDERR "There was an error connecting to $sql_server:\n\n",
-                      "    $error\n\n", _bz_connect_error_reasons();
--        exit;
-+        exit(1);
-     }
-     return $dbh;    
- }
+
+## REMOVED: none-existent in bugzilla 4
+#diff -Naur bugzilla-srcdir.orig//Bugzilla/DB.pm bugzilla-srcdir/Bugzilla/DB.pm
+#--- bugzilla-srcdir.orig//Bugzilla/DB.pm	2010-08-02 03:34:28.000000000 +0200
+#+++ bugzilla-srcdir/Bugzilla/DB.pm	2010-11-12 10:28:19.713916614 +0100
+#@@ -155,7 +155,7 @@
+#     $command
+# 
+# EOT
+#-        exit;
+#+        exit(1);
+#     }
+# 
+#     # We don't try to connect to the actual database if $db_check is
+#@@ -185,7 +185,7 @@
+# newer version.
+# 
+# EOT
+#-        exit;
+#+        exit(1);
+#     }
+# 
+#     print "\n" if $output;
+#@@ -216,7 +216,7 @@
+#             print STDERR  "The '$db_name' database could not be created.",
+#                           " The error returned was:\n\n    $error\n\n",
+#                           _bz_connect_error_reasons();
+#-            exit;
+#+            exit(1);
+#         }
+#     }
+# 
+#@@ -239,7 +239,7 @@
+#         chomp($error);
+#         print STDERR "There was an error connecting to $sql_server:\n\n",
+#                      "    $error\n\n", _bz_connect_error_reasons();
+#-        exit;
+#+        exit(1);
+#     }
+#     return $dbh;    
+# }
+
 diff -Naur bugzilla-srcdir.orig//Bugzilla/Error.pm bugzilla-srcdir/Bugzilla/Error.pm
 --- bugzilla-srcdir.orig//Bugzilla/Error.pm	2010-04-01 03:17:35.000000000 +0200
 +++ bugzilla-srcdir/Bugzilla/Error.pm	2010-11-12 10:28:19.713916614 +0100
