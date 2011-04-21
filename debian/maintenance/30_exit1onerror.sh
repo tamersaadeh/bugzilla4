@@ -102,25 +102,26 @@ diff -Naur bugzilla-srcdir.orig//attachment.cgi bugzilla-srcdir/attachment.cgi
 diff -Naur bugzilla-srcdir.orig//buglist.cgi bugzilla-srcdir/buglist.cgi
 --- bugzilla-srcdir.orig//buglist.cgi	2010-11-12 10:26:39.540915708 +0100
 +++ bugzilla-srcdir/buglist.cgi	2010-11-12 10:28:19.705916808 +0100
-@@ -77,7 +77,7 @@
+@@ -81,5 +81,5 @@
      $vars->{'url'} = $url;
      $template->process("global/message.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
 -    exit;
 +    exit(1);
  }
+
+## REMOVED: none-existant in Bugzilla 4 
+# If query was POSTed, clean the URL from empty parameters and redirect back to
+#@@ -88,7 +88,7 @@
+#     my $uri_length = length($cgi->self_url());
+#     if ($uri_length < CGI_URI_LIMIT) {
+#         print $cgi->redirect(-url => $cgi->self_url());
+#-        exit;
+#+        exit(0);
+#     }
+# }
  
- # If query was POSTed, clean the URL from empty parameters and redirect back to
-@@ -88,7 +88,7 @@
-     my $uri_length = length($cgi->self_url());
-     if ($uri_length < CGI_URI_LIMIT) {
-         print $cgi->redirect(-url => $cgi->self_url());
--        exit;
-+        exit(0);
-     }
- }
- 
-@@ -491,7 +491,7 @@
+@@ -493,9 +493,9 @@
          $vars->{'url'} = "query.cgi";
          $template->process("global/message.html.tmpl", $vars)
            || ThrowTemplateError($template->error());
@@ -129,7 +130,7 @@ diff -Naur bugzilla-srcdir.orig//buglist.cgi bugzilla-srcdir/buglist.cgi
      }
  }
  elsif (($cmdtype eq "doit") && defined $cgi->param('remtype')) {
-@@ -592,7 +592,7 @@
+@@ -596,9 +596,9 @@
          print $cgi->header();
          $template->process("global/message.html.tmpl", $vars)
            || ThrowTemplateError($template->error());
