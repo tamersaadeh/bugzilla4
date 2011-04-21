@@ -389,7 +389,7 @@ sub getAndValidateSeriesIDs {
 diff -Naur bugzilla-srcdir.orig//colchange.cgi bugzilla-srcdir/colchange.cgi
 --- bugzilla-srcdir.orig//colchange.cgi	2010-11-12 10:26:23.916940016 +0100
 +++ bugzilla-srcdir/colchange.cgi	2010-11-12 10:28:19.721916586 +0100
-@@ -164,12 +164,12 @@
+@@ -168,7 +168,7 @@
      }
      else {
        print $cgi->redirect($vars->{'redirect_url'});
