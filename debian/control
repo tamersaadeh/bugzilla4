@@ -2,7 +2,7 @@ Source: bugzilla
 Section: web
 Priority: optional
 Maintainer: Tamer Saadeh <tamer@tamersaadeh.com>
-Build-Depends: po-debconf, debhelper (>= 7.0.50), python-central (>= 0.5), quilt (>= 0.46-7~), fakeroot, gettext
+Build-Depends: po-debconf, debhelper (>= 7.0.50), python-central (>= 0.5), quilt (>= 0.46-7~), fakeroot, gettext, dctrl-tools
 Build-Depends-Indep: debconf (>= 0.9.95) | debconf-2.0
 XS-Python-Version: all
 Standards-Version: 3.9.1
