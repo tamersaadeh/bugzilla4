@@ -621,7 +621,7 @@ diff -Naur bugzilla-srcdir.orig//editflagtypes.cgi bugzilla-srcdir/editflagtypes
 diff -Naur bugzilla-srcdir.orig//editgroups.cgi bugzilla-srcdir/editgroups.cgi
 --- bugzilla-srcdir.orig//editgroups.cgi	2010-11-12 10:26:25.248917828 +0100
 +++ bugzilla-srcdir/editgroups.cgi	2010-11-12 10:28:19.721916586 +0100
-@@ -157,7 +157,7 @@
+@@ -160,5 +160,5 @@
      print $cgi->header();
      $template->process("admin/groups/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -630,7 +630,7 @@ diff -Naur bugzilla-srcdir.orig//editgroups.cgi bugzilla-srcdir/editgroups.cgi
  }
  
  #
-@@ -179,7 +179,7 @@
+@@ -182,5 +182,5 @@
      $template->process("admin/groups/edit.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
  
@@ -639,7 +639,7 @@ diff -Naur bugzilla-srcdir.orig//editgroups.cgi bugzilla-srcdir/editgroups.cgi
  }
  
  #
-@@ -194,7 +194,7 @@
+@@ -197,5 +197,5 @@
      $template->process("admin/groups/create.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
      
@@ -648,7 +648,7 @@ diff -Naur bugzilla-srcdir.orig//editgroups.cgi bugzilla-srcdir/editgroups.cgi
  }
  
  
-@@ -231,7 +231,7 @@
+@@ -234,5 +234,5 @@
      print $cgi->header();
      $template->process("admin/groups/edit.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -657,7 +657,7 @@ diff -Naur bugzilla-srcdir.orig//editgroups.cgi bugzilla-srcdir/editgroups.cgi
  }
  
  #
-@@ -256,7 +256,7 @@
+@@ -259,5 +259,5 @@
      $template->process("admin/groups/delete.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
      
@@ -666,7 +666,7 @@ diff -Naur bugzilla-srcdir.orig//editgroups.cgi bugzilla-srcdir/editgroups.cgi
  }
  
  #
-@@ -282,7 +282,7 @@
+@@ -285,5 +285,5 @@
      print $cgi->header();
      $template->process("admin/groups/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -675,7 +675,7 @@ diff -Naur bugzilla-srcdir.orig//editgroups.cgi bugzilla-srcdir/editgroups.cgi
  }
  
  #
-@@ -304,7 +304,7 @@
+@@ -307,5 +307,5 @@
      print $cgi->header();
      $template->process("admin/groups/edit.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -684,7 +684,7 @@ diff -Naur bugzilla-srcdir.orig//editgroups.cgi bugzilla-srcdir/editgroups.cgi
  }
  
  if ($action eq 'confirm_remove') {
-@@ -314,7 +314,7 @@
+@@ -317,5 +317,5 @@
      $vars->{'token'} = issue_session_token('remove_group_members');
      $template->process('admin/groups/confirm-remove.html.tmpl', $vars)
          || ThrowTemplateError($template->error());
@@ -693,7 +693,7 @@ diff -Naur bugzilla-srcdir.orig//editgroups.cgi bugzilla-srcdir/editgroups.cgi
  }
  
  if ($action eq 'remove_regexp') {
-@@ -354,7 +354,7 @@
+@@ -357,5 +357,5 @@
      $template->process("admin/groups/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
  
