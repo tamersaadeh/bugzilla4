@@ -196,7 +196,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/CGI.pm bugzilla-srcdir/Bugzilla/CGI.pm
 diff -Naur bugzilla-srcdir.orig//Bugzilla/DB/Mysql.pm bugzilla-srcdir/Bugzilla/DB/Mysql.pm
 --- bugzilla-srcdir.orig//Bugzilla/DB/Mysql.pm	2010-02-01 00:39:14.000000000 +0100
 +++ bugzilla-srcdir/Bugzilla/DB/Mysql.pm	2010-11-12 10:28:19.709917012 +0100
-@@ -707,7 +707,7 @@
+@@ -726,17 +726,17 @@
           Re-run checksetup.pl in interactive mode (without an 'answers' file)
           to continue.
  EOT
