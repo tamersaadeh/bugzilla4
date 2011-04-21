@@ -283,7 +283,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/Install/Localconfig.pm bugzilla-srcdir
 diff -Naur bugzilla-srcdir.orig//Bugzilla/Search/Quicksearch.pm bugzilla-srcdir/Bugzilla/Search/Quicksearch.pm
 --- bugzilla-srcdir.orig//Bugzilla/Search/Quicksearch.pm	2010-09-21 20:02:13.000000000 +0200
 +++ bugzilla-srcdir/Bugzilla/Search/Quicksearch.pm	2010-11-12 10:28:19.713916614 +0100
-@@ -230,7 +230,7 @@
+@@ -235,9 +235,9 @@
          # Single bug number; shortcut to show_bug.cgi.
          print $cgi->redirect(
              -uri => correct_urlbase() . "show_bug.cgi?id=$searchstring");
@@ -292,7 +292,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/Search/Quicksearch.pm bugzilla-srcdir/
      }
      else {
          # List of bug numbers.
-@@ -250,7 +250,7 @@
+@@ -256,13 +256,13 @@
          if ($is_alias) {
              print Bugzilla->cgi->redirect(
                  -uri => correct_urlbase() . "show_bug.cgi?id=$alias");
