@@ -1322,26 +1322,10 @@ diff -Naur bugzilla-srcdir.orig//token.cgi bugzilla-srcdir/token.cgi
 diff -Naur bugzilla-srcdir.orig//votes.cgi bugzilla-srcdir/votes.cgi
 --- bugzilla-srcdir.orig//votes.cgi	2010-11-12 10:26:23.872946250 +0100
 +++ bugzilla-srcdir/votes.cgi	2010-11-12 10:28:19.725914769 +0100
-@@ -91,7 +91,7 @@
-     ThrowCodeError("unknown_action", {action => $action});
- }
- 
+@@ -50,1 +50,1 @@
+    ThrowUserError('unknown_action', {action => $action});
+}
+
+print $cgi->redirect('page.cgi?' . $cgi->query_string);
 -exit;
 +exit(0);
- 
- # Display the names of all the people voting for this one bug.
- sub show_bug {
-@@ -242,11 +242,11 @@
-             print $cgi->header();
-             $template->process("bug/votes/delete-all.html.tmpl", $vars)
-               || ThrowTemplateError($template->error());
--            exit();
-+            exit(1);
-         }
-         elsif ($cgi->param('delete_all_votes') == 0) {
-             print $cgi->redirect("votes.cgi");
--            exit();
-+            exit(0);
-         }
-     }
- 
