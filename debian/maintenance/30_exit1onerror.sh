@@ -429,7 +429,7 @@ diff -Naur bugzilla-srcdir.orig//contrib/recode.pl bugzilla-srcdir/contrib/recod
 diff -Naur bugzilla-srcdir.orig//contrib/sendbugmail.pl bugzilla-srcdir/contrib/sendbugmail.pl
 --- bugzilla-srcdir.orig//contrib/sendbugmail.pl	2010-11-12 10:26:25.008928823 +0100
 +++ bugzilla-srcdir/contrib/sendbugmail.pl	2010-11-12 10:28:19.721916586 +0100
-@@ -23,7 +23,7 @@
+@@ -26,5 +26,5 @@
  
  sub usage {
      print STDERR "Usage: $0 bug_id user_email\n";
