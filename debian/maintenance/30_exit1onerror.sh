@@ -37,7 +37,7 @@ exit 0
 diff -Naur bugzilla-srcdir.orig//attachment.cgi bugzilla-srcdir/attachment.cgi
 --- bugzilla-srcdir.orig//attachment.cgi	2010-11-12 10:26:24.156917777 +0100
 +++ bugzilla-srcdir/attachment.cgi	2010-11-12 10:28:19.701917501 +0100
-@@ -130,3 +130,3 @@
+@@ -130,7 +130,7 @@
    ThrowCodeError("unknown_action", { action => $action });
  }
  
@@ -46,7 +46,7 @@ diff -Naur bugzilla-srcdir.orig//attachment.cgi bugzilla-srcdir/attachment.cgi
  
  ################################################################################
  # Data Validation / Security Authorization
-@@ -161 +161 @@
+@@ -161,7 +161,7 @@
          print $cgi->header();
          $template->process("attachment/choose.html.tmpl", $vars) ||
              ThrowTemplateError($template->error());
@@ -55,7 +55,7 @@ diff -Naur bugzilla-srcdir.orig//attachment.cgi bugzilla-srcdir/attachment.cgi
      }
      
      my $attach_id = $cgi->param($param);
-@@ -263 +263 @@
+@@ -263,7 +263,7 @@
                  {
                      # Not a valid token.
                      print $cgi->redirect('-location' => correct_urlbase() . $path);
@@ -64,7 +64,7 @@ diff -Naur bugzilla-srcdir.orig//attachment.cgi bugzilla-srcdir/attachment.cgi
                  }
                  # Change current user without creating cookies.
                  Bugzilla->set_user(new Bugzilla::User($userid));
-@@ -289 +289 @@
+@@ -289,13 +289,13 @@
              if (attachmentIsPublic($attachment)) {
                  # No need for a token; redirect to attachment base.
                  print $cgi->redirect(-location => $attachbase . $path);
@@ -81,7 +81,7 @@ diff -Naur bugzilla-srcdir.orig//attachment.cgi bugzilla-srcdir/attachment.cgi
              }
          }
      } else {
-@@ -465 +465 @@
+@@ -465,7 +465,7 @@
              print $cgi->header();
              $template->process("attachment/cancel-create-dupe.html.tmpl",  $vars)
                  || ThrowTemplateError($template->error());
@@ -90,7 +90,7 @@ diff -Naur bugzilla-srcdir.orig//attachment.cgi bugzilla-srcdir/attachment.cgi
          }
      }
  
-@@ -627 +627 @@
+@@ -627,7 +627,7 @@
                  # Warn the user about the mid-air collision and ask them what to do.
                  $template->process("attachment/midair.html.tmpl", $vars)
                    || ThrowTemplateError($template->error());
@@ -102,7 +102,7 @@ diff -Naur bugzilla-srcdir.orig//attachment.cgi bugzilla-srcdir/attachment.cgi
 diff -Naur bugzilla-srcdir.orig//buglist.cgi bugzilla-srcdir/buglist.cgi
 --- bugzilla-srcdir.orig//buglist.cgi	2010-11-12 10:26:39.540915708 +0100
 +++ bugzilla-srcdir/buglist.cgi	2010-11-12 10:28:19.705916808 +0100
-@@ -81 +81 @@
+@@ -81,6 +81,6 @@
      $vars->{'url'} = $url;
      $template->process("global/message.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -110,7 +110,7 @@ diff -Naur bugzilla-srcdir.orig//buglist.cgi bugzilla-srcdir/buglist.cgi
 +    exit(1);
  }
 
-@@ -493 +493 @@
+@@ -493,7 +493,7 @@
          $vars->{'url'} = "query.cgi";
          $template->process("global/message.html.tmpl", $vars)
            || ThrowTemplateError($template->error());
@@ -119,7 +119,7 @@ diff -Naur bugzilla-srcdir.orig//buglist.cgi bugzilla-srcdir/buglist.cgi
      }
  }
  elsif (($cmdtype eq "doit") && defined $cgi->param('remtype')) {
-@@ -596 +596 @@
+@@ -596,7 +596,7 @@
          print $cgi->header();
          $template->process("global/message.html.tmpl", $vars)
            || ThrowTemplateError($template->error());
@@ -131,7 +131,7 @@ diff -Naur bugzilla-srcdir.orig//buglist.cgi bugzilla-srcdir/buglist.cgi
 diff -Naur bugzilla-srcdir.orig//Bugzilla/Auth/Login/CGI.pm bugzilla-srcdir/Bugzilla/Auth/Login/CGI.pm
 --- bugzilla-srcdir.orig//Bugzilla/Auth/Login/CGI.pm	2010-03-24 00:21:18.000000000 +0100
 +++ bugzilla-srcdir/Bugzilla/Auth/Login/CGI.pm	2010-11-12 10:28:19.705916808 +0100
-@@ -68 +68 @@
+@@ -68,7 +68,7 @@
      $template->process("account/auth/login.html.tmpl",
                         { 'target' => $cgi->url(-relative=>1) }) 
          || ThrowTemplateError($template->error());
@@ -143,7 +143,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/Auth/Login/CGI.pm bugzilla-srcdir/Bugz
 diff -Naur bugzilla-srcdir.orig//Bugzilla/Bug.pm bugzilla-srcdir/Bugzilla/Bug.pm
 --- bugzilla-srcdir.orig//Bugzilla/Bug.pm	2010-10-28 17:35:01.000000000 +0200
 +++ bugzilla-srcdir/Bugzilla/Bug.pm	2010-11-12 10:28:19.709917012 +0100
-@@ -1581 +1581 @@
+@@ -1581,7 +1581,7 @@
              print $cgi->header();
              $template->process("bug/process/confirm-duplicate.html.tmpl", $vars)
                || ThrowTemplateError($template->error());
@@ -152,7 +152,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/Bug.pm bugzilla-srcdir/Bugzilla/Bug.pm
          }
      }
  
-@@ -2460 +2460 @@
+@@ -2460,7 +2460,7 @@
              my $template = Bugzilla->template;
              $template->process("bug/process/verify-new-product.html.tmpl",
                  \%vars) || ThrowTemplateError($template->error());
@@ -164,7 +164,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/Bug.pm bugzilla-srcdir/Bugzilla/Bug.pm
 diff -Naur bugzilla-srcdir.orig//Bugzilla/CGI.pm bugzilla-srcdir/Bugzilla/CGI.pm
 --- bugzilla-srcdir.orig//Bugzilla/CGI.pm	2010-11-03 00:35:08.000000000 +0100
 +++ bugzilla-srcdir/Bugzilla/CGI.pm	2010-11-12 10:28:19.709917012 +0100
-@@ -457 +457 @@
+@@ -457,7 +457,7 @@
  
      # When using XML-RPC with mod_perl, we need the headers sent immediately.
      $self->r->rflush if $ENV{MOD_PERL};
@@ -173,7 +173,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/CGI.pm bugzilla-srcdir/Bugzilla/CGI.pm
  }
  
  # Redirect to the urlbase version of the current URL.
-@@ -480 +480 @@
+@@ -480,7 +480,7 @@
      my $self = shift;
      my $path = $self->url('-path_info' => 1, '-query' => 1, '-relative' => 1);
      print $self->redirect('-location' => correct_urlbase() . $path);
