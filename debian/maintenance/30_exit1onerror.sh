@@ -719,7 +719,7 @@ diff -Naur bugzilla-srcdir.orig//editkeywords.cgi bugzilla-srcdir/editkeywords.c
 diff -Naur bugzilla-srcdir.orig//editmilestones.cgi bugzilla-srcdir/editmilestones.cgi
 --- bugzilla-srcdir.orig//editmilestones.cgi	2010-11-12 10:26:24.040930488 +0100
 +++ bugzilla-srcdir/editmilestones.cgi	2010-11-12 10:28:19.721916586 +0100
-@@ -77 +77 @@
+@@ -77,7 +77,7 @@
  
      $template->process("admin/milestones/select-product.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -728,7 +728,7 @@ diff -Naur bugzilla-srcdir.orig//editmilestones.cgi bugzilla-srcdir/editmileston
  }
  
  my $product = $user->check_can_admin_product($product_name);
-@@ -92 +92 @@
+@@ -92,7 +92,7 @@
      $vars->{'product'} = $product;
      $template->process("admin/milestones/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -737,7 +737,7 @@ diff -Naur bugzilla-srcdir.orig//editmilestones.cgi bugzilla-srcdir/editmileston
  }
  
  #
-@@ -106 +106 @@
+@@ -106,7 +106,7 @@
      $vars->{'product'} = $product;
      $template->process("admin/milestones/create.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -746,7 +746,7 @@ diff -Naur bugzilla-srcdir.orig//editmilestones.cgi bugzilla-srcdir/editmileston
  }
  
  #
-@@ -125 +125 @@
+@@ -125,7 +125,7 @@
      $vars->{'product'} = $product;
      $template->process("admin/milestones/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -755,7 +755,7 @@ diff -Naur bugzilla-srcdir.orig//editmilestones.cgi bugzilla-srcdir/editmileston
  }
  
  #
-@@ -149 +149 @@
+@@ -149,7 +149,7 @@
  
      $template->process("admin/milestones/confirm-delete.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -764,7 +764,7 @@ diff -Naur bugzilla-srcdir.orig//editmilestones.cgi bugzilla-srcdir/editmileston
  }
  
  #
-@@ -170 +170 @@
+@@ -170,7 +170,7 @@
  
      $template->process("admin/milestones/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -773,7 +773,7 @@ diff -Naur bugzilla-srcdir.orig//editmilestones.cgi bugzilla-srcdir/editmileston
  }
  
  #
-@@ -190 +190 @@
+@@ -190,7 +190,7 @@
  
      $template->process("admin/milestones/edit.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -782,7 +782,7 @@ diff -Naur bugzilla-srcdir.orig//editmilestones.cgi bugzilla-srcdir/editmileston
  }
  
  #
-@@ -215 +215 @@
+@@ -215,7 +215,7 @@
      $vars->{'changes'} = $changes;
      $template->process("admin/milestones/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -794,7 +794,7 @@ diff -Naur bugzilla-srcdir.orig//editmilestones.cgi bugzilla-srcdir/editmileston
 diff -Naur bugzilla-srcdir.orig//editproducts.cgi bugzilla-srcdir/editproducts.cgi
 --- bugzilla-srcdir.orig//editproducts.cgi	2010-11-12 10:26:24.176934711 +0100
 +++ bugzilla-srcdir/editproducts.cgi	2010-11-12 10:28:19.721916586 +0100
-@@ -95 +95 @@
+@@ -95,7 +95,7 @@
  
      $template->process("admin/products/list-classifications.html.tmpl", $vars)
          || ThrowTemplateError($template->error());
@@ -803,7 +803,7 @@ diff -Naur bugzilla-srcdir.orig//editproducts.cgi bugzilla-srcdir/editproducts.c
  }
  
  
-@@ -129 +129 @@
+@@ -129,7 +129,7 @@
  
      $template->process("admin/products/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -812,7 +812,7 @@ diff -Naur bugzilla-srcdir.orig//editproducts.cgi bugzilla-srcdir/editproducts.c
  }
  
  
-@@ -158 +158 @@
+@@ -158,7 +158,7 @@
      $template->process("admin/products/create.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
  
@@ -821,7 +821,7 @@ diff -Naur bugzilla-srcdir.orig//editproducts.cgi bugzilla-srcdir/editproducts.c
  }
  
  
-@@ -204 +204 @@
+@@ -204,7 +204,7 @@
  
      $template->process("admin/products/edit.html.tmpl", $vars)
          || ThrowTemplateError($template->error());
@@ -830,7 +830,7 @@ diff -Naur bugzilla-srcdir.orig//editproducts.cgi bugzilla-srcdir/editproducts.c
  }
  
  #
-@@ -226 +226 @@
+@@ -226,7 +226,7 @@
      
      $template->process("admin/products/confirm-delete.html.tmpl", $vars)
          || ThrowTemplateError($template->error());
@@ -839,7 +839,7 @@ diff -Naur bugzilla-srcdir.orig//editproducts.cgi bugzilla-srcdir/editproducts.c
  }
  
  #
-@@ -263 +263 @@
+@@ -263,7 +263,7 @@
          $template->process("admin/products/list.html.tmpl", $vars)
            || ThrowTemplateError($template->error());
      }
@@ -848,7 +848,7 @@ diff -Naur bugzilla-srcdir.orig//editproducts.cgi bugzilla-srcdir/editproducts.c
  }
  
  #
-@@ -284 +284 @@
+@@ -284,7 +284,7 @@
  
      $template->process("admin/products/edit.html.tmpl", $vars)
          || ThrowTemplateError($template->error());
@@ -857,7 +857,7 @@ diff -Naur bugzilla-srcdir.orig//editproducts.cgi bugzilla-srcdir/editproducts.c
  }
  
  #
-@@ -318 +318 @@
+@@ -318,7 +318,7 @@
  
      $template->process("admin/products/updated.html.tmpl", $vars)
          || ThrowTemplateError($template->error());
@@ -866,7 +866,7 @@ diff -Naur bugzilla-srcdir.orig//editproducts.cgi bugzilla-srcdir/editproducts.c
  }
  
  #
-@@ -333 +333 @@
+@@ -333,7 +333,7 @@
  
      $template->process("admin/products/groupcontrol/edit.html.tmpl", $vars)
          || ThrowTemplateError($template->error());
@@ -875,7 +875,7 @@ diff -Naur bugzilla-srcdir.orig//editproducts.cgi bugzilla-srcdir/editproducts.c
  }
  
  #
-@@ -402 +402 @@
+@@ -402,7 +402,7 @@
              $vars->{'mandatory_groups'} = $mandatory_groups;
              $template->process("admin/products/groupcontrol/confirm-edit.html.tmpl", $vars)
                  || ThrowTemplateError($template->error());
@@ -884,7 +884,7 @@ diff -Naur bugzilla-srcdir.orig//editproducts.cgi bugzilla-srcdir/editproducts.c
          }
      }
  
-@@ -427 +427 @@
+@@ -427,7 +427,7 @@
  
      $template->process("admin/products/groupcontrol/updated.html.tmpl", $vars)
          || ThrowTemplateError($template->error());
@@ -896,7 +896,7 @@ diff -Naur bugzilla-srcdir.orig//editproducts.cgi bugzilla-srcdir/editproducts.c
 diff -Naur bugzilla-srcdir.orig//editusers.cgi bugzilla-srcdir/editusers.cgi
 --- bugzilla-srcdir.orig//editusers.cgi	2010-11-12 10:26:23.832939184 +0100
 +++ bugzilla-srcdir/editusers.cgi	2010-11-12 10:28:19.721916586 +0100
-@@ -683 +683 @@
+@@ -683,7 +683,7 @@
      ThrowCodeError('action_unrecognized', $vars);
  }
  
@@ -908,7 +908,7 @@ diff -Naur bugzilla-srcdir.orig//editusers.cgi bugzilla-srcdir/editusers.cgi
 diff -Naur bugzilla-srcdir.orig//editvalues.cgi bugzilla-srcdir/editvalues.cgi
 --- bugzilla-srcdir.orig//editvalues.cgi	2010-11-12 10:26:23.852923792 +0100
 +++ bugzilla-srcdir/editvalues.cgi	2010-11-12 10:28:19.721916586 +0100
-@@ -39 +39 @@
+@@ -39,7 +39,7 @@
      $vars->{'values'} = $vars->{'field'}->legal_values;
      $template->process("admin/fieldvalues/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -917,7 +917,7 @@ diff -Naur bugzilla-srcdir.orig//editvalues.cgi bugzilla-srcdir/editvalues.cgi
  }
  
  ######################################################################
-@@ -85 +85 @@
+@@ -85,7 +85,7 @@
      $vars->{'fields'} = \@field_list;
      $template->process("admin/fieldvalues/select-field.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -926,7 +926,7 @@ diff -Naur bugzilla-srcdir.orig//editvalues.cgi bugzilla-srcdir/editvalues.cgi
  }
  
  # At this point, the field must be defined.
-@@ -108 +108 @@
+@@ -108,7 +108,7 @@
      $vars->{'token'} = issue_session_token('add_field_value');
      $template->process("admin/fieldvalues/create.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -935,7 +935,7 @@ diff -Naur bugzilla-srcdir.orig//editvalues.cgi bugzilla-srcdir/editvalues.cgi
  }
  
  #
-@@ -149 +149 @@
+@@ -149,7 +149,7 @@
      $template->process("admin/fieldvalues/confirm-delete.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
  
@@ -944,7 +944,7 @@ diff -Naur bugzilla-srcdir.orig//editvalues.cgi bugzilla-srcdir/editvalues.cgi
  }
  
  
-@@ -175 +175 @@
+@@ -175,7 +175,7 @@
      $template->process("admin/fieldvalues/edit.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
  
@@ -956,7 +956,7 @@ diff -Naur bugzilla-srcdir.orig//editvalues.cgi bugzilla-srcdir/editvalues.cgi
 diff -Naur bugzilla-srcdir.orig//editversions.cgi bugzilla-srcdir/editversions.cgi
 --- bugzilla-srcdir.orig//editversions.cgi	2010-11-12 10:26:23.461427610 +0100
 +++ bugzilla-srcdir/editversions.cgi	2010-11-12 10:28:19.721916586 +0100
-@@ -80 +80 @@
+@@ -80,7 +80,7 @@
  
      $template->process("admin/versions/select-product.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -965,7 +965,7 @@ diff -Naur bugzilla-srcdir.orig//editversions.cgi bugzilla-srcdir/editversions.c
  }
  
  my $product = $user->check_can_admin_product($product_name);
-@@ -95 +95 @@
+@@ -95,7 +95,7 @@
      $template->process("admin/versions/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
  
@@ -974,7 +974,7 @@ diff -Naur bugzilla-srcdir.orig//editversions.cgi bugzilla-srcdir/editversions.c
  }
  
  #
-@@ -110 +110 @@
+@@ -110,7 +110,7 @@
      $template->process("admin/versions/create.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
  
@@ -983,7 +983,7 @@ diff -Naur bugzilla-srcdir.orig//editversions.cgi bugzilla-srcdir/editversions.c
  }
  
  #
-@@ -129 +129 @@
+@@ -129,7 +129,7 @@
      $template->process("admin/versions/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
  
@@ -992,7 +992,7 @@ diff -Naur bugzilla-srcdir.orig//editversions.cgi bugzilla-srcdir/editversions.c
  }
  
  #
-@@ -147 +147 @@
+@@ -147,7 +147,7 @@
      $template->process("admin/versions/confirm-delete.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
  
@@ -1001,7 +1001,7 @@ diff -Naur bugzilla-srcdir.orig//editversions.cgi bugzilla-srcdir/editversions.c
  }
  
  #
-@@ -169 +169 @@
+@@ -169,7 +169,7 @@
      $template->process("admin/versions/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
  
@@ -1010,7 +1010,7 @@ diff -Naur bugzilla-srcdir.orig//editversions.cgi bugzilla-srcdir/editversions.c
  }
  
  #
-@@ -188 +188 @@
+@@ -188,7 +188,7 @@
      $template->process("admin/versions/edit.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
  
@@ -1019,7 +1019,7 @@ diff -Naur bugzilla-srcdir.orig//editversions.cgi bugzilla-srcdir/editversions.c
  }
  
  #
-@@ -216 +216 @@
+@@ -216,7 +216,7 @@
      $template->process("admin/versions/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
  
@@ -1031,7 +1031,7 @@ diff -Naur bugzilla-srcdir.orig//editversions.cgi bugzilla-srcdir/editversions.c
 diff -Naur bugzilla-srcdir.orig//editworkflow.cgi bugzilla-srcdir/editworkflow.cgi
 --- bugzilla-srcdir.orig//editworkflow.cgi	2010-11-12 10:26:23.952922193 +0100
 +++ bugzilla-srcdir/editworkflow.cgi	2010-11-12 10:28:19.721916586 +0100
-@@ -67 +67 @@
+@@ -67,7 +67,7 @@
  
      $template->process("admin/workflow/$filename.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
