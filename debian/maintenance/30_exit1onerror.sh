@@ -1043,7 +1043,7 @@ diff -Naur bugzilla-srcdir.orig//editworkflow.cgi bugzilla-srcdir/editworkflow.c
 diff -Naur bugzilla-srcdir.orig//email_in.pl bugzilla-srcdir/email_in.pl
 --- bugzilla-srcdir.orig//email_in.pl	2010-11-12 10:26:39.776939670 +0100
 +++ bugzilla-srcdir/email_in.pl	2010-11-12 10:28:19.721916586 +0100
-@@ -395 +395 @@
+@@ -395,7 +395,7 @@
      print STDERR "$msg\n";
      # We exit with a successful value, because we don't want the MTA
      # to *also* send a failure notice.
@@ -1055,7 +1055,7 @@ diff -Naur bugzilla-srcdir.orig//email_in.pl bugzilla-srcdir/email_in.pl
 diff -Naur bugzilla-srcdir.orig//enter_bug.cgi bugzilla-srcdir/enter_bug.cgi
 --- bugzilla-srcdir.orig//enter_bug.cgi	2010-11-12 10:26:23.481418058 +0100
 +++ bugzilla-srcdir/enter_bug.cgi	2010-11-12 10:28:19.725914769 +0100
-@@ -115 +115 @@
+@@ -115,7 +115,7 @@
              print $cgi->header();
              $template->process("global/choose-classification.html.tmpl", $vars)
                 || ThrowTemplateError($template->error());
@@ -1064,7 +1064,7 @@ diff -Naur bugzilla-srcdir.orig//enter_bug.cgi bugzilla-srcdir/enter_bug.cgi
          }
          # If we come here, then there is only one classification available.
          $classification = $classifications[0]->{'object'}->name;
-@@ -147 +147 @@
+@@ -147,7 +147,7 @@
          print $cgi->header();
          $template->process("global/choose-product.html.tmpl", $vars)
            || ThrowTemplateError($template->error());
@@ -1076,7 +1076,7 @@ diff -Naur bugzilla-srcdir.orig//enter_bug.cgi bugzilla-srcdir/enter_bug.cgi
 diff -Naur bugzilla-srcdir.orig//importxml.pl bugzilla-srcdir/importxml.pl
 --- bugzilla-srcdir.orig//importxml.pl	2010-11-12 10:26:39.432919924 +0100
 +++ bugzilla-srcdir/importxml.pl	2010-11-12 10:28:19.725914769 +0100
-@@ -157 +157 @@
+@@ -157,7 +157,7 @@
      my @to = ( $params->{"maintainer"}, $exporter);
      Debug( $message, ERR_LEVEL );
      MailMessage( $subject, $message, @to );
@@ -1088,7 +1088,7 @@ diff -Naur bugzilla-srcdir.orig//importxml.pl bugzilla-srcdir/importxml.pl
 diff -Naur bugzilla-srcdir.orig//index.cgi bugzilla-srcdir/index.cgi
 --- bugzilla-srcdir.orig//index.cgi	2010-11-12 10:26:25.268914746 +0100
 +++ bugzilla-srcdir/index.cgi	2010-11-12 10:28:19.725914769 +0100
-@@ -64 +64 @@
+@@ -64,7 +64,7 @@
      unless (Bugzilla->params->{'urlbase'}) {
          $template->process('welcome-admin.html.tmpl')
            || ThrowTemplateError($template->error());
@@ -1100,7 +1100,7 @@ diff -Naur bugzilla-srcdir.orig//index.cgi bugzilla-srcdir/index.cgi
 diff -Naur bugzilla-srcdir.orig//install-module.pl bugzilla-srcdir/install-module.pl
 --- bugzilla-srcdir.orig//install-module.pl	2010-04-21 00:17:50.000000000 +0200
 +++ bugzilla-srcdir/install-module.pl	2010-11-12 10:28:19.725914769 +0100
-@@ -60 +60 @@
+@@ -60,10 +60,10 @@
 if (ON_ACTIVESTATE) {
     print <<END;
 You cannot run this script when using ActiveState Perl. Please follow
@@ -1112,7 +1112,7 @@ END
 }
 
 pod2usage({ -verbose => 0 }) if (!%switch && !@ARGV);
-@@ -69 +69 @@
+@@ -69,15 +69,15 @@
 set_cpan_config($switch{'global'});
 
 if ($switch{'show-config'}) {
@@ -1133,7 +1133,7 @@ if ($switch{'all'} || $switch{'upgrade-all'}) {
 diff -Naur bugzilla-srcdir.orig//post_bug.cgi bugzilla-srcdir/post_bug.cgi
 --- bugzilla-srcdir.orig//post_bug.cgi	2010-11-12 10:26:39.724915541 +0100
 +++ bugzilla-srcdir/post_bug.cgi	2010-11-12 10:28:19.725914769 +0100
-@@ -80 +80 @@
+@@ -80,7 +80,7 @@
          print $cgi->header();
          $template->process("bug/create/confirm-create-dupe.html.tmpl", $vars)
             || ThrowTemplateError($template->error());
@@ -1142,7 +1142,7 @@ diff -Naur bugzilla-srcdir.orig//post_bug.cgi bugzilla-srcdir/post_bug.cgi
      }
  }    
  
-@@ -98 +98 @@
+@@ -98,7 +98,7 @@
      print $cgi->header();
      $template->process("bug/create/make-template.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -1154,7 +1154,7 @@ diff -Naur bugzilla-srcdir.orig//post_bug.cgi bugzilla-srcdir/post_bug.cgi
 diff -Naur bugzilla-srcdir.orig//process_bug.cgi bugzilla-srcdir/process_bug.cgi
 --- bugzilla-srcdir.orig//process_bug.cgi	2010-11-12 10:26:25.605917372 +0100
 +++ bugzilla-srcdir/process_bug.cgi	2010-11-12 10:28:19.725914769 +0100
-@@ -168 +168 @@
+@@ -168,7 +168,7 @@
          # Warn the user about the mid-air collision and ask them what to do.
          $template->process("bug/process/midair.html.tmpl", $vars)
            || ThrowTemplateError($template->error());
@@ -1163,7 +1163,7 @@ diff -Naur bugzilla-srcdir.orig//process_bug.cgi bugzilla-srcdir/process_bug.cgi
      }
  }
  
-@@ -400 +400 @@
+@@ -400,5 +400,5 @@
         $template->process("bug/show.html.tmpl", $vars)
           || ThrowTemplateError($template->error());
 -    exit;
@@ -1173,7 +1173,7 @@ diff -Naur bugzilla-srcdir.orig//process_bug.cgi bugzilla-srcdir/process_bug.cgi
 diff -Naur bugzilla-srcdir.orig//report.cgi bugzilla-srcdir/report.cgi
 --- bugzilla-srcdir.orig//report.cgi	2010-11-12 10:26:24.124922158 +0100
 +++ bugzilla-srcdir/report.cgi	2010-11-12 10:28:19.725914769 +0100
-@@ -42 +42 @@
+@@ -42,7 +42,7 @@
        ($params ? "&$params" : "");
  
      print $cgi->redirect($location);
@@ -1182,7 +1182,7 @@ diff -Naur bugzilla-srcdir.orig//report.cgi bugzilla-srcdir/report.cgi
  }
  
  use Bugzilla::Search;
-@@ -58 +58 @@
+@@ -58,7 +58,7 @@
      print $cgi->header();
      $template->process("reports/menu.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -1203,7 +1203,7 @@ diff -Naur bugzilla-srcdir.orig//report.cgi bugzilla-srcdir/report.cgi
 diff -Naur bugzilla-srcdir.orig//request.cgi bugzilla-srcdir/request.cgi
 --- bugzilla-srcdir.orig//request.cgi	2010-11-12 10:26:39.704930703 +0100
 +++ bugzilla-srcdir/request.cgi	2010-11-12 10:28:19.725914769 +0100
-@@ -87 +87 @@
+@@ -87,7 +87,7 @@
      $template->process('request/queue.html.tmpl', $vars)
        || ThrowTemplateError($template->error());
  }
@@ -1215,7 +1215,7 @@ diff -Naur bugzilla-srcdir.orig//request.cgi bugzilla-srcdir/request.cgi
 diff -Naur bugzilla-srcdir.orig//sanitycheck.cgi bugzilla-srcdir/sanitycheck.cgi
 --- bugzilla-srcdir.orig//sanitycheck.cgi	2010-11-12 10:26:23.932915961 +0100
 +++ bugzilla-srcdir/sanitycheck.cgi	2010-11-12 10:28:19.725914769 +0100
-@@ -273 +273 @@
+@@ -273,7 +273,7 @@
          $template->process('global/footer.html.tmpl', $vars)
            || ThrowTemplateError($template->error());
      }
@@ -1227,7 +1227,7 @@ diff -Naur bugzilla-srcdir.orig//sanitycheck.cgi bugzilla-srcdir/sanitycheck.cgi
 diff -Naur bugzilla-srcdir.orig//showattachment.cgi bugzilla-srcdir/showattachment.cgi
 --- bugzilla-srcdir.orig//showattachment.cgi	2010-11-12 10:26:24.060929332 +0100
 +++ bugzilla-srcdir/showattachment.cgi	2010-11-12 10:28:19.725914769 +0100
-@@ -37 +37 @@
+@@ -37,4 +37,4 @@
  print $cgi->redirect(-location=>"attachment.cgi?id=$id",
                       -status=>'301 Permanent Redirect');
  
@@ -1236,7 +1236,7 @@ diff -Naur bugzilla-srcdir.orig//showattachment.cgi bugzilla-srcdir/showattachme
 diff -Naur bugzilla-srcdir.orig//show_bug.cgi bugzilla-srcdir/show_bug.cgi
 --- bugzilla-srcdir.orig//show_bug.cgi	2010-11-12 10:26:39.684930804 +0100
 +++ bugzilla-srcdir/show_bug.cgi	2010-11-12 10:28:19.725914769 +0100
-@@ -46 +46 @@
+@@ -46,6 +46,6 @@
      print Bugzilla->cgi->header();
      $template->process("bug/choose.html.tmpl", $vars) ||
        ThrowTemplateError($template->error());
@@ -1248,7 +1248,7 @@ diff -Naur bugzilla-srcdir.orig//show_bug.cgi bugzilla-srcdir/show_bug.cgi
 diff -Naur bugzilla-srcdir.orig//testagent.cgi bugzilla-srcdir/testagent.cgi
 --- bugzilla-srcdir.orig//testagent.cgi	2007-02-11 01:12:24.000000000 +0100
 +++ bugzilla-srcdir/testagent.cgi	2010-11-12 10:28:19.725914769 +0100
-@@ -20 +20 @@
+@@ -20,5 +20,5 @@
  use strict;
  print "content-type:text/plain\n\n";
  print "OK " . ($::ENV{MOD_PERL} || "mod_cgi") . "\n";
@@ -1258,7 +1258,7 @@ diff -Naur bugzilla-srcdir.orig//testagent.cgi bugzilla-srcdir/testagent.cgi
 diff -Naur bugzilla-srcdir.orig//token.cgi bugzilla-srcdir/token.cgi
 --- bugzilla-srcdir.orig//token.cgi	2010-11-12 10:26:39.388920267 +0100
 +++ bugzilla-srcdir/token.cgi	2010-11-12 10:28:19.725914769 +0100
-@@ -169 +169 @@
+@@ -169,7 +169,7 @@
      ThrowCodeError("unknown_action", { action => $action });
  }
  
@@ -1270,7 +1270,7 @@ diff -Naur bugzilla-srcdir.orig//token.cgi bugzilla-srcdir/token.cgi
 diff -Naur bugzilla-srcdir.orig//votes.cgi bugzilla-srcdir/votes.cgi
 --- bugzilla-srcdir.orig//votes.cgi	2010-11-12 10:26:23.872946250 +0100
 +++ bugzilla-srcdir/votes.cgi	2010-11-12 10:28:19.725914769 +0100
-@@ -50 +50 @@
+@@ -50,5 +50,5 @@
     ThrowUserError('unknown_action', {action => $action});
 }
 
