@@ -185,7 +185,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/CGI.pm bugzilla-srcdir/Bugzilla/CGI.pm
 diff -Naur bugzilla-srcdir.orig//Bugzilla/DB/Mysql.pm bugzilla-srcdir/Bugzilla/DB/Mysql.pm
 --- bugzilla-srcdir.orig//Bugzilla/DB/Mysql.pm	2010-02-01 00:39:14.000000000 +0100
 +++ bugzilla-srcdir/Bugzilla/DB/Mysql.pm	2010-11-12 10:28:19.709917012 +0100
-@@ -726 +726 @@
+@@ -726,8 +726,8 @@
           Re-run checksetup.pl in interactive mode (without an 'answers' file)
           to continue.
  EOT
@@ -198,7 +198,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/DB/Mysql.pm bugzilla-srcdir/Bugzilla/D
 diff -Naur bugzilla-srcdir.orig//Bugzilla/Error.pm bugzilla-srcdir/Bugzilla/Error.pm
 --- bugzilla-srcdir.orig//Bugzilla/Error.pm	2010-04-01 03:17:35.000000000 +0200
 +++ bugzilla-srcdir/Bugzilla/Error.pm	2010-11-12 10:28:19.713916614 +0100
-@@ -154 +154 @@
+@@ -154,7 +154,7 @@
              }
          }
      }
@@ -207,7 +207,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/Error.pm bugzilla-srcdir/Bugzilla/Erro
  }
  
  sub ThrowUserError {
-@@ -208 +208 @@
+@@ -208,7 +208,7 @@
          </tt>
  END
      }
@@ -219,7 +219,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/Error.pm bugzilla-srcdir/Bugzilla/Erro
 diff -Naur bugzilla-srcdir.orig//Bugzilla/Install/Localconfig.pm bugzilla-srcdir/Bugzilla/Install/Localconfig.pm
 --- bugzilla-srcdir.orig//Bugzilla/Install/Localconfig.pm	2010-04-22 20:22:50.000000000 +0200
 +++ bugzilla-srcdir/Bugzilla/Install/Localconfig.pm	2010-11-12 10:28:19.713916614 +0100
-@@ -405 +405 @@
+@@ -405,7 +405,7 @@
  checksetup.pl:  $newstuff
  
  EOT
@@ -231,7 +231,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/Install/Localconfig.pm bugzilla-srcdir
 diff -Naur bugzilla-srcdir.orig//Bugzilla/Search/Quicksearch.pm bugzilla-srcdir/Bugzilla/Search/Quicksearch.pm
 --- bugzilla-srcdir.orig//Bugzilla/Search/Quicksearch.pm	2010-09-21 20:02:13.000000000 +0200
 +++ bugzilla-srcdir/Bugzilla/Search/Quicksearch.pm	2010-11-12 10:28:19.713916614 +0100
-@@ -235 +235 @@
+@@ -235,7 +235,7 @@
          # Single bug number; shortcut to show_bug.cgi.
          print $cgi->redirect(
              -uri => correct_urlbase() . "show_bug.cgi?id=$searchstring");
@@ -240,7 +240,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/Search/Quicksearch.pm bugzilla-srcdir/
      }
      else {
          # List of bug numbers.
-@@ -256 +256 @@
+@@ -256,7 +256,7 @@
          if ($is_alias) {
              print Bugzilla->cgi->redirect(
                  -uri => correct_urlbase() . "show_bug.cgi?id=$alias");
@@ -252,7 +252,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/Search/Quicksearch.pm bugzilla-srcdir/
 diff -Naur bugzilla-srcdir.orig//Bugzilla/Token.pm bugzilla-srcdir/Bugzilla/Token.pm
 --- bugzilla-srcdir.orig//Bugzilla/Token.pm	2009-12-31 13:53:19.000000000 +0100
 +++ bugzilla-srcdir/Bugzilla/Token.pm	2010-11-12 10:28:19.717916713 +0100
-@@ -219 +219 @@
+@@ -219,7 +219,7 @@
          print Bugzilla->cgi->header();
          $template->process('global/confirm-action.html.tmpl', $vars)
            || ThrowTemplateError($template->error());
@@ -261,7 +261,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/Token.pm bugzilla-srcdir/Bugzilla/Toke
      }
  
      # If we come here, then the token is valid and not too old.
-@@ -400 +400 @@
+@@ -400,7 +400,7 @@
  
          $template->process('admin/confirm-action.html.tmpl', $vars)
            || ThrowTemplateError($template->error());
@@ -273,7 +273,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/Token.pm bugzilla-srcdir/Bugzilla/Toke
 diff -Naur bugzilla-srcdir.orig//Bugzilla/User.pm bugzilla-srcdir/Bugzilla/User.pm
 --- bugzilla-srcdir.orig//Bugzilla/User.pm	2010-02-18 01:34:42.000000000 +0100
 +++ bugzilla-srcdir/Bugzilla/User.pm	2010-11-12 10:28:19.717916713 +0100
-@@ -1486 +1486 @@
+@@ -1486,7 +1486,7 @@
  
      $template->process("global/confirm-user-match.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -285,7 +285,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/User.pm bugzilla-srcdir/Bugzilla/User.
 diff -Naur bugzilla-srcdir.orig//Bugzilla.pm bugzilla-srcdir/Bugzilla.pm
 --- bugzilla-srcdir.orig//Bugzilla.pm	2010-11-12 10:27:20.664915051 +0100
 +++ bugzilla-srcdir/Bugzilla.pm	2010-11-12 10:28:19.721916586 +0100
-@@ -144 +144 @@
+@@ -144,7 +144,7 @@
         if (!i_am_cgi()
             && grep { $_ eq $script } SHUTDOWNHTML_EXIT_SILENTLY)
         {
@@ -294,7 +294,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla.pm bugzilla-srcdir/Bugzilla.pm
         }
 
         # For security reasons, log out users when Bugzilla is down.
-@@ -178 +178 @@
+@@ -178,7 +178,7 @@
          $template->process("global/message.$extension.tmpl", $vars, \$t_output)
              || ThrowTemplateError($template->error);
          print $t_output . "\n";
@@ -306,7 +306,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla.pm bugzilla-srcdir/Bugzilla.pm
 diff -Naur bugzilla-srcdir.orig//chart.cgi bugzilla-srcdir/chart.cgi
 --- bugzilla-srcdir.orig//chart.cgi	2010-11-12 10:26:25.625929357 +0100
 +++ bugzilla-srcdir/chart.cgi	2010-11-12 10:28:19.721916586 +0100
-@@ -79 +79 @@
+@@ -79,7 +79,7 @@
     my $params = $cgi->canonicalise_query("format", "ctype", "action");
     print $cgi->redirect("query.cgi?format=" . $cgi->param('query_format') .
                                                ($params ? "&$params" : ""));
