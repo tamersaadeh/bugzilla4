@@ -307,12 +307,13 @@ diff -Naur bugzilla-srcdir.orig//chart.cgi bugzilla-srcdir/chart.cgi
 --- bugzilla-srcdir.orig//chart.cgi	2010-11-12 10:26:25.625929357 +0100
 +++ bugzilla-srcdir/chart.cgi	2010-11-12 10:28:19.721916586 +0100
 @@ -79,7 +79,7 @@
+if (grep(/^cmd-/, $cgi->param())) {
     my $params = $cgi->canonicalise_query("format", "ctype", "action");
     print $cgi->redirect("query.cgi?format=" . $cgi->param('query_format') .
                                                ($params ? "&$params" : ""));
 -    exit;
 +    exit(0);
- }
+}
 
 my $action = $cgi->param('action');
 @@ -102,7 +102,7 @@
