@@ -393,7 +393,7 @@ diff -Naur bugzilla-srcdir.orig//contrib/syncLDAP.pl bugzilla-srcdir/contrib/syn
           print " -q Quiet mode, give less output\n";
           print "\n";
 -         exit;
-+         exit(1)(1);
++         exit(1);
     }
  }
  
