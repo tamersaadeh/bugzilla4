@@ -372,7 +372,7 @@ diff -Naur bugzilla-srcdir.orig//config.cgi bugzilla-srcdir/config.cgi
 diff -Naur bugzilla-srcdir.orig//contrib/recode.pl bugzilla-srcdir/contrib/recode.pl
 --- bugzilla-srcdir.orig//contrib/recode.pl	2010-11-12 10:26:25.192920218 +0100
 +++ bugzilla-srcdir/contrib/recode.pl	2010-11-12 10:28:19.721916586 +0100
-@@ -157,7 +157,7 @@
+@@ -154,7 +154,7 @@ Encode::Detect, run the following command:
    $^X install-module.pl Encode::Detect
  
  EOT
