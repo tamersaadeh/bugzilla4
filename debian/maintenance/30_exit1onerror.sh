@@ -1212,7 +1212,7 @@ diff -Naur bugzilla-srcdir.orig//request.cgi bugzilla-srcdir/request.cgi
 diff -Naur bugzilla-srcdir.orig//sanitycheck.cgi bugzilla-srcdir/sanitycheck.cgi
 --- bugzilla-srcdir.orig//sanitycheck.cgi	2010-11-12 10:26:23.932915961 +0100
 +++ bugzilla-srcdir/sanitycheck.cgi	2010-11-12 10:28:19.725914769 +0100
-@@ -273,7 +273,7 @@
+@@ -270,7 +270,7 @@ if ($cgi->param('rescanallBugMail')) {
          $template->process('global/footer.html.tmpl', $vars)
            || ThrowTemplateError($template->error());
      }
