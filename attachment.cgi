@@ -130,7 +130,7 @@ else
   ThrowUserError('unknown_action', {action => $action});
 }
 
-exit;
+exit(0);
 
 ################################################################################
 # Data Validation / Security Authorization
@@ -158,7 +158,7 @@ sub validateID {
         print $cgi->header();
         $template->process("attachment/choose.html.tmpl", $vars) ||
             ThrowTemplateError($template->error());
-        exit;
+        exit(1);
     }
     
     my $attach_id = $cgi->param($param);
@@ -260,7 +260,7 @@ sub view {
                 {
                     # Not a valid token.
                     print $cgi->redirect('-location' => correct_urlbase() . $path);
-                    exit;
+                    exit(0);
                 }
                 # Change current user without creating cookies.
                 Bugzilla->set_user(new Bugzilla::User($userid));
@@ -286,14 +286,14 @@ sub view {
             if (attachmentIsPublic($attachment)) {
                 # No need for a token; redirect to attachment base.
                 print $cgi->redirect(-location => $attachbase . $path);
-                exit;
+                exit(0);
             } else {
                 # Make sure the user can view the attachment.
                 check_can_access($attachment);
                 # Create a token and redirect.
                 my $token = url_quote(issue_session_token($attachment->id));
                 print $cgi->redirect(-location => $attachbase . "$path&t=$token");
-                exit;
+                exit(0);
             }
         }
     } else {
@@ -462,7 +462,7 @@ sub insert {
             print $cgi->header();
             $template->process("attachment/cancel-create-dupe.html.tmpl",  $vars)
                 || ThrowTemplateError($template->error());
-            exit;
+            exit(1);
         }
     }
 
@@ -624,7 +624,7 @@ sub update {
                 # Warn the user about the mid-air collision and ask them what to do.
                 $template->process("attachment/midair.html.tmpl", $vars)
                   || ThrowTemplateError($template->error());
-                exit;
+                exit(1);
             }
         }
     }
