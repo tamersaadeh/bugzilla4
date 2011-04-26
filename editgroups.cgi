@@ -157,7 +157,7 @@ unless ($action) {
     print $cgi->header();
     $template->process("admin/groups/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 #
@@ -179,7 +179,7 @@ if ($action eq 'changeform') {
     $template->process("admin/groups/edit.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
 
-    exit;
+    exit(1);
 }
 
 #
@@ -194,7 +194,7 @@ if ($action eq 'add') {
     $template->process("admin/groups/create.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
     
-    exit;
+    exit(1);
 }
 
 
@@ -231,7 +231,7 @@ if ($action eq 'new') {
     print $cgi->header();
     $template->process("admin/groups/edit.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 #
@@ -256,7 +256,7 @@ if ($action eq 'del') {
     $template->process("admin/groups/delete.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
     
-    exit;
+    exit(1);
 }
 
 #
@@ -282,7 +282,7 @@ if ($action eq 'delete') {
     print $cgi->header();
     $template->process("admin/groups/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 #
@@ -304,7 +304,7 @@ if ($action eq 'postchanges') {
     print $cgi->header();
     $template->process("admin/groups/edit.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 if ($action eq 'confirm_remove') {
@@ -314,7 +314,7 @@ if ($action eq 'confirm_remove') {
     $vars->{'token'} = issue_session_token('remove_group_members');
     $template->process('admin/groups/confirm-remove.html.tmpl', $vars)
         || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 if ($action eq 'remove_regexp') {
@@ -354,7 +354,7 @@ if ($action eq 'remove_regexp') {
     $template->process("admin/groups/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
 
-    exit;
+    exit(1);
 }
 
 # No valid action found
