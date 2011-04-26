@@ -1149,7 +1149,7 @@ diff -Naur bugzilla-srcdir.orig//post_bug.cgi bugzilla-srcdir/post_bug.cgi
 diff -Naur bugzilla-srcdir.orig//process_bug.cgi bugzilla-srcdir/process_bug.cgi
 --- bugzilla-srcdir.orig//process_bug.cgi	2010-11-12 10:26:25.605917372 +0100
 +++ bugzilla-srcdir/process_bug.cgi	2010-11-12 10:28:19.725914769 +0100
-@@ -168,7 +168,7 @@
+@@ -165,7 +165,7 @@ if (defined $cgi->param('delta_ts'))
          # Warn the user about the mid-air collision and ask them what to do.
          $template->process("bug/process/midair.html.tmpl", $vars)
            || ThrowTemplateError($template->error());
@@ -1158,13 +1158,15 @@ diff -Naur bugzilla-srcdir.orig//process_bug.cgi bugzilla-srcdir/process_bug.cgi
      }
  }
  
-@@ -400,5 +400,5 @@
-        $template->process("bug/show.html.tmpl", $vars)
-          || ThrowTemplateError($template->error());
--    exit;
-+    exit(1);
- }
- 
+@@ -397,7 +397,7 @@ elsif ($action eq 'next_bug' or $action eq 'same_bug') {
+         }
+         $template->process("bug/show.html.tmpl", $vars)
+           || ThrowTemplateError($template->error());
+-        exit;
++        exit(1);
+     }
+ } elsif ($action ne 'nothing') {
+     ThrowCodeError("invalid_post_bug_submit_action");
 diff -Naur bugzilla-srcdir.orig//report.cgi bugzilla-srcdir/report.cgi
 --- bugzilla-srcdir.orig//report.cgi	2010-11-12 10:26:24.124922158 +0100
 +++ bugzilla-srcdir/report.cgi	2010-11-12 10:28:19.725914769 +0100
