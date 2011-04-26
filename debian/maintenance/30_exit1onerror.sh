@@ -198,7 +198,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/DB/Mysql.pm bugzilla-srcdir/Bugzilla/D
 diff -Naur bugzilla-srcdir.orig//Bugzilla/Error.pm bugzilla-srcdir/Bugzilla/Error.pm
 --- bugzilla-srcdir.orig//Bugzilla/Error.pm	2010-04-01 03:17:35.000000000 +0200
 +++ bugzilla-srcdir/Bugzilla/Error.pm	2010-11-12 10:28:19.713916614 +0100
-@@ -154,7 +154,7 @@
+@@ -151,7 +151,7 @@ sub _throw_error {
              }
          }
      }
@@ -207,7 +207,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/Error.pm bugzilla-srcdir/Bugzilla/Erro
  }
  
  sub ThrowUserError {
-@@ -208,7 +208,7 @@
+@@ -205,7 +205,7 @@ sub ThrowTemplateError {
          </tt>
  END
      }
