@@ -895,8 +895,8 @@ diff -Naur bugzilla-srcdir.orig//editproducts.cgi bugzilla-srcdir/editproducts.c
 diff -Naur bugzilla-srcdir.orig//editusers.cgi bugzilla-srcdir/editusers.cgi
 --- bugzilla-srcdir.orig//editusers.cgi	2010-11-12 10:26:23.832939184 +0100
 +++ bugzilla-srcdir/editusers.cgi	2010-11-12 10:28:19.721916586 +0100
-@@ -683,7 +683,7 @@
-     ThrowCodeError('action_unrecognized', $vars);
+@@ -678,7 +678,7 @@ if ($action eq 'search') {
+     ThrowUserError('unknown_action', {action => $action});
  }
  
 -exit;
