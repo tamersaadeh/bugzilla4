@@ -1233,7 +1233,7 @@ diff -Naur bugzilla-srcdir.orig//showattachment.cgi bugzilla-srcdir/showattachme
 diff -Naur bugzilla-srcdir.orig//show_bug.cgi bugzilla-srcdir/show_bug.cgi
 --- bugzilla-srcdir.orig//show_bug.cgi	2010-11-12 10:26:39.684930804 +0100
 +++ bugzilla-srcdir/show_bug.cgi	2010-11-12 10:28:19.725914769 +0100
-@@ -46,6 +46,6 @@
+@@ -46,7 +46,7 @@ if (!$cgi->param('id') && $single) {
      print Bugzilla->cgi->header();
      $template->process("bug/choose.html.tmpl", $vars) ||
        ThrowTemplateError($template->error());
