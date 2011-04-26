@@ -507,11 +507,11 @@ sub _update_votes {
             print $cgi->header();
             $template->process("voting/delete-all.html.tmpl", $vars)
               || ThrowTemplateError($template->error());
-            exit;
+            exit(1);
         }
         elsif ($cgi->param('delete_all_votes') == 0) {
             print $cgi->redirect("page.cgi?id=voting/user.html");
-            exit;
+            exit(0);
         }
     }
 
