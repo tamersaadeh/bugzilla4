@@ -151,7 +151,7 @@ sub _throw_error {
             }
         }
     }
-    exit;
+    exit(1);
 }
 
 sub ThrowUserError {
@@ -205,7 +205,7 @@ sub ThrowTemplateError {
         </tt>
 END
     }
-    exit;
+    exit(1);
 }
 
 1;
