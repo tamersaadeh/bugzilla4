@@ -652,7 +652,7 @@ diff -Naur bugzilla-srcdir.orig//editgroups.cgi bugzilla-srcdir/editgroups.cgi
 diff -Naur bugzilla-srcdir.orig//editkeywords.cgi bugzilla-srcdir/editkeywords.cgi
 --- bugzilla-srcdir.orig//editkeywords.cgi	2010-11-12 10:26:24.000917760 +0100
 +++ bugzilla-srcdir/editkeywords.cgi	2010-11-12 10:28:19.721916586 +0100
-@@ -65,7 +65,7 @@
+@@ -62,7 +62,7 @@ if ($action eq "") {
      $template->process("admin/keywords/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
  
@@ -661,7 +661,7 @@ diff -Naur bugzilla-srcdir.orig//editkeywords.cgi bugzilla-srcdir/editkeywords.c
  }
      
  
-@@ -77,7 +77,7 @@
+@@ -74,7 +74,7 @@ if ($action eq 'add') {
      $template->process("admin/keywords/create.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
  
@@ -670,7 +670,7 @@ diff -Naur bugzilla-srcdir.orig//editkeywords.cgi bugzilla-srcdir/editkeywords.c
  }
  
  #
-@@ -101,7 +101,7 @@
+@@ -98,7 +98,7 @@ if ($action eq 'new') {
  
      $template->process("admin/keywords/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -679,7 +679,7 @@ diff -Naur bugzilla-srcdir.orig//editkeywords.cgi bugzilla-srcdir/editkeywords.c
  }
  
  
-@@ -121,7 +121,7 @@
+@@ -118,7 +118,7 @@ if ($action eq 'edit') {
      print $cgi->header();
      $template->process("admin/keywords/edit.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -688,7 +688,7 @@ diff -Naur bugzilla-srcdir.orig//editkeywords.cgi bugzilla-srcdir/editkeywords.c
  }
  
  
-@@ -151,7 +151,7 @@
+@@ -148,7 +148,7 @@ if ($action eq 'update') {
  
      $template->process("admin/keywords/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -697,7 +697,7 @@ diff -Naur bugzilla-srcdir.orig//editkeywords.cgi bugzilla-srcdir/editkeywords.c
  }
  
  if ($action eq 'del') {
-@@ -164,7 +164,7 @@
+@@ -161,7 +161,7 @@ if ($action eq 'del') {
      print $cgi->header();
      $template->process("admin/keywords/confirm-delete.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -706,7 +706,7 @@ diff -Naur bugzilla-srcdir.orig//editkeywords.cgi bugzilla-srcdir/editkeywords.c
  }
  
  if ($action eq 'delete') {
-@@ -184,7 +184,7 @@
+@@ -181,7 +181,7 @@ if ($action eq 'delete') {
  
      $template->process("admin/keywords/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -714,7 +714,7 @@ diff -Naur bugzilla-srcdir.orig//editkeywords.cgi bugzilla-srcdir/editkeywords.c
 +    exit(1);
  }
  
- ThrowCodeError("action_unrecognized", $vars);
+ ThrowUserError('unknown_action', {action => $action});
 diff -Naur bugzilla-srcdir.orig//editmilestones.cgi bugzilla-srcdir/editmilestones.cgi
 --- bugzilla-srcdir.orig//editmilestones.cgi	2010-11-12 10:26:24.040930488 +0100
 +++ bugzilla-srcdir/editmilestones.cgi	2010-11-12 10:28:19.721916586 +0100
