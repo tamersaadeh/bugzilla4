@@ -1273,3 +1273,20 @@ diff -Naur bugzilla-srcdir.orig//votes.cgi bugzilla-srcdir/votes.cgi
  print $cgi->redirect('page.cgi?' . $cgi->query_string);
 -exit;
 +exit(0);
+diff -Naur bugzilla-srcdir.orig//extensions/Voting/Extension.pm bugzilla-srcdir/extensions/Voting/Extension.pm
+--- bugzilla-srcdir.orig//extensions/Voting/Extension.pm	2010-11-12 10:26:23.872946250 +0100
++++ bugzilla-srcdir/extensions/Voting/Extension.pm	2010-11-12 10:28:19.725914769 +0100
+@@ -507,11 +507,11 @@ sub _update_votes {
+             print $cgi->header();
+             $template->process("voting/delete-all.html.tmpl", $vars)
+               || ThrowTemplateError($template->error());
+-            exit;
++            exit(1);
+         }
+         elsif ($cgi->param('delete_all_votes') == 0) {
+             print $cgi->redirect("page.cgi?id=voting/user.html");
+-            exit;
++            exit(0);
+         }
+     }
+ 
