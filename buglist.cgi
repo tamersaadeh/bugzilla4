@@ -78,7 +78,7 @@ if (grep { $_ =~ /^cmd\-/ } $cgi->param()) {
     $vars->{'url'} = $url;
     $template->process("global/message.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 $cgi->redirect_search_url();
@@ -490,7 +490,7 @@ if ($cmdtype eq "dorem") {
         $vars->{'url'} = "buglist.cgi?newquery=" . url_quote($buffer) . "&cmdtype=doit&remtype=asnamed&newqueryname=" . url_quote($qname);
         $template->process("global/message.html.tmpl", $vars)
           || ThrowTemplateError($template->error());
-        exit;
+        exit(1);
     }
 }
 elsif (($cmdtype eq "doit") && defined $cgi->param('remtype')) {
@@ -593,7 +593,7 @@ elsif (($cmdtype eq "doit") && defined $cgi->param('remtype')) {
         print $cgi->header();
         $template->process("global/message.html.tmpl", $vars)
           || ThrowTemplateError($template->error());
-        exit;
+        exit(1);
     }
 }
 
