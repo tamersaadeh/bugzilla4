@@ -285,16 +285,16 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/User.pm bugzilla-srcdir/Bugzilla/User.
 diff -Naur bugzilla-srcdir.orig//Bugzilla.pm bugzilla-srcdir/Bugzilla.pm
 --- bugzilla-srcdir.orig//Bugzilla.pm	2010-11-12 10:27:20.664915051 +0100
 +++ bugzilla-srcdir/Bugzilla.pm	2010-11-12 10:28:19.721916586 +0100
-@@ -144,7 +144,7 @@
-        if (!i_am_cgi()
-            && grep { $_ eq $script } SHUTDOWNHTML_EXIT_SILENTLY)
-        {
+@@ -141,7 +141,7 @@ sub init_page {
+         if (!i_am_cgi()
+             && grep { $_ eq $script } SHUTDOWNHTML_EXIT_SILENTLY)
+         {
 -            exit;
 +            exit(0);
-        }
-
-        # For security reasons, log out users when Bugzilla is down.
-@@ -178,7 +178,7 @@
+         }
+ 
+         # For security reasons, log out users when Bugzilla is down.
+@@ -175,7 +175,7 @@ sub init_page {
          $template->process("global/message.$extension.tmpl", $vars, \$t_output)
              || ThrowTemplateError($template->error);
          print $t_output . "\n";
