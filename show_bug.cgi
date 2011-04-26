@@ -46,7 +46,7 @@ if (!$cgi->param('id') && $single) {
     print Bugzilla->cgi->header();
     $template->process("bug/choose.html.tmpl", $vars) ||
       ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 my $format = $template->get_format("bug/show", scalar $cgi->param('format'), 
