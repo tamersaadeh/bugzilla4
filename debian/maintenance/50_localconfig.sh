@@ -17,7 +17,7 @@ exit 0
 
 --- a/Bugzilla/Install/Localconfig.pm	2010-10-27 14:23:52.000000000 +0200
 +++ b/Bugzilla/Install/Localconfig.pm	2010-10-27 14:26:17.000000000 +0200
-@@ -323,7 +323,7 @@
+@@ -320,7 +320,7 @@ sub update_localconfig {
  
      my $output      = $params->{output} || 0;
      my $answer      = Bugzilla->installation_answers;
@@ -26,7 +26,7 @@ exit 0
  
      my @new_vars;
      foreach my $var (LOCALCONFIG_VARS) {
-@@ -393,7 +393,7 @@
+@@ -390,7 +390,7 @@ EOT
                                       ["*$var->{name}"]);
     }
  
