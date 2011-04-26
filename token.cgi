@@ -166,7 +166,7 @@ if ($action eq 'reqpw') {
     ThrowUserError('unknown_action', {action => $action});
 }
 
-exit;
+exit(0);
 
 ################################################################################
 # Functions
