@@ -131,7 +131,7 @@ diff -Naur bugzilla-srcdir.orig//buglist.cgi bugzilla-srcdir/buglist.cgi
 diff -Naur bugzilla-srcdir.orig//Bugzilla/Auth/Login/CGI.pm bugzilla-srcdir/Bugzilla/Auth/Login/CGI.pm
 --- bugzilla-srcdir.orig//Bugzilla/Auth/Login/CGI.pm	2010-03-24 00:21:18.000000000 +0100
 +++ bugzilla-srcdir/Bugzilla/Auth/Login/CGI.pm	2010-11-12 10:28:19.705916808 +0100
-@@ -68,7 +68,7 @@
+@@ -65,7 +65,7 @@ sub fail_nodata {
      $template->process("account/auth/login.html.tmpl",
                         { 'target' => $cgi->url(-relative=>1) }) 
          || ThrowTemplateError($template->error());
