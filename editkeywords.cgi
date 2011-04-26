@@ -62,7 +62,7 @@ if ($action eq "") {
     $template->process("admin/keywords/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
 
-    exit;
+    exit(1);
 }
     
 
@@ -74,7 +74,7 @@ if ($action eq 'add') {
     $template->process("admin/keywords/create.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
 
-    exit;
+    exit(1);
 }
 
 #
@@ -98,7 +98,7 @@ if ($action eq 'new') {
 
     $template->process("admin/keywords/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 
@@ -118,7 +118,7 @@ if ($action eq 'edit') {
     print $cgi->header();
     $template->process("admin/keywords/edit.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 
@@ -148,7 +148,7 @@ if ($action eq 'update') {
 
     $template->process("admin/keywords/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 if ($action eq 'del') {
@@ -161,7 +161,7 @@ if ($action eq 'del') {
     print $cgi->header();
     $template->process("admin/keywords/confirm-delete.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 if ($action eq 'delete') {
@@ -181,7 +181,7 @@ if ($action eq 'delete') {
 
     $template->process("admin/keywords/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 ThrowUserError('unknown_action', {action => $action});
