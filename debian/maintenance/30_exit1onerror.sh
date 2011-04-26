@@ -448,7 +448,7 @@ diff -Naur bugzilla-srcdir.orig//createaccount.cgi bugzilla-srcdir/createaccount
 diff -Naur bugzilla-srcdir.orig//describecomponents.cgi bugzilla-srcdir/describecomponents.cgi
 --- bugzilla-srcdir.orig//describecomponents.cgi	2010-11-12 10:26:23.441434910 +0100
 +++ bugzilla-srcdir/describecomponents.cgi	2010-11-12 10:28:19.721916586 +0100
-@@ -73,7 +73,7 @@
+@@ -70,7 +70,7 @@ unless ($product && $user->can_access_product($product->name)) {
  
          $template->process("global/choose-product.html.tmpl", $vars)
            || ThrowTemplateError($template->error());
