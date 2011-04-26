@@ -1075,7 +1075,7 @@ diff -Naur bugzilla-srcdir.orig//enter_bug.cgi bugzilla-srcdir/enter_bug.cgi
 diff -Naur bugzilla-srcdir.orig//importxml.pl bugzilla-srcdir/importxml.pl
 --- bugzilla-srcdir.orig//importxml.pl	2010-11-12 10:26:39.432919924 +0100
 +++ bugzilla-srcdir/importxml.pl	2010-11-12 10:28:19.725914769 +0100
-@@ -157,7 +157,7 @@
+@@ -163,7 +163,7 @@ sub Error {
      my @to = ( $params->{"maintainer"}, $exporter);
      Debug( $message, ERR_LEVEL );
      MailMessage( $subject, $message, @to );
