@@ -1267,10 +1267,9 @@ diff -Naur bugzilla-srcdir.orig//token.cgi bugzilla-srcdir/token.cgi
 diff -Naur bugzilla-srcdir.orig//votes.cgi bugzilla-srcdir/votes.cgi
 --- bugzilla-srcdir.orig//votes.cgi	2010-11-12 10:26:23.872946250 +0100
 +++ bugzilla-srcdir/votes.cgi	2010-11-12 10:28:19.725914769 +0100
-@@ -50,5 +50,5 @@
-    ThrowUserError('unknown_action', {action => $action});
-}
-
-print $cgi->redirect('page.cgi?' . $cgi->query_string);
+@@ -47,4 +47,4 @@ else {
+ }
+ 
+ print $cgi->redirect('page.cgi?' . $cgi->query_string);
 -exit;
 +exit(0);
