@@ -436,7 +436,7 @@ diff -Naur bugzilla-srcdir.orig//contrib/syncLDAP.pl bugzilla-srcdir/contrib/syn
 diff -Naur bugzilla-srcdir.orig//createaccount.cgi bugzilla-srcdir/createaccount.cgi
 --- bugzilla-srcdir.orig//createaccount.cgi	2010-11-12 10:26:23.609427775 +0100
 +++ bugzilla-srcdir/createaccount.cgi	2010-11-12 10:28:19.721916586 +0100
-@@ -77,7 +77,7 @@
+@@ -74,7 +74,7 @@ if (defined($login)) {
  
      $template->process("account/created.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
