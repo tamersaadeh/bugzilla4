@@ -460,7 +460,7 @@ diff -Naur bugzilla-srcdir.orig//describecomponents.cgi bugzilla-srcdir/describe
 diff -Naur bugzilla-srcdir.orig//editclassifications.cgi bugzilla-srcdir/editclassifications.cgi
 --- bugzilla-srcdir.orig//editclassifications.cgi	2010-11-12 10:26:24.104928811 +0100
 +++ bugzilla-srcdir/editclassifications.cgi	2010-11-12 10:28:19.721916586 +0100
-@@ -54,7 +54,7 @@
+@@ -51,7 +51,7 @@ sub LoadTemplate {
      print $cgi->header();
      $template->process("admin/classifications/$action.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
