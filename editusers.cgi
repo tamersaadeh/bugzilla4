@@ -678,7 +678,7 @@ if ($action eq 'search') {
     ThrowUserError('unknown_action', {action => $action});
 }
 
-exit;
+exit(0);
 
 ###########################################################################
 # Helpers
