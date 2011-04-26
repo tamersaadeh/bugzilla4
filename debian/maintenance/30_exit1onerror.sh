@@ -718,7 +718,7 @@ diff -Naur bugzilla-srcdir.orig//editkeywords.cgi bugzilla-srcdir/editkeywords.c
 diff -Naur bugzilla-srcdir.orig//editmilestones.cgi bugzilla-srcdir/editmilestones.cgi
 --- bugzilla-srcdir.orig//editmilestones.cgi	2010-11-12 10:26:24.040930488 +0100
 +++ bugzilla-srcdir/editmilestones.cgi	2010-11-12 10:28:19.721916586 +0100
-@@ -77,7 +77,7 @@
+@@ -77,7 +77,7 @@ unless ($product_name) {
  
      $template->process("admin/milestones/select-product.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -727,7 +727,7 @@ diff -Naur bugzilla-srcdir.orig//editmilestones.cgi bugzilla-srcdir/editmileston
  }
  
  my $product = $user->check_can_admin_product($product_name);
-@@ -92,7 +92,7 @@
+@@ -92,7 +92,7 @@ unless ($action) {
      $vars->{'product'} = $product;
      $template->process("admin/milestones/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -736,7 +736,7 @@ diff -Naur bugzilla-srcdir.orig//editmilestones.cgi bugzilla-srcdir/editmileston
  }
  
  #
-@@ -106,7 +106,7 @@
+@@ -106,7 +106,7 @@ if ($action eq 'add') {
      $vars->{'product'} = $product;
      $template->process("admin/milestones/create.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -745,7 +745,7 @@ diff -Naur bugzilla-srcdir.orig//editmilestones.cgi bugzilla-srcdir/editmileston
  }
  
  #
-@@ -125,7 +125,7 @@
+@@ -125,7 +125,7 @@ if ($action eq 'new') {
      $vars->{'product'} = $product;
      $template->process("admin/milestones/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -754,7 +754,7 @@ diff -Naur bugzilla-srcdir.orig//editmilestones.cgi bugzilla-srcdir/editmileston
  }
  
  #
-@@ -149,7 +149,7 @@
+@@ -149,7 +149,7 @@ if ($action eq 'del') {
  
      $template->process("admin/milestones/confirm-delete.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -763,7 +763,7 @@ diff -Naur bugzilla-srcdir.orig//editmilestones.cgi bugzilla-srcdir/editmileston
  }
  
  #
-@@ -170,7 +170,7 @@
+@@ -170,7 +170,7 @@ if ($action eq 'delete') {
  
      $template->process("admin/milestones/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -772,7 +772,7 @@ diff -Naur bugzilla-srcdir.orig//editmilestones.cgi bugzilla-srcdir/editmileston
  }
  
  #
-@@ -190,7 +190,7 @@
+@@ -190,7 +190,7 @@ if ($action eq 'edit') {
  
      $template->process("admin/milestones/edit.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -781,7 +781,7 @@ diff -Naur bugzilla-srcdir.orig//editmilestones.cgi bugzilla-srcdir/editmileston
  }
  
  #
-@@ -215,7 +215,7 @@
+@@ -218,7 +218,7 @@ if ($action eq 'update') {
      $vars->{'changes'} = $changes;
      $template->process("admin/milestones/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -789,7 +789,7 @@ diff -Naur bugzilla-srcdir.orig//editmilestones.cgi bugzilla-srcdir/editmileston
 +    exit(1);
  }
  
- #
+ # No valid action found
 diff -Naur bugzilla-srcdir.orig//editproducts.cgi bugzilla-srcdir/editproducts.cgi
 --- bugzilla-srcdir.orig//editproducts.cgi	2010-11-12 10:26:24.176934711 +0100
 +++ bugzilla-srcdir/editproducts.cgi	2010-11-12 10:28:19.721916586 +0100
