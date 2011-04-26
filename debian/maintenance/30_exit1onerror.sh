@@ -102,16 +102,17 @@ diff -Naur bugzilla-srcdir.orig//attachment.cgi bugzilla-srcdir/attachment.cgi
 diff -Naur bugzilla-srcdir.orig//buglist.cgi bugzilla-srcdir/buglist.cgi
 --- bugzilla-srcdir.orig//buglist.cgi	2010-11-12 10:26:39.540915708 +0100
 +++ bugzilla-srcdir/buglist.cgi	2010-11-12 10:28:19.705916808 +0100
-@@ -81,6 +81,6 @@
+@@ -78,7 +78,7 @@ if (grep { $_ =~ /^cmd\-/ } $cgi->param()) {
      $vars->{'url'} = $url;
      $template->process("global/message.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
 -    exit;
 +    exit(1);
  }
-
-@@ -493,7 +493,7 @@
-         $vars->{'url'} = "query.cgi";
+ 
+ $cgi->redirect_search_url();
+@@ -490,7 +490,7 @@ if ($cmdtype eq "dorem") {
+         $vars->{'url'} = "buglist.cgi?newquery=" . url_quote($buffer) . "&cmdtype=doit&remtype=asnamed&newqueryname=" . url_quote($qname);
          $template->process("global/message.html.tmpl", $vars)
            || ThrowTemplateError($template->error());
 -        exit;
@@ -119,7 +120,7 @@ diff -Naur bugzilla-srcdir.orig//buglist.cgi bugzilla-srcdir/buglist.cgi
      }
  }
  elsif (($cmdtype eq "doit") && defined $cgi->param('remtype')) {
-@@ -596,7 +596,7 @@
+@@ -593,7 +593,7 @@ elsif (($cmdtype eq "doit") && defined $cgi->param('remtype')) {
          print $cgi->header();
          $template->process("global/message.html.tmpl", $vars)
            || ThrowTemplateError($template->error());
