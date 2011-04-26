@@ -273,7 +273,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/Token.pm bugzilla-srcdir/Bugzilla/Toke
 diff -Naur bugzilla-srcdir.orig//Bugzilla/User.pm bugzilla-srcdir/Bugzilla/User.pm
 --- bugzilla-srcdir.orig//Bugzilla/User.pm	2010-02-18 01:34:42.000000000 +0100
 +++ bugzilla-srcdir/Bugzilla/User.pm	2010-11-12 10:28:19.717916713 +0100
-@@ -1486,7 +1486,7 @@
+@@ -1483,7 +1483,7 @@ sub match_field {
  
      $template->process("global/confirm-user-match.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
