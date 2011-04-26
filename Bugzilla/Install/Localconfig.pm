@@ -320,7 +320,7 @@ sub update_localconfig {
 
     my $output      = $params->{output} || 0;
     my $answer      = Bugzilla->installation_answers;
-    my $localconfig = read_localconfig('include deprecated');
+    my $localconfig = $params->{debian_localconfig} || read_localconfig('include deprecated');
 
     my @new_vars;
     foreach my $var (LOCALCONFIG_VARS) {
@@ -390,7 +390,7 @@ EOT
                                      ["*$var->{name}"]);
    }
 
-    if (@new_vars) {
+    if (!$params->{debian_localconfig} && @new_vars) {
         my $newstuff = join(', ', @new_vars);
         print <<EOT;
 
