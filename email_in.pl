@@ -377,7 +377,7 @@ sub die_handler {
     print STDERR "$msg\n";
     # We exit with a successful value, because we don't want the MTA
     # to *also* send a failure notice.
-    exit;
+    exit(1);
 }
 
 ###############
