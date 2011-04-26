@@ -164,7 +164,16 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/Bug.pm bugzilla-srcdir/Bugzilla/Bug.pm
 diff -Naur bugzilla-srcdir.orig//Bugzilla/CGI.pm bugzilla-srcdir/Bugzilla/CGI.pm
 --- bugzilla-srcdir.orig//Bugzilla/CGI.pm	2010-11-03 00:35:08.000000000 +0100
 +++ bugzilla-srcdir/Bugzilla/CGI.pm	2010-11-12 10:28:19.709917012 +0100
-@@ -457,7 +457,7 @@
+@@ -454,7 +454,7 @@ sub redirect_search_url {
+     my $uri_length = length($self->self_url());
+     if ($self->request_method() ne 'POST' or $uri_length < CGI_URI_LIMIT) {
+         print $self->redirect(-url => $self->self_url());
+-        exit;
++        exit(0);
+     }
+ }
+ 
+@@ -477,7 +477,7 @@ sub redirect_to_https {
  
      # When using XML-RPC with mod_perl, we need the headers sent immediately.
      $self->r->rflush if $ENV{MOD_PERL};
@@ -173,7 +182,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/CGI.pm bugzilla-srcdir/Bugzilla/CGI.pm
  }
  
  # Redirect to the urlbase version of the current URL.
-@@ -480,7 +480,7 @@
+@@ -485,7 +485,7 @@ sub redirect_to_urlbase {
      my $self = shift;
      my $path = $self->url('-path_info' => 1, '-query' => 1, '-relative' => 1);
      print $self->redirect('-location' => correct_urlbase() . $path);
