@@ -47,4 +47,4 @@ else {
 }
 
 print $cgi->redirect('page.cgi?' . $cgi->query_string);
-exit;
+exit(0);
