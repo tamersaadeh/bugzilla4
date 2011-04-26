@@ -73,7 +73,7 @@ my @categoryActions;
 if (@categoryActions = grep(/^categoryAction-.+/, $cgi->param())) {
     $categoryActions[0] =~ s/^categoryAction-//;
     processCategoryChange($categoryActions[0], $token);
-    exit;
+    exit(0);
 }
 
 if    ($action eq 'list')           { list();           }
@@ -89,7 +89,7 @@ else {
     ThrowUserError('unknown_action', {action => $action});
 }
 
-exit;
+exit(0);
 
 ################################################################################
 # Functions
