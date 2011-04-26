@@ -354,7 +354,7 @@ diff -Naur bugzilla-srcdir.orig//colchange.cgi bugzilla-srcdir/colchange.cgi
 diff -Naur bugzilla-srcdir.orig//config.cgi bugzilla-srcdir/config.cgi
 --- bugzilla-srcdir.orig//config.cgi	2010-11-12 10:26:39.496917725 +0100
 +++ bugzilla-srcdir/config.cgi	2010-11-12 10:28:19.721916586 +0100
-@@ -165,5 +165,5 @@
+@@ -162,5 +162,5 @@ sub display_data {
                              -type => $format->{'ctype'});
          print $output;
      }
