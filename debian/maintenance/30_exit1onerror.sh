@@ -472,7 +472,7 @@ diff -Naur bugzilla-srcdir.orig//editclassifications.cgi bugzilla-srcdir/editcla
 diff -Naur bugzilla-srcdir.orig//editcomponents.cgi bugzilla-srcdir/editcomponents.cgi
 --- bugzilla-srcdir.orig//editcomponents.cgi	2010-11-12 10:26:24.920955767 +0100
 +++ bugzilla-srcdir/editcomponents.cgi	2010-11-12 10:28:19.721916586 +0100
-@@ -83,7 +83,7 @@
+@@ -80,7 +80,7 @@ unless ($product_name) {
  
      $template->process("admin/components/select-product.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -481,7 +481,7 @@ diff -Naur bugzilla-srcdir.orig//editcomponents.cgi bugzilla-srcdir/editcomponen
  }
  
  my $product = $user->check_can_admin_product($product_name);
-@@ -97,7 +97,7 @@
+@@ -94,7 +94,7 @@ unless ($action) {
      $vars->{'product'} = $product;
      $template->process("admin/components/list.html.tmpl", $vars)
          || ThrowTemplateError($template->error());
@@ -490,7 +490,7 @@ diff -Naur bugzilla-srcdir.orig//editcomponents.cgi bugzilla-srcdir/editcomponen
  }
  
  #
-@@ -111,7 +111,7 @@
+@@ -108,7 +108,7 @@ if ($action eq 'add') {
      $vars->{'product'} = $product;
      $template->process("admin/components/create.html.tmpl", $vars)
          || ThrowTemplateError($template->error());
@@ -499,7 +499,7 @@ diff -Naur bugzilla-srcdir.orig//editcomponents.cgi bugzilla-srcdir/editcomponen
  }
  
  #
-@@ -151,7 +151,7 @@
+@@ -148,7 +148,7 @@ if ($action eq 'new') {
  
      $template->process("admin/components/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -508,7 +508,7 @@ diff -Naur bugzilla-srcdir.orig//editcomponents.cgi bugzilla-srcdir/editcomponen
  }
  
  #
-@@ -168,7 +168,7 @@
+@@ -165,7 +165,7 @@ if ($action eq 'del') {
  
      $template->process("admin/components/confirm-delete.html.tmpl", $vars)
          || ThrowTemplateError($template->error());
@@ -517,7 +517,7 @@ diff -Naur bugzilla-srcdir.orig//editcomponents.cgi bugzilla-srcdir/editcomponen
  }
  
  #
-@@ -190,7 +190,7 @@
+@@ -187,7 +187,7 @@ if ($action eq 'delete') {
  
      $template->process("admin/components/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -526,7 +526,7 @@ diff -Naur bugzilla-srcdir.orig//editcomponents.cgi bugzilla-srcdir/editcomponen
  }
  
  #
-@@ -212,7 +212,7 @@
+@@ -209,7 +209,7 @@ if ($action eq 'edit') {
  
      $template->process("admin/components/edit.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -535,7 +535,7 @@ diff -Naur bugzilla-srcdir.orig//editcomponents.cgi bugzilla-srcdir/editcomponen
  }
  
  #
-@@ -252,7 +252,7 @@
+@@ -249,7 +249,7 @@ if ($action eq 'update') {
  
      $template->process("admin/components/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -543,7 +543,7 @@ diff -Naur bugzilla-srcdir.orig//editcomponents.cgi bugzilla-srcdir/editcomponen
 +    exit(1);
  }
  
- #
+ # No valid action found
 diff -Naur bugzilla-srcdir.orig//editflagtypes.cgi bugzilla-srcdir/editflagtypes.cgi
 --- bugzilla-srcdir.orig//editflagtypes.cgi	2010-11-12 10:26:39.456938968 +0100
 +++ bugzilla-srcdir/editflagtypes.cgi	2010-11-12 10:28:19.721916586 +0100
