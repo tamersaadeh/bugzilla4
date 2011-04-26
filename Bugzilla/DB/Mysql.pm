@@ -723,7 +723,7 @@ EOT
          Re-run checksetup.pl in interactive mode (without an 'answers' file)
          to continue.
 EOT
-                exit;
+                exit(1);
             }
             else {
                 print "         Press Enter to continue or Ctrl-C to exit...";
