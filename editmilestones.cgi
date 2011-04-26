@@ -77,7 +77,7 @@ unless ($product_name) {
 
     $template->process("admin/milestones/select-product.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 my $product = $user->check_can_admin_product($product_name);
@@ -92,7 +92,7 @@ unless ($action) {
     $vars->{'product'} = $product;
     $template->process("admin/milestones/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 #
@@ -106,7 +106,7 @@ if ($action eq 'add') {
     $vars->{'product'} = $product;
     $template->process("admin/milestones/create.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 #
@@ -125,7 +125,7 @@ if ($action eq 'new') {
     $vars->{'product'} = $product;
     $template->process("admin/milestones/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 #
@@ -149,7 +149,7 @@ if ($action eq 'del') {
 
     $template->process("admin/milestones/confirm-delete.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 #
@@ -170,7 +170,7 @@ if ($action eq 'delete') {
 
     $template->process("admin/milestones/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 #
@@ -190,7 +190,7 @@ if ($action eq 'edit') {
 
     $template->process("admin/milestones/edit.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 #
@@ -218,7 +218,7 @@ if ($action eq 'update') {
     $vars->{'changes'} = $changes;
     $template->process("admin/milestones/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 # No valid action found
