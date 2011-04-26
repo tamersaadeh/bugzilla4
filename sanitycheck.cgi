@@ -270,7 +270,7 @@ if ($cgi->param('rescanallBugMail')) {
         $template->process('global/footer.html.tmpl', $vars)
           || ThrowTemplateError($template->error());
     }
-    exit;
+    exit(0);
 }
 
 ###########################################################################
