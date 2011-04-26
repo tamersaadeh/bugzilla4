@@ -1170,7 +1170,7 @@ diff -Naur bugzilla-srcdir.orig//process_bug.cgi bugzilla-srcdir/process_bug.cgi
 diff -Naur bugzilla-srcdir.orig//report.cgi bugzilla-srcdir/report.cgi
 --- bugzilla-srcdir.orig//report.cgi	2010-11-12 10:26:24.124922158 +0100
 +++ bugzilla-srcdir/report.cgi	2010-11-12 10:28:19.725914769 +0100
-@@ -42,7 +42,7 @@
+@@ -43,7 +43,7 @@ if (grep(/^cmd-/, $cgi->param())) {
        ($params ? "&$params" : "");
  
      print $cgi->redirect($location);
@@ -1179,7 +1179,7 @@ diff -Naur bugzilla-srcdir.orig//report.cgi bugzilla-srcdir/report.cgi
  }
  
  use Bugzilla::Search;
-@@ -58,7 +58,7 @@
+@@ -59,7 +59,7 @@ if ($action eq "menu") {
      print $cgi->header();
      $template->process("reports/menu.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -1188,7 +1188,7 @@ diff -Naur bugzilla-srcdir.orig//report.cgi bugzilla-srcdir/report.cgi
  }
  
  my $col_field = $cgi->param('x_axis_field') || '';
-@@ -326,7 +326,7 @@
+@@ -306,7 +306,7 @@ disable_utf8() if ($format->{'ctype'} =~ /^image\//);
  $template->process("$format->{'template'}", $vars)
    || ThrowTemplateError($template->error());
  
