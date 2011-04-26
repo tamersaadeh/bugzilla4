@@ -793,7 +793,7 @@ diff -Naur bugzilla-srcdir.orig//editmilestones.cgi bugzilla-srcdir/editmileston
 diff -Naur bugzilla-srcdir.orig//editproducts.cgi bugzilla-srcdir/editproducts.cgi
 --- bugzilla-srcdir.orig//editproducts.cgi	2010-11-12 10:26:24.176934711 +0100
 +++ bugzilla-srcdir/editproducts.cgi	2010-11-12 10:28:19.721916586 +0100
-@@ -95,7 +95,7 @@
+@@ -95,7 +95,7 @@ if (Bugzilla->params->{'useclassification'}
  
      $template->process("admin/products/list-classifications.html.tmpl", $vars)
          || ThrowTemplateError($template->error());
@@ -802,7 +802,7 @@ diff -Naur bugzilla-srcdir.orig//editproducts.cgi bugzilla-srcdir/editproducts.c
  }
  
  
-@@ -129,7 +129,7 @@
+@@ -129,7 +129,7 @@ if (!$action && !$product_name) {
  
      $template->process("admin/products/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -811,7 +811,7 @@ diff -Naur bugzilla-srcdir.orig//editproducts.cgi bugzilla-srcdir/editproducts.c
  }
  
  
-@@ -158,7 +158,7 @@
+@@ -158,7 +158,7 @@ if ($action eq 'add') {
      $template->process("admin/products/create.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
  
@@ -820,7 +820,7 @@ diff -Naur bugzilla-srcdir.orig//editproducts.cgi bugzilla-srcdir/editproducts.c
  }
  
  
-@@ -204,7 +204,7 @@
+@@ -199,7 +199,7 @@ if ($action eq 'new') {
  
      $template->process("admin/products/edit.html.tmpl", $vars)
          || ThrowTemplateError($template->error());
@@ -829,7 +829,7 @@ diff -Naur bugzilla-srcdir.orig//editproducts.cgi bugzilla-srcdir/editproducts.c
  }
  
  #
-@@ -226,7 +226,7 @@
+@@ -221,7 +221,7 @@ if ($action eq 'del') {
      
      $template->process("admin/products/confirm-delete.html.tmpl", $vars)
          || ThrowTemplateError($template->error());
@@ -838,7 +838,7 @@ diff -Naur bugzilla-srcdir.orig//editproducts.cgi bugzilla-srcdir/editproducts.c
  }
  
  #
-@@ -263,7 +263,7 @@
+@@ -258,7 +258,7 @@ if ($action eq 'delete') {
          $template->process("admin/products/list.html.tmpl", $vars)
            || ThrowTemplateError($template->error());
      }
@@ -847,7 +847,7 @@ diff -Naur bugzilla-srcdir.orig//editproducts.cgi bugzilla-srcdir/editproducts.c
  }
  
  #
-@@ -284,7 +284,7 @@
+@@ -279,7 +279,7 @@ if ($action eq 'edit' || (!$action && $product_name)) {
  
      $template->process("admin/products/edit.html.tmpl", $vars)
          || ThrowTemplateError($template->error());
@@ -856,7 +856,7 @@ diff -Naur bugzilla-srcdir.orig//editproducts.cgi bugzilla-srcdir/editproducts.c
  }
  
  #
-@@ -318,7 +318,7 @@
+@@ -310,7 +310,7 @@ if ($action eq 'update') {
  
      $template->process("admin/products/updated.html.tmpl", $vars)
          || ThrowTemplateError($template->error());
@@ -865,7 +865,7 @@ diff -Naur bugzilla-srcdir.orig//editproducts.cgi bugzilla-srcdir/editproducts.c
  }
  
  #
-@@ -333,7 +333,7 @@
+@@ -325,7 +325,7 @@ if ($action eq 'editgroupcontrols') {
  
      $template->process("admin/products/groupcontrol/edit.html.tmpl", $vars)
          || ThrowTemplateError($template->error());
@@ -874,7 +874,7 @@ diff -Naur bugzilla-srcdir.orig//editproducts.cgi bugzilla-srcdir/editproducts.c
  }
  
  #
-@@ -402,7 +402,7 @@
+@@ -394,7 +394,7 @@ if ($action eq 'updategroupcontrols') {
              $vars->{'mandatory_groups'} = $mandatory_groups;
              $template->process("admin/products/groupcontrol/confirm-edit.html.tmpl", $vars)
                  || ThrowTemplateError($template->error());
@@ -883,7 +883,7 @@ diff -Naur bugzilla-srcdir.orig//editproducts.cgi bugzilla-srcdir/editproducts.c
          }
      }
  
-@@ -427,7 +427,7 @@
+@@ -419,7 +419,7 @@ if ($action eq 'updategroupcontrols') {
  
      $template->process("admin/products/groupcontrol/updated.html.tmpl", $vars)
          || ThrowTemplateError($template->error());
@@ -891,7 +891,7 @@ diff -Naur bugzilla-srcdir.orig//editproducts.cgi bugzilla-srcdir/editproducts.c
 +    exit(1);
  }
  
- #
+ # No valid action found
 diff -Naur bugzilla-srcdir.orig//editusers.cgi bugzilla-srcdir/editusers.cgi
 --- bugzilla-srcdir.orig//editusers.cgi	2010-11-12 10:26:23.832939184 +0100
 +++ bugzilla-srcdir/editusers.cgi	2010-11-12 10:28:19.721916586 +0100
