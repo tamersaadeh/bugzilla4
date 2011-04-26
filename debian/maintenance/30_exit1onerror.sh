@@ -306,35 +306,33 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla.pm bugzilla-srcdir/Bugzilla.pm
 diff -Naur bugzilla-srcdir.orig//chart.cgi bugzilla-srcdir/chart.cgi
 --- bugzilla-srcdir.orig//chart.cgi	2010-11-12 10:26:25.625929357 +0100
 +++ bugzilla-srcdir/chart.cgi	2010-11-12 10:28:19.721916586 +0100
-@@ -79,7 +79,7 @@
-if (grep(/^cmd-/, $cgi->param())) {
-    my $params = $cgi->canonicalise_query("format", "ctype", "action");
-    print $cgi->redirect("query.cgi?format=" . $cgi->param('query_format') .
-                                               ($params ? "&$params" : ""));
+@@ -76,7 +76,7 @@ if (grep(/^cmd-/, $cgi->param())) {
+     my $params = $cgi->canonicalise_query("format", "ctype", "action");
+     print $cgi->redirect("query.cgi?format=" . $cgi->param('query_format') .
+                                                ($params ? "&$params" : ""));
 -    exit;
 +    exit(0);
-}
-
-my $action = $cgi->param('action');
-@@ -102,7 +102,7 @@
-if ($action eq "search") {
-    my $params = $cgi->canonicalise_query("format", "ctype", "action");
-    print $cgi->redirect("buglist.cgi" . ($params ? "?$params" : ""));
+ }
+ 
+ my $action = $cgi->param('action');
+@@ -99,7 +99,7 @@ $action ||= "assemble";
+ if ($action eq "search") {
+     my $params = $cgi->canonicalise_query("format", "ctype", "action");
+     print $cgi->redirect("buglist.cgi" . ($params ? "?$params" : ""));
 -    exit;
 +    exit(0);
-}
-
-$user->in_group(Bugzilla->params->{"chartgroup"})
-@@ -233,9 +233,9 @@
-else {
-    ThrowUserError('unknown_action', {action => $action});
-}
-
+ }
+ 
+ $user->in_group(Bugzilla->params->{"chartgroup"})
+@@ -234,7 +234,7 @@ else {
+     ThrowUserError('unknown_action', {action => $action});
+ }
+ 
 -exit;
 +exit(0);
-
-# Find any selected series and return either the first or all of them.
-sub getAndValidateSeriesIDs {
+ 
+ # Find any selected series and return either the first or all of them.
+ sub getAndValidateSeriesIDs {
 diff -Naur bugzilla-srcdir.orig//colchange.cgi bugzilla-srcdir/colchange.cgi
 --- bugzilla-srcdir.orig//colchange.cgi	2010-11-12 10:26:23.916940016 +0100
 +++ bugzilla-srcdir/colchange.cgi	2010-11-12 10:28:19.721916586 +0100
