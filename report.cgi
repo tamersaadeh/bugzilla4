@@ -43,7 +43,7 @@ if (grep(/^cmd-/, $cgi->param())) {
       ($params ? "&$params" : "");
 
     print $cgi->redirect($location);
-    exit;
+    exit(0);
 }
 
 use Bugzilla::Search;
@@ -59,7 +59,7 @@ if ($action eq "menu") {
     print $cgi->header();
     $template->process("reports/menu.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 my $col_field = $cgi->param('x_axis_field') || '';
@@ -306,7 +306,7 @@ disable_utf8() if ($format->{'ctype'} =~ /^image\//);
 $template->process("$format->{'template'}", $vars)
   || ThrowTemplateError($template->error());
 
-exit;
+exit(0);
 
 
 sub get_names {
