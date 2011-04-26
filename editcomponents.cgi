@@ -80,7 +80,7 @@ unless ($product_name) {
 
     $template->process("admin/components/select-product.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 my $product = $user->check_can_admin_product($product_name);
@@ -94,7 +94,7 @@ unless ($action) {
     $vars->{'product'} = $product;
     $template->process("admin/components/list.html.tmpl", $vars)
         || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 #
@@ -108,7 +108,7 @@ if ($action eq 'add') {
     $vars->{'product'} = $product;
     $template->process("admin/components/create.html.tmpl", $vars)
         || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 #
@@ -148,7 +148,7 @@ if ($action eq 'new') {
 
     $template->process("admin/components/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 #
@@ -165,7 +165,7 @@ if ($action eq 'del') {
 
     $template->process("admin/components/confirm-delete.html.tmpl", $vars)
         || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 #
@@ -187,7 +187,7 @@ if ($action eq 'delete') {
 
     $template->process("admin/components/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 #
@@ -209,7 +209,7 @@ if ($action eq 'edit') {
 
     $template->process("admin/components/edit.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 #
@@ -249,7 +249,7 @@ if ($action eq 'update') {
 
     $template->process("admin/components/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 # No valid action found
