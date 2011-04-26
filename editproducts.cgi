@@ -95,7 +95,7 @@ if (Bugzilla->params->{'useclassification'}
 
     $template->process("admin/products/list-classifications.html.tmpl", $vars)
         || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 
@@ -129,7 +129,7 @@ if (!$action && !$product_name) {
 
     $template->process("admin/products/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 
@@ -158,7 +158,7 @@ if ($action eq 'add') {
     $template->process("admin/products/create.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
 
-    exit;
+    exit(1);
 }
 
 
@@ -199,7 +199,7 @@ if ($action eq 'new') {
 
     $template->process("admin/products/edit.html.tmpl", $vars)
         || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 #
@@ -221,7 +221,7 @@ if ($action eq 'del') {
     
     $template->process("admin/products/confirm-delete.html.tmpl", $vars)
         || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 #
@@ -258,7 +258,7 @@ if ($action eq 'delete') {
         $template->process("admin/products/list.html.tmpl", $vars)
           || ThrowTemplateError($template->error());
     }
-    exit;
+    exit(1);
 }
 
 #
@@ -279,7 +279,7 @@ if ($action eq 'edit' || (!$action && $product_name)) {
 
     $template->process("admin/products/edit.html.tmpl", $vars)
         || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 #
@@ -310,7 +310,7 @@ if ($action eq 'update') {
 
     $template->process("admin/products/updated.html.tmpl", $vars)
         || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 #
@@ -325,7 +325,7 @@ if ($action eq 'editgroupcontrols') {
 
     $template->process("admin/products/groupcontrol/edit.html.tmpl", $vars)
         || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 #
@@ -394,7 +394,7 @@ if ($action eq 'updategroupcontrols') {
             $vars->{'mandatory_groups'} = $mandatory_groups;
             $template->process("admin/products/groupcontrol/confirm-edit.html.tmpl", $vars)
                 || ThrowTemplateError($template->error());
-            exit;
+            exit(1);
         }
     }
 
@@ -419,7 +419,7 @@ if ($action eq 'updategroupcontrols') {
 
     $template->process("admin/products/groupcontrol/updated.html.tmpl", $vars)
         || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 # No valid action found
