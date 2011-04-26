@@ -252,7 +252,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/Search/Quicksearch.pm bugzilla-srcdir/
 diff -Naur bugzilla-srcdir.orig//Bugzilla/Token.pm bugzilla-srcdir/Bugzilla/Token.pm
 --- bugzilla-srcdir.orig//Bugzilla/Token.pm	2009-12-31 13:53:19.000000000 +0100
 +++ bugzilla-srcdir/Bugzilla/Token.pm	2010-11-12 10:28:19.717916713 +0100
-@@ -219,7 +219,7 @@
+@@ -216,7 +216,7 @@ sub check_hash_token {
          print Bugzilla->cgi->header();
          $template->process('global/confirm-action.html.tmpl', $vars)
            || ThrowTemplateError($template->error());
@@ -261,7 +261,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/Token.pm bugzilla-srcdir/Bugzilla/Toke
      }
  
      # If we come here, then the token is valid and not too old.
-@@ -400,7 +400,7 @@
+@@ -397,7 +397,7 @@ sub check_token_data {
  
          $template->process('admin/confirm-action.html.tmpl', $vars)
            || ThrowTemplateError($template->error());
