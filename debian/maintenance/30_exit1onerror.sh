@@ -37,8 +37,8 @@ exit 0
 diff -Naur bugzilla-srcdir.orig//attachment.cgi bugzilla-srcdir/attachment.cgi
 --- bugzilla-srcdir.orig//attachment.cgi	2010-11-12 10:26:24.156917777 +0100
 +++ bugzilla-srcdir/attachment.cgi	2010-11-12 10:28:19.701917501 +0100
-@@ -130,7 +130,7 @@
-   ThrowCodeError("unknown_action", { action => $action });
+@@ -130,7 +130,7 @@ else
+   ThrowUserError('unknown_action', {action => $action});
  }
  
 -exit;
@@ -46,7 +46,7 @@ diff -Naur bugzilla-srcdir.orig//attachment.cgi bugzilla-srcdir/attachment.cgi
  
  ################################################################################
  # Data Validation / Security Authorization
-@@ -161,7 +161,7 @@
+@@ -158,7 +158,7 @@ sub validateID {
          print $cgi->header();
          $template->process("attachment/choose.html.tmpl", $vars) ||
              ThrowTemplateError($template->error());
@@ -55,7 +55,7 @@ diff -Naur bugzilla-srcdir.orig//attachment.cgi bugzilla-srcdir/attachment.cgi
      }
      
      my $attach_id = $cgi->param($param);
-@@ -263,7 +263,7 @@
+@@ -260,7 +260,7 @@ sub view {
                  {
                      # Not a valid token.
                      print $cgi->redirect('-location' => correct_urlbase() . $path);
@@ -64,7 +64,7 @@ diff -Naur bugzilla-srcdir.orig//attachment.cgi bugzilla-srcdir/attachment.cgi
                  }
                  # Change current user without creating cookies.
                  Bugzilla->set_user(new Bugzilla::User($userid));
-@@ -289,13 +289,13 @@
+@@ -286,14 +286,14 @@ sub view {
              if (attachmentIsPublic($attachment)) {
                  # No need for a token; redirect to attachment base.
                  print $cgi->redirect(-location => $attachbase . $path);
@@ -81,7 +81,7 @@ diff -Naur bugzilla-srcdir.orig//attachment.cgi bugzilla-srcdir/attachment.cgi
              }
          }
      } else {
-@@ -465,7 +465,7 @@
+@@ -462,7 +462,7 @@ sub insert {
              print $cgi->header();
              $template->process("attachment/cancel-create-dupe.html.tmpl",  $vars)
                  || ThrowTemplateError($template->error());
@@ -90,7 +90,7 @@ diff -Naur bugzilla-srcdir.orig//attachment.cgi bugzilla-srcdir/attachment.cgi
          }
      }
  
-@@ -627,7 +627,7 @@
+@@ -624,7 +624,7 @@ sub update {
                  # Warn the user about the mid-air collision and ask them what to do.
                  $template->process("attachment/midair.html.tmpl", $vars)
                    || ThrowTemplateError($template->error());
