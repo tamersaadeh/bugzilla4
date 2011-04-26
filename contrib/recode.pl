@@ -154,7 +154,7 @@ Encode::Detect, run the following command:
   $^X install-module.pl Encode::Detect
 
 EOT
-        exit;
+        exit(1);
     }
 
     import Encode::Detect::Detector qw(detect);
