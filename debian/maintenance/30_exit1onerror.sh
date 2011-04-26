@@ -955,7 +955,7 @@ diff -Naur bugzilla-srcdir.orig//editvalues.cgi bugzilla-srcdir/editvalues.cgi
 diff -Naur bugzilla-srcdir.orig//editversions.cgi bugzilla-srcdir/editversions.cgi
 --- bugzilla-srcdir.orig//editversions.cgi	2010-11-12 10:26:23.461427610 +0100
 +++ bugzilla-srcdir/editversions.cgi	2010-11-12 10:28:19.721916586 +0100
-@@ -80,7 +80,7 @@
+@@ -80,7 +80,7 @@ unless ($product_name) {
  
      $template->process("admin/versions/select-product.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
@@ -964,7 +964,7 @@ diff -Naur bugzilla-srcdir.orig//editversions.cgi bugzilla-srcdir/editversions.c
  }
  
  my $product = $user->check_can_admin_product($product_name);
-@@ -95,7 +95,7 @@
+@@ -95,7 +95,7 @@ unless ($action) {
      $template->process("admin/versions/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
  
@@ -973,7 +973,7 @@ diff -Naur bugzilla-srcdir.orig//editversions.cgi bugzilla-srcdir/editversions.c
  }
  
  #
-@@ -110,7 +110,7 @@
+@@ -110,7 +110,7 @@ if ($action eq 'add') {
      $template->process("admin/versions/create.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
  
@@ -982,7 +982,7 @@ diff -Naur bugzilla-srcdir.orig//editversions.cgi bugzilla-srcdir/editversions.c
  }
  
  #
-@@ -129,7 +129,7 @@
+@@ -129,7 +129,7 @@ if ($action eq 'new') {
      $template->process("admin/versions/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
  
@@ -991,7 +991,7 @@ diff -Naur bugzilla-srcdir.orig//editversions.cgi bugzilla-srcdir/editversions.c
  }
  
  #
-@@ -147,7 +147,7 @@
+@@ -147,7 +147,7 @@ if ($action eq 'del') {
      $template->process("admin/versions/confirm-delete.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
  
@@ -1000,7 +1000,7 @@ diff -Naur bugzilla-srcdir.orig//editversions.cgi bugzilla-srcdir/editversions.c
  }
  
  #
-@@ -169,7 +169,7 @@
+@@ -169,7 +169,7 @@ if ($action eq 'delete') {
      $template->process("admin/versions/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
  
@@ -1009,7 +1009,7 @@ diff -Naur bugzilla-srcdir.orig//editversions.cgi bugzilla-srcdir/editversions.c
  }
  
  #
-@@ -188,7 +188,7 @@
+@@ -188,7 +188,7 @@ if ($action eq 'edit') {
      $template->process("admin/versions/edit.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
  
@@ -1018,7 +1018,7 @@ diff -Naur bugzilla-srcdir.orig//editversions.cgi bugzilla-srcdir/editversions.c
  }
  
  #
-@@ -216,7 +216,7 @@
+@@ -216,7 +216,7 @@ if ($action eq 'update') {
      $template->process("admin/versions/list.html.tmpl", $vars)
        || ThrowTemplateError($template->error());
  
@@ -1026,7 +1026,7 @@ diff -Naur bugzilla-srcdir.orig//editversions.cgi bugzilla-srcdir/editversions.c
 +    exit(1);
  }
  
- #
+ # No valid action found
 diff -Naur bugzilla-srcdir.orig//editworkflow.cgi bugzilla-srcdir/editworkflow.cgi
 --- bugzilla-srcdir.orig//editworkflow.cgi	2010-11-12 10:26:23.952922193 +0100
 +++ bugzilla-srcdir/editworkflow.cgi	2010-11-12 10:28:19.721916586 +0100
