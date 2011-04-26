@@ -1042,7 +1042,7 @@ diff -Naur bugzilla-srcdir.orig//editworkflow.cgi bugzilla-srcdir/editworkflow.c
 diff -Naur bugzilla-srcdir.orig//email_in.pl bugzilla-srcdir/email_in.pl
 --- bugzilla-srcdir.orig//email_in.pl	2010-11-12 10:26:39.776939670 +0100
 +++ bugzilla-srcdir/email_in.pl	2010-11-12 10:28:19.721916586 +0100
-@@ -395,7 +395,7 @@
+@@ -377,7 +377,7 @@ sub die_handler {
      print STDERR "$msg\n";
      # We exit with a successful value, because we don't want the MTA
      # to *also* send a failure notice.
