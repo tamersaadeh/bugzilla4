@@ -228,6 +228,7 @@ diff -Naur bugzilla-srcdir.orig//Bugzilla/Error.pm bugzilla-srcdir/Bugzilla/Erro
 diff -Naur bugzilla-srcdir.orig//Bugzilla/Install/Localconfig.pm bugzilla-srcdir/Bugzilla/Install/Localconfig.pm
 --- bugzilla-srcdir.orig//Bugzilla/Install/Localconfig.pm	2010-04-22 20:22:50.000000000 +0200
 +++ bugzilla-srcdir/Bugzilla/Install/Localconfig.pm	2010-11-12 10:28:19.713916614 +0100
+@@ -402,7 +402,7 @@ The following variables are new to $filename since you last ran
  checksetup.pl:  $newstuff
  
  EOT
