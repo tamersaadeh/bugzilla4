@@ -57,7 +57,7 @@ You cannot run this script when using ActiveState Perl. Please follow
 the instructions given by checksetup.pl to install missing Perl modules.
 
 END
-    exit;
+    exit(1);
 }
 
 pod2usage({ -verbose => 0 }) if (!%switch && !@ARGV);
@@ -66,14 +66,14 @@ set_cpan_config($switch{'global'});
 
 if ($switch{'show-config'}) {
     print Dumper($CPAN::Config);
-    exit;
+    exit(0);
 }
 
 check_cpan_requirements($original_dir, \@original_args);
 
 if ($switch{'shell'}) {
     CPAN::shell();
-    exit;
+    exit(0);
 }
 
 if ($switch{'all'} || $switch{'upgrade-all'}) {
