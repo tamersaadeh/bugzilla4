@@ -1255,8 +1255,8 @@ diff -Naur bugzilla-srcdir.orig//testagent.cgi bugzilla-srcdir/testagent.cgi
 diff -Naur bugzilla-srcdir.orig//token.cgi bugzilla-srcdir/token.cgi
 --- bugzilla-srcdir.orig//token.cgi	2010-11-12 10:26:39.388920267 +0100
 +++ bugzilla-srcdir/token.cgi	2010-11-12 10:28:19.725914769 +0100
-@@ -169,7 +169,7 @@
-     ThrowCodeError("unknown_action", { action => $action });
+@@ -166,7 +166,7 @@ if ($action eq 'reqpw') {
+     ThrowUserError('unknown_action', {action => $action});
  }
  
 -exit;
