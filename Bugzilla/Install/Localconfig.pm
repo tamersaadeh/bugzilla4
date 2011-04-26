@@ -402,7 +402,7 @@ The following variables are new to $filename since you last ran
 checksetup.pl:  $newstuff
 
 EOT
-        exit;
+        exit(9);
     }
 
     # Reset the cache for Bugzilla->localconfig so that it will be re-read
