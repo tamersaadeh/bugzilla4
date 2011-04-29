@@ -1,6 +1,64 @@
-bugzilla (4.0.0.0-0ubuntu1) natty; urgency=low
+bugzilla (4.0.0-2) natty; urgency=low
 
-  * Initial update to Bugzilla 4.
+  * During installation, the CPAN module
+    Math::Random::Secure would sometimes
+    fail to install properly and give an
+    error about Math::Random::Secure::irand.
+    Now, when using install-module.pl to
+    install Math::Random::Secure, this
+    will no longer happen. If you are
+    currently experiencing this bug and
+    it prevented you from installing 4.0,
+    remove Math::Random::Secure from your
+    lib/ directory. Like: 
+      - rm -rf lib/Math/Random/Secure*
+    Fixes Bug #646578.
+  * The "Remember values as bookmarkable
+    template" button on the bug entry
+    page will now work even when some
+    required fields are empty.
+    Fixes Bug #640719.
+  * Email notifications about dependencies
+    and flags had the wrong timestamp.
+    Fixes Bug #643910 and Bug #652165.
+  * You can now select "UTC" as a valid
+    timezone in General Preferences.
+    Fixes Bug #646209.
+  * Automatic duplicate detection now
+    works on PostgreSQL (although it
+    is not as high-quality as on other
+    DB platforms). Fixes Bug #634144.
+  * Autcomplete for users now works
+    even if you are using the
+    "emailsuffix" option.
+    Fixes Bug #641519.
+  * Javascript errors during series
+    creation in New Charts have been
+    fixed. Fixes Bug #644285.
+  * The "Show Votes" page now works,
+    for installations using the Voting
+    extension. Fixes Bug #652381.
+
+ -- Tamer Saadeh <tamer@tamersaadeh.com>  Fri, 29 Apr 2011 20:30:04 +0300
+
+bugzilla (4.0.0-1) natty; urgency=medium
+
+  * New upstream release (Bugzilla 4.0).
+  * Automatic Duplicate Detection When Filing Bugs
+  * New Advanced Search UI
+  * New Attachment Details UI
+  * Autocomplete for Users and Keywords
+  * General Usability Improvements
+  * New Default Status Workflow
+  * "Last Search" Now Remembers Multiple Searches
+  * Cross-Domain WebServices with JSONP
+  * Major WebService Enhancements
+  * Mandatory Custom Fields
+  * Voting Is Now An Extension
+  * Users Get New CSS and Javascript Automatically
+  * Many New Hooks
+  * New Apache Configuration
+  * Other Enhancements and Changes
 
  -- Tamer Saadeh <tamer@tamersaadeh.com>  Wed, 13 Apr 2011 15:36:34 +0300
 
