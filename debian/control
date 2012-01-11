@@ -45,14 +45,14 @@ Suggests: bugzilla4-doc,
           libwww-perl,
           ruby,
           libjson-xs-perl (>= 2.0),
-          libapache2-mod-perl2 (>= 1.999022)
-Recommends: libchart-perl (>= 0.99c.pre3-0.1),
-            libtemplate-plugin-gd-perl,
-            libxml-parser-perl,
-            perlmagick,
-            mysql-server | postgresql,
-            cvs,
-            imagemagick
+          libapache2-mod-perl2 (>= 1.999022),
+          libchart-perl (>= 0.99c.pre3-0.1),
+          libtemplate-plugin-gd-perl,
+          libxml-parser-perl,
+          perlmagick,
+          mysql-server | postgresql,
+          cvs,
+          imagemagick
 Conflicts: bugzilla4-min, bugzilla4-full
 Replaces: bugzilla4-min
 XB-Python-Version: ${python:Versions}
@@ -99,27 +99,38 @@ Depends: perl (>= 5.8.1),
          liburi-perl (>= 1.37),
          liblist-moreutils-perl (>= 0.22),
          libmath-random-isaac-perl (>= 1.0.1),
+
+         libgd-gd2-perl,
+         libchart-perl,
+         libtemplate-plugin-gd-perl,
+         libgd-text-perl,
+         libgd-graph-perl,
+         libmime-tools-perl (>= 5.406),
+         libwww-perl,
+         libxml-twig-perl,
+
+
+
          ${python:Depends},
          ${misc:Depends}
 Suggests: bugzilla4-doc,
           libnet-ldap-perl,
-          libgd-text-perl,
-          libgd-graph-perl, libgd-gd2-perl,
+
           libmailtools-perl (>= 1.77-1),
-          libmime-tools-perl (>= 5.425-2),	
+
           libhtml-parser-perl,
           libhtml-scrubber-perl,
-          libxml-twig-perl,
+ 
           libauthen-radius-perl,
           graphviz,
           libsoap-lite-perl (>= 0.712),
           patchutils,
-          libwww-perl,
+ 
           ruby,
           libjson-xs-perl (>= 2.0),
           libapache2-mod-perl2 (>= 1.999022)
-Recommends: libchart-perl (>= 0.99c.pre3-0.1),
-            libtemplate-plugin-gd-perl,
+Recommends: 
+            
             libxml-parser-perl,
             perlmagick,
             mysql-server | postgresql,
