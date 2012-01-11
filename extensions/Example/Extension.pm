@@ -31,6 +31,7 @@ use Bugzilla::User;
 use Bugzilla::User::Setting;
 use Bugzilla::Util qw(diff_arrays html_quote);
 use Bugzilla::Status qw(is_open_state);
+use Bugzilla::Install::Filesystem;
 
 # This is extensions/Example/lib/Util.pm. I can load this here in my
 # Extension.pm only because I have a Config.pm.
@@ -210,15 +211,12 @@ sub search_operator_field_override {
 
 sub _component_nonchanged {
     my $original = shift;
-    my $invocant = shift;
+    my ($invocant, $args) = @_;
 
-    my %func_args = @_;
-    $invocant->$original(%func_args);
-
+    $invocant->$original($args);
     # Actually, it does not change anything in the result,
     # just an example.
-    my ($term) = @func_args{qw(term)};
-    $$term = $$term . " OR 1=2";
+    $args->{term} = $args->{term} . " OR 1=2";
 }
 
 sub bugmail_recipients {
@@ -247,13 +245,6 @@ sub bugmail_relationships {
     $relationships->{+REL_EXAMPLE} = 'Example';
 }
 
-sub config {
-    my ($self, $args) = @_;
-
-    my $config = $args->{config};
-    $config->{Example} = "Bugzilla::Extension::Example::Config";
-}
-
 sub config_add_panels {
     my ($self, $args) = @_;
     
@@ -270,9 +261,33 @@ sub config_modify_panels {
     my $auth_params = $panels->{'auth'}->{params};
     my ($info_class)   = grep($_->{name} eq 'user_info_class', @$auth_params);
     my ($verify_class) = grep($_->{name} eq 'user_verify_class', @$auth_params);
-    
+
     push(@{ $info_class->{choices} },   'CGI,Example');
     push(@{ $verify_class->{choices} }, 'Example');
+
+    push(@$auth_params, { name => 'param_example',
+                          type => 't',
+                          default => 0,
+                          checker => \&check_numeric });    
+}
+
+sub db_schema_abstract_schema {
+    my ($self, $args) = @_;
+#    $args->{'schema'}->{'example_table'} = {
+#        FIELDS => [
+#            id       => {TYPE => 'SMALLSERIAL', NOTNULL => 1,
+#                     PRIMARYKEY => 1},
+#            for_key  => {TYPE => 'INT3', NOTNULL => 1,
+#                           REFERENCES  => {TABLE  =>  'example_table2',
+#                                           COLUMN =>  'id',
+#                                           DELETE => 'CASCADE'}},
+#            col_3    => {TYPE => 'varchar(64)', NOTNULL => 1},
+#        ],
+#        INDEXES => [
+#            id_index_idx   => {FIELDS => ['col_3'], TYPE => 'UNIQUE'},
+#            for_id_idx => ['for_key'],
+#        ],
+#    };
 }
 
 sub email_in_before_parse {
@@ -315,6 +330,13 @@ sub email_in_after_parse {
     else {
         ThrowUserError('invalid_username', { name => $reporter });
     }
+}
+
+sub enter_bug_entrydefaultvars {
+    my ($self, $args) = @_;
+    
+    my $vars = $args->{vars};
+    $vars->{'example'} = 1;
 }
 
 sub flag_end_of_update {
@@ -398,6 +420,60 @@ sub install_before_final_checks {
     # To add descriptions for the setting and choices, add extra values to 
     # the hash defined in global/setting-descs.none.tmpl. Do this in a hook: 
     # hook/global/setting-descs-settings.none.tmpl .
+}
+
+sub install_filesystem {
+    my ($self, $args) = @_;
+    my $create_dirs  = $args->{'create_dirs'};
+    my $recurse_dirs = $args->{'recurse_dirs'};
+    my $htaccess     = $args->{'htaccess'};
+
+    # Create a new directory in datadir specifically for this extension.
+    # The directory will need to allow files to be created by the extension
+    # code as well as allow the webserver to server content from it.
+    # my $data_path = bz_locations->{'datadir'} . "/" . __PACKAGE__->NAME;
+    # $create_dirs->{$data_path} = Bugzilla::Install::Filesystem::DIR_CGI_WRITE;
+   
+    # Update the permissions of any files and directories that currently reside
+    # in the extension's directory. 
+    # $recurse_dirs->{$data_path} = {
+    #     files => Bugzilla::Install::Filesystem::CGI_READ,
+    #     dirs  => Bugzilla::Install::Filesystem::DIR_CGI_WRITE
+    # };
+    
+    # Create a htaccess file that allows specific content to be served from the 
+    # extension's directory.
+    # $htaccess->{"$data_path/.htaccess"} = {
+    #     perms    => Bugzilla::Install::Filesystem::WS_SERVE,
+    #     contents => Bugzilla::Install::Filesystem::HT_DEFAULT_DENY
+    # };
+}
+
+sub install_update_db {
+    my $dbh = Bugzilla->dbh;
+#    $dbh->bz_add_column('example', 'new_column',
+#                        {TYPE => 'INT2', NOTNULL => 1, DEFAULT => 0});
+#    $dbh->bz_add_index('example', 'example_new_column_idx', [qw(value)]);
+}
+
+sub install_update_db_fielddefs {
+    my $dbh = Bugzilla->dbh;
+#    $dbh->bz_add_column('fielddefs', 'example_column', 
+#                        {TYPE => 'MEDIUMTEXT', NOTNULL => 1, DEFAULT => ''});
+}
+
+sub job_map {
+    my ($self, $args) = @_;
+    
+    my $job_map = $args->{job_map};
+    
+    # This adds the named class (an instance of TheSchwartz::Worker) as a
+    # handler for when a job is added with the name "some_task".
+    $job_map->{'some_task'} = 'Bugzilla::Extension::Example::Job::SomeClass';
+    
+    # Schedule a job like this:
+    # my $queue = Bugzilla->job_queue();
+    # $queue->insert('some_task', { some_parameter => $some_variable });
 }
 
 sub mailer_before_send {
@@ -578,6 +654,13 @@ sub page_before_template {
     if ($page eq 'example.html') {
         $vars->{cgi_variables} = { Bugzilla->cgi->Vars };
     }
+}
+
+sub post_bug_after_creation {
+    my ($self, $args) = @_;
+    
+    my $vars = $args->{vars};
+    $vars->{'example'} = 1;
 }
 
 sub product_confirm_delete {

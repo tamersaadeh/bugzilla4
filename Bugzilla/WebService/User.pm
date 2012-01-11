@@ -28,7 +28,6 @@ use Bugzilla::Error;
 use Bugzilla::Group;
 use Bugzilla::User;
 use Bugzilla::Util qw(trim);
-use Bugzilla::Token;
 use Bugzilla::WebService::Util qw(filter validate);
 
 # Don't need auth to login
@@ -91,19 +90,8 @@ sub offer_account_by_email {
     my $email = trim($params->{email})
         || ThrowCodeError('param_required', { param => 'email' });
 
-    my $createexp = Bugzilla->params->{'createemailregexp'};
-    if (!$createexp) {
-        ThrowUserError("account_creation_disabled");
-    }
-    elsif ($email !~ /$createexp/) {
-        ThrowUserError("account_creation_restricted");
-    }
-
-    $email = Bugzilla::User->check_login_name_for_creation($email);
-
-    # Create and send a token for this new account.
-    Bugzilla::Token::issue_new_user_account_token($email);
-
+    Bugzilla->user->check_account_creation_enabled;
+    Bugzilla->user->check_and_send_account_creation_confirmation($email);
     return undef;
 }
 
@@ -218,7 +206,7 @@ sub get {
                 real_name => $self->type('string', $_->name),
                 name      => $self->type('string', $_->login),
                 email     => $self->type('string', $_->email),
-                can_login => $self->type('boolean', $_->is_disabled ? 0 : 1),
+                can_login => $self->type('boolean', $_->is_enabled ? 1 : 0),
                 email_enabled     => $self->type('boolean', $_->email_enabled),
                 login_denied_text => $self->type('string', $_->disabledtext),
             }} @$in_group;
@@ -231,7 +219,7 @@ sub get {
                 real_name => $self->type('string', $_->name),
                 name      => $self->type('string', $_->login),
                 email     => $self->type('string', $_->email),
-                can_login => $self->type('boolean', $_->is_disabled ? 0 : 1),
+                can_login => $self->type('boolean', $_->is_enabled ? 1 : 0),
             }} @$in_group;
     }
 
@@ -396,14 +384,14 @@ This is the recommended way to create a Bugzilla account.
 
 =over
 
-=item 500 (Illegal Email Address)
+=item 500 (Account Already Exists)
+
+An account with that email address already exists in Bugzilla.
+
+=item 501 (Illegal Email Address)
 
 This Bugzilla does not allow you to create accounts with the format of
 email address you specified. Account creation may be entirely disabled.
-
-=item 501 (Account Already Exists)
-
-An account with that email address already exists in Bugzilla.
 
 =back
 

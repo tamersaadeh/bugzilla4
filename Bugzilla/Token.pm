@@ -63,13 +63,14 @@ sub issue_new_user_account_token {
     # But to prevent using this way to mailbomb an email address, make sure
     # the last request is at least 10 minutes old before sending a new email.
 
-    my $pending_requests =
-        $dbh->selectrow_array('SELECT COUNT(*)
-                                 FROM tokens
-                                WHERE tokentype = ?
-                                  AND ' . $dbh->sql_istrcmp('eventdata', '?') . '
-                                  AND issuedate > NOW() - ' . $dbh->sql_interval(10, 'MINUTE'),
-                               undef, ('account', $login_name));
+    my $pending_requests = $dbh->selectrow_array(
+        'SELECT COUNT(*)
+           FROM tokens
+          WHERE tokentype = ?
+                AND ' . $dbh->sql_istrcmp('eventdata', '?') . '
+                AND issuedate > '
+                    . $dbh->sql_date_math('NOW()', '-', 10, 'MINUTE'),
+        undef, ('account', $login_name));
 
     ThrowUserError('too_soon_for_new_token', {'type' => 'account'}) if $pending_requests;
 
@@ -91,8 +92,9 @@ sub issue_new_user_account_token {
 }
 
 sub IssueEmailChangeToken {
-    my ($user, $old_email, $new_email) = @_;
+    my ($user, $new_email) = @_;
     my $email_suffix = Bugzilla->params->{'emailsuffix'};
+    my $old_email = $user->login;
 
     my ($token, $token_ts) = _create_token($user->id, 'emailold', $old_email . ":" . $new_email);
 
@@ -100,7 +102,7 @@ sub IssueEmailChangeToken {
 
     # Mail the user the token along with instructions for using it.
 
-    my $template = Bugzilla->template_inner($user->settings->{'lang'}->{'value'});
+    my $template = Bugzilla->template_inner($user->setting('lang'));
     my $vars = {};
 
     $vars->{'oldemailaddress'} = $old_email . $email_suffix;
@@ -131,20 +133,19 @@ sub IssuePasswordToken {
     my $user = shift;
     my $dbh = Bugzilla->dbh;
 
-    my $too_soon =
-        $dbh->selectrow_array('SELECT 1 FROM tokens
-                                WHERE userid = ?
-                                  AND tokentype = ?
-                                  AND issuedate > NOW() - ' .
-                                      $dbh->sql_interval(10, 'MINUTE'),
-                                undef, ($user->id, 'password'));
+    my $too_soon = $dbh->selectrow_array(
+        'SELECT 1 FROM tokens
+          WHERE userid = ? AND tokentype = ?
+                AND issuedate > ' 
+                    . $dbh->sql_date_math('NOW()', '-', 10, 'MINUTE'),
+        undef, ($user->id, 'password'));
 
     ThrowUserError('too_soon_for_new_token', {'type' => 'password'}) if $too_soon;
 
     my ($token, $token_ts) = _create_token($user->id, 'password', remote_ip());
 
     # Mail the user the token along with instructions for using it.
-    my $template = Bugzilla->template_inner($user->settings->{'lang'}->{'value'});
+    my $template = Bugzilla->template_inner($user->setting('lang'));
     my $vars = {};
 
     $vars->{'token'} = $token;
@@ -175,9 +176,14 @@ sub issue_hash_token {
     $data ||= [];
     $time ||= time();
 
+    # For the user ID, use the actual ID if the user is logged in.
+    # Otherwise, use the remote IP, in case this is for something
+    # such as creating an account or logging in.
+    my $user_id = Bugzilla->user->id || remote_ip();
+
     # The concatenated string is of the form
-    # token creation time + site-wide secret + user ID + data
-    my @args = ($time, Bugzilla->localconfig->{'site_wide_secret'}, Bugzilla->user->id, @$data);
+    # token creation time + site-wide secret + user ID (either ID or remote IP) + data
+    my @args = ($time, Bugzilla->localconfig->{'site_wide_secret'}, $user_id, @$data);
 
     my $token = join('*', @args);
     # Wide characters cause md5_hex() to die.
@@ -245,7 +251,7 @@ sub GenerateUniqueToken {
     $column ||= "token";
 
     my $dbh = Bugzilla->dbh;
-    my $sth = $dbh->prepare("SELECT userid FROM $table WHERE $column = ?");
+    my $sth = $dbh->prepare("SELECT 1 FROM $table WHERE $column = ?");
 
     while ($duplicate) {
         ++$tries;
@@ -292,7 +298,7 @@ sub Cancel {
     $vars->{'cancelaction'} = $cancelaction;
 
     # Notify the user via email about the cancellation.
-    my $template = Bugzilla->template_inner($user->settings->{'lang'}->{'value'});
+    my $template = Bugzilla->template_inner($user->setting('lang'));
 
     my $message;
     $template->process("account/cancel-token.txt.tmpl", $vars, \$message)
@@ -447,7 +453,7 @@ Bugzilla::Token - Provides different routines to manage tokens.
     use Bugzilla::Token;
 
     Bugzilla::Token::issue_new_user_account_token($login_name);
-    Bugzilla::Token::IssueEmailChangeToken($user, $old_email, $new_email);
+    Bugzilla::Token::IssueEmailChangeToken($user, $new_email);
     Bugzilla::Token::IssuePasswordToken($user);
     Bugzilla::Token::DeletePasswordTokens($user_id, $reason);
     Bugzilla::Token::Cancel($token, $cancelaction, $vars);
@@ -478,7 +484,7 @@ Bugzilla::Token - Provides different routines to manage tokens.
  Returns:     Nothing. It throws an error if the same user made the same
               request in the last few minutes.
 
-=item C<sub IssueEmailChangeToken($user, $old_email, $new_email)>
+=item C<sub IssueEmailChangeToken($user, $new_email)>
 
  Description: Sends two distinct tokens per email to the old and new email
               addresses to confirm the email address change for the given
@@ -486,7 +492,6 @@ Bugzilla::Token - Provides different routines to manage tokens.
 
  Params:      $user      - User object of the user requesting a new
                            email address.
-              $old_email - The current (old) email address of the user.
               $new_email - The new email address of the user.
 
  Returns:     Nothing.

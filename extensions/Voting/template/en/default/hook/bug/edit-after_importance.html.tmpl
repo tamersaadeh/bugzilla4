@@ -18,16 +18,12 @@
   #   Max Kanat-Alexander <mkanat@bugzilla.org>
   #%]
 [% IF bug.product_obj.votesperuser %]
-  <style type="text/css">
-    #votes_container { white-space: nowrap; }
-  </style>
-
   <span id="votes_container">
     [% IF bug.votes %]
       with
       <a href="page.cgi?id=voting/bug.html&amp;bug_id=
-               [%- bug.id FILTER url_quote %]">
-        [%- bug.votes %] 
+               [%- bug.id FILTER uri %]">
+        [%- bug.votes FILTER html %] 
         [% IF bug.votes == 1 %]
             vote
         [% ELSE %]
@@ -35,7 +31,7 @@
         [% END %]</a>
     [% END %]
     (<a href="page.cgi?id=voting/user.html&amp;bug_id=
-              [%- bug.id FILTER url_quote %]#vote_
-              [%- bug.id FILTER url_quote %]">vote</a>)
+              [%- bug.id FILTER uri %]#vote_
+              [%- bug.id FILTER uri %]">vote</a>)
   </span>
 [% END %]

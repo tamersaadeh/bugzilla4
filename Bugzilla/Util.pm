@@ -39,14 +39,15 @@ use base qw(Exporter);
                              do_ssl_redirect_if_required use_attachbase
                              diff_arrays on_main_db
                              trim wrap_hard wrap_comment find_wrap_point
-                             format_time format_time_decimal validate_date
-                             validate_time datetime_from
+                             format_time validate_date validate_time datetime_from
                              file_mod_time is_7bit_clean
                              bz_crypt generate_random_password
                              validate_email_syntax clean_text
-                             get_text template_var disable_utf8);
+                             get_text template_var disable_utf8
+                             detect_encoding);
 
 use Bugzilla::Constants;
+use Bugzilla::RNG qw(irand);
 
 use Date::Parse;
 use Date::Format;
@@ -55,9 +56,11 @@ use DateTime::TimeZone;
 use Digest;
 use Email::Address;
 use List::Util qw(first);
-use Scalar::Util qw(tainted);
+use Scalar::Util qw(tainted blessed);
 use Template::Filters;
 use Text::Wrap;
+use Encode qw(encode decode resolve_alias);
+use Encode::Guess;
 
 sub trick_taint {
     require Carp;
@@ -240,14 +243,11 @@ sub xml_quote {
     return $var;
 }
 
-# This function must not be relied upon to return a valid string to pass to
-# the DB or the user in UTF-8 situations. The only thing you  can rely upon
-# it for is that if you url_decode a string, it will url_encode back to the 
-# exact same thing.
 sub url_decode {
     my ($todecode) = (@_);
     $todecode =~ tr/+/ /;       # pluses become spaces
     $todecode =~ s/%([0-9a-fA-F]{2})/pack("c",hex($1))/ge;
+    utf8::decode($todecode) if Bugzilla->params->{'utf8'};
     return $todecode;
 }
 
@@ -307,25 +307,40 @@ sub use_attachbase {
 }
 
 sub diff_arrays {
-    my ($old_ref, $new_ref) = @_;
+    my ($old_ref, $new_ref, $attrib) = @_;
+    $attrib ||= 'name';
 
+    my (%counts, %pos);
+    # We are going to alter the old array.
     my @old = @$old_ref;
-    my @new = @$new_ref;
+    my $i = 0;
 
-    # For each pair of (old, new) entries:
-    # If they're equal, set them to empty. When done, @old contains entries
-    # that were removed; @new contains ones that got added.
-    foreach my $oldv (@old) {
-        foreach my $newv (@new) {
-            next if ($newv eq '');
-            if ($oldv eq $newv) {
-                $newv = $oldv = '';
-            }
+    # $counts{foo}-- means old, $counts{foo}++ means new.
+    # If $counts{foo} becomes positive, then we are adding new items,
+    # else we simply cancel one old existing item. Remaining items
+    # in the old list have been removed.
+    foreach (@old) {
+        next unless defined $_;
+        my $value = blessed($_) ? $_->$attrib : $_;
+        $counts{$value}--;
+        push @{$pos{$value}}, $i++;
+    }
+    my @added;
+    foreach (@$new_ref) {
+        next unless defined $_;
+        my $value = blessed($_) ? $_->$attrib : $_;
+        if (++$counts{$value} > 0) {
+            # Ignore empty strings, but objects having an empty string
+            # as attribute are fine.
+            push(@added, $_) unless ($value eq '' && !blessed($_));
+        }
+        else {
+            my $old_pos = shift @{$pos{$value}};
+            $old[$old_pos] = undef;
         }
     }
-
-    my @removed = grep { $_ ne '' } @old;
-    my @added = grep { $_ ne '' } @new;
+    # Ignore canceled items as well as empty strings.
+    my @removed = grep { defined $_ && $_ ne '' } @old;
     return (\@removed, \@added);
 }
 
@@ -475,18 +490,6 @@ sub datetime_from {
     return $dt;
 }
 
-sub format_time_decimal {
-    my ($time) = (@_);
-
-    my $newtime = sprintf("%.2f", $time);
-
-    if ($newtime =~ /0\Z/) {
-        $newtime = sprintf("%.1f", $time);
-    }
-
-    return $newtime;
-}
-
 sub file_mod_time {
     my ($filename) = (@_);
     my ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,
@@ -556,48 +559,7 @@ sub bz_crypt {
 # strength of the string in bits.
 sub generate_random_password {
     my $size = shift || 10; # default to 10 chars if nothing specified
-    my $rand;
-    if (Bugzilla->feature('rand_security')) {
-        $rand = \&Math::Random::Secure::irand;
-    }
-    else {
-        # For details on why this block works the way it does, see bug 619594.
-        # (Note that we don't do this if Math::Random::Secure is installed,
-        # because we don't need to.)
-        my $counter = 0;
-        $rand = sub {
-            # If we regenerate the seed every 5 characters, our seed is roughly
-            # as strong (in terms of bit size) as our randomly-generated
-            # string itself.
-            _do_srand() if ($counter % 5) == 0;
-            $counter++;
-            return int(rand $_[0]);
-        };
-    }
-    return join("", map{ ('0'..'9','a'..'z','A'..'Z')[$rand->(62)] } 
-                       (1..$size));
-}
-
-sub _do_srand {
-    # On Windows, calling srand over and over in the same process produces
-    # very bad results. We need a stronger seed.
-    if (ON_WINDOWS) {
-        require Win32;
-        # GuidGen generates random data via Windows's CryptGenRandom
-        # interface, which is documented as being cryptographically secure.
-        my $guid = Win32::GuidGen();
-        # GUIDs look like:
-        # {09531CF1-D0C7-4860-840C-1C8C8735E2AD}
-        $guid =~ s/[-{}]+//g;
-        # Get a 32-bit integer using the first eight hex digits.
-        my $seed = hex(substr($guid, 0, 8));
-        srand($seed);
-        return;
-    }
-
-    # On *nix-like platforms, this uses /dev/urandom, so the seed changes
-    # enough on every invocation.
-    srand();
+    return join("", map{ ('0'..'9','a'..'z','A'..'Z')[irand 62] } (1..$size));
 }
 
 sub validate_email_syntax {
@@ -699,10 +661,76 @@ sub template_var {
     return $vars{$name};
 }
 
+sub display_value {
+    my ($field, $value) = @_;
+    my $value_descs = template_var('value_descs');
+    if (defined $value_descs->{$field}->{$value}) {
+        return $value_descs->{$field}->{$value};
+    }
+    return $value;
+}
+
 sub disable_utf8 {
     if (Bugzilla->params->{'utf8'}) {
         binmode STDOUT, ':bytes'; # Turn off UTF8 encoding.
     }
+}
+
+use constant UTF8_ACCIDENTAL => qw(shiftjis big5-eten euc-kr euc-jp);
+
+sub detect_encoding {
+    my $data = shift;
+
+    if (!Bugzilla->feature('detect_charset')) {
+        require Bugzilla::Error;
+        Bugzilla::Error::ThrowCodeError('feature_disabled',
+            { feature => 'detect_charset' });
+    }
+
+    require Encode::Detect::Detector;
+    import Encode::Detect::Detector 'detect';
+
+    my $encoding = detect($data);
+    $encoding = resolve_alias($encoding) if $encoding;
+
+    # Encode::Detect is bad at detecting certain charsets, but Encode::Guess
+    # is better at them. Here's the details:
+
+    # shiftjis, big5-eten, euc-kr, and euc-jp: (Encode::Detect
+    # tends to accidentally mis-detect UTF-8 strings as being
+    # these encodings.)
+    if ($encoding && grep($_ eq $encoding, UTF8_ACCIDENTAL)) {
+        $encoding = undef;
+        my $decoder = guess_encoding($data, UTF8_ACCIDENTAL);
+        $encoding = $decoder->name if ref $decoder;
+    }
+
+    # Encode::Detect sometimes mis-detects various ISO encodings as iso-8859-8,
+    # but Encode::Guess can usually tell which one it is.
+    if ($encoding && $encoding eq 'iso-8859-8') {
+        my $decoded_as = _guess_iso($data, 'iso-8859-8', 
+            # These are ordered this way because it gives the most 
+            # accurate results.
+            qw(iso-8859-7 iso-8859-2));
+        $encoding = $decoded_as if $decoded_as;
+    }
+
+    return $encoding;
+}
+
+# A helper for detect_encoding.
+sub _guess_iso {
+    my ($data, $versus, @isos) = (shift, shift, shift);
+
+    my $encoding;
+    foreach my $iso (@isos) {
+        my $decoder = guess_encoding($data, ($iso, $versus));
+        if (ref $decoder) {
+            $encoding = $decoder->name if ref $decoder;
+            last;
+        }
+    }
+    return $encoding;
 }
 
 1;
@@ -935,6 +963,12 @@ ASCII 10 (LineFeed) and ASCII 13 (Carrage Return).
 
 Disable utf8 on STDOUT (and display raw data instead).
 
+=item C<detect_encoding($str)>
+
+Guesses what encoding a given data is encoded in, returning the canonical name
+of the detected encoding (which may be different from the MIME charset 
+specification).
+
 =item C<clean_text($str)>
 Returns the parameter "cleaned" by exchanging non-printable characters with spaces.
 Specifically characters (ASCII 0 through 31) and (ASCII 127) will become ASCII 32 (Space).
@@ -990,11 +1024,6 @@ is used, as defined in his preferences.
 
 This routine is mainly called from templates to filter dates, see
 "FILTER time" in L<Bugzilla::Template>.
-
-=item C<format_time_decimal($time)>
-
-Returns a number with 2 digit precision, unless the last digit is a 0. Then it 
-returns only 1 digit precision.
 
 =item C<datetime_from($time, $timezone)>
 

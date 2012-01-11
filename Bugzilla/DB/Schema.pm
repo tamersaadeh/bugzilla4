@@ -44,13 +44,19 @@ use Bugzilla::Constants;
 use Carp qw(confess);
 use Digest::MD5 qw(md5_hex);
 use Hash::Util qw(lock_value unlock_hash lock_keys unlock_keys);
-use List::MoreUtils qw(firstidx);
+use List::MoreUtils qw(firstidx natatime);
 use Safe;
 # Historical, needed for SCHEMA_VERSION = '1.00'
 use Storable qw(dclone freeze thaw);
 
-# New SCHEMA_VERSION (2.00) use this
+# New SCHEMA_VERSIONs (2+) use this
 use Data::Dumper;
+
+# Whether or not this database can safely create FKs when doing a
+# CREATE TABLE statement. This is false for most DBs, because they
+# prevent you from creating FKs on tables and columns that don't
+# yet exist. (However, in SQLite it's 1 because SQLite allows that.)
+use constant FK_ON_CREATE => 0;
 
 =head1 NAME
 
@@ -208,7 +214,7 @@ update this column in this table."
 
 =cut
 
-use constant SCHEMA_VERSION  => '2.00';
+use constant SCHEMA_VERSION  => 3;
 use constant ADD_COLUMN      => 'ADD COLUMN';
 # Multiple FKs can be added using ALTER TABLE ADD CONSTRAINT in one
 # SQL statement. This isn't true for all databases.
@@ -249,7 +255,8 @@ use constant ABSTRACT_SCHEMA => {
             assigned_to         => {TYPE => 'INT3', NOTNULL => 1,
                                     REFERENCES => {TABLE  => 'profiles',
                                                    COLUMN => 'userid'}},
-            bug_file_loc        => {TYPE => 'MEDIUMTEXT'},
+            bug_file_loc        => {TYPE => 'MEDIUMTEXT', 
+                                    NOTNULL => 1, DEFAULT => "''"},
             bug_severity        => {TYPE => 'varchar(64)', NOTNULL => 1},
             bug_status          => {TYPE => 'varchar(64)', NOTNULL => 1},
             creation_ts         => {TYPE => 'DATETIME'},
@@ -453,8 +460,6 @@ use constant ABSTRACT_SCHEMA => {
                              DEFAULT => 'FALSE'},
             isprivate    => {TYPE => 'BOOLEAN', NOTNULL => 1,
                              DEFAULT => 'FALSE'},
-            isurl        => {TYPE => 'BOOLEAN', NOTNULL => 1,
-                             DEFAULT => 'FALSE'},
         ],
         INDEXES => [
             attachments_bug_id_idx => ['bug_id'],
@@ -490,15 +495,36 @@ use constant ABSTRACT_SCHEMA => {
 
     bug_see_also => {
         FIELDS => [
+            id     => {TYPE => 'MEDIUMSERIAL', NOTNULL => 1,
+                       PRIMARYKEY => 1},
             bug_id => {TYPE => 'INT3', NOTNULL => 1,
                        REFERENCES => {TABLE  => 'bugs',
                                       COLUMN => 'bug_id',
                                       DELETE => 'CASCADE'}},
             value  => {TYPE => 'varchar(255)', NOTNULL => 1},
+            class  => {TYPE => 'varchar(255)', NOTNULL => 1, DEFAULT => "''"},
         ],
         INDEXES => [
             bug_see_also_bug_id_idx => {FIELDS => [qw(bug_id value)], 
                                         TYPE   => 'UNIQUE'},
+        ],
+    },
+
+    # Auditing
+    # --------
+
+    audit_log => {
+        FIELDS => [
+            user_id   => {TYPE => 'INT3',
+                          REFERENCES => {TABLE  => 'profiles',
+                                         COLUMN => 'userid',
+                                         DELETE => 'SET NULL'}},
+            class     => {TYPE => 'varchar(255)', NOTNULL => 1},
+            object_id => {TYPE => 'INT4', NOTNULL => 1},
+            field     => {TYPE => 'varchar(64)', NOTNULL => 1},
+            removed   => {TYPE => 'MEDIUMTEXT'},
+            added     => {TYPE => 'MEDIUMTEXT'},
+            at_time   => {TYPE => 'DATETIME', NOTNULL => 1},
         ],
     },
 
@@ -676,12 +702,13 @@ use constant ABSTRACT_SCHEMA => {
             visibility_field_id => {TYPE => 'INT3', 
                                     REFERENCES => {TABLE  => 'fielddefs',
                                                    COLUMN => 'id'}},
-            visibility_value_id => {TYPE => 'INT2'},
             value_field_id => {TYPE => 'INT3',
                                REFERENCES => {TABLE  => 'fielddefs',
                                               COLUMN => 'id'}},
             reverse_desc => {TYPE => 'TINYTEXT'},
             is_mandatory => {TYPE => 'BOOLEAN', NOTNULL => 1,
+                             DEFAULT => 'FALSE'},
+            is_numeric    => {TYPE => 'BOOLEAN', NOTNULL => 1,
                              DEFAULT => 'FALSE'},
         ],
         INDEXES => [
@@ -690,6 +717,25 @@ use constant ABSTRACT_SCHEMA => {
             fielddefs_sortkey_idx => ['sortkey'],
             fielddefs_value_field_id_idx => ['value_field_id'],
             fielddefs_is_mandatory_idx => ['is_mandatory'],
+        ],
+    },
+
+    # Field Visibility Information
+    # -------------------------
+
+    field_visibility => {
+        FIELDS => [
+            field_id => {TYPE => 'INT3', 
+                         REFERENCES => {TABLE  => 'fielddefs',
+                                        COLUMN => 'id',
+                                        DELETE => 'CASCADE'}},
+            value_id => {TYPE => 'INT2', NOTNULL => 1}
+        ],
+        INDEXES => [
+            field_visibility_field_id_idx => {
+                FIELDS => [qw(field_id value_id)],
+                TYPE   => 'UNIQUE'
+            },
         ],
     },
 
@@ -705,6 +751,8 @@ use constant ABSTRACT_SCHEMA => {
                             REFERENCES => {TABLE  => 'products',
                                            COLUMN => 'id',
                                            DELETE => 'CASCADE'}},
+            isactive   =>  {TYPE => 'BOOLEAN', NOTNULL => 1, 
+                            DEFAULT => 'TRUE'},
         ],
         INDEXES => [
             versions_product_id_idx => {FIELDS => [qw(product_id value)],
@@ -723,6 +771,8 @@ use constant ABSTRACT_SCHEMA => {
             value      => {TYPE => 'varchar(20)', NOTNULL => 1},
             sortkey    => {TYPE => 'INT2', NOTNULL => 1,
                            DEFAULT => 0},
+            isactive   => {TYPE => 'BOOLEAN', NOTNULL => 1, 
+                           DEFAULT => 'TRUE'},
         ],
         INDEXES => [
             milestones_product_id_idx => {FIELDS => [qw(product_id value)],
@@ -837,6 +887,8 @@ use constant ABSTRACT_SCHEMA => {
             mybugslink     => {TYPE => 'BOOLEAN', NOTNULL => 1,
                                DEFAULT => 'TRUE'},
             extern_id      => {TYPE => 'varchar(64)'},
+            is_enabled     => {TYPE => 'BOOLEAN', NOTNULL => 1, 
+                               DEFAULT => 'TRUE'}, 
         ],
         INDEXES => [
             profiles_login_name_idx => {FIELDS => ['login_name'],
@@ -925,7 +977,6 @@ use constant ABSTRACT_SCHEMA => {
                                             DELETE => 'CASCADE'}},
             name         => {TYPE => 'varchar(64)', NOTNULL => 1},
             query        => {TYPE => 'LONGTEXT', NOTNULL => 1},
-            query_type   => {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => 0},
         ],
         INDEXES => [
             namedqueries_userid_idx => {FIELDS => [qw(userid name)],
@@ -948,6 +999,36 @@ use constant ABSTRACT_SCHEMA => {
             namedqueries_link_in_footer_id_idx => {FIELDS => [qw(namedquery_id user_id)],
                                                    TYPE => 'UNIQUE'},
             namedqueries_link_in_footer_userid_idx => ['user_id'],
+        ],
+    },
+
+    tag => {
+        FIELDS => [
+            id   => {TYPE => 'MEDIUMSERIAL', NOTNULL => 1, PRIMARYKEY => 1},
+            name => {TYPE => 'varchar(64)', NOTNULL => 1},
+            user_id  => {TYPE => 'INT3', NOTNULL => 1,
+                         REFERENCES => {TABLE  => 'profiles',
+                                        COLUMN => 'userid',
+                                        DELETE => 'CASCADE'}},
+        ],
+        INDEXES => [
+            tag_user_id_idx => {FIELDS => [qw(user_id name)], TYPE => 'UNIQUE'},
+        ],
+    },
+
+    bug_tag => {
+        FIELDS => [
+            bug_id => {TYPE => 'INT3', NOTNULL => 1,
+                       REFERENCES => {TABLE  => 'bugs',
+                                      COLUMN => 'bug_id',
+                                      DELETE => 'CASCADE'}},
+            tag_id => {TYPE => 'INT3', NOTNULL => 1,
+                       REFERENCES => {TABLE  => 'tag',
+                                      COLUMN => 'id',
+                                      DELETE => 'CASCADE'}},
+        ],
+        INDEXES => [
+            bug_tag_bug_id_idx => {FIELDS => [qw(bug_id tag_id)], TYPE => 'UNIQUE'},
         ],
     },
 
@@ -1251,6 +1332,8 @@ use constant ABSTRACT_SCHEMA => {
                                                 COLUMN => 'userid',
                                                 DELETE => 'SET NULL'}},
             description      => {TYPE => 'MEDIUMTEXT', NOTNULL => 1},
+            isactive         => {TYPE => 'BOOLEAN', NOTNULL => 1, 
+                                 DEFAULT => 'TRUE'},
         ],
         INDEXES => [
             components_product_id_idx => {FIELDS => [qw(product_id name)],
@@ -1285,9 +1368,9 @@ use constant ABSTRACT_SCHEMA => {
                             DEFAULT => 'FALSE'},
         ],
         INDEXES => [
-            series_creator_idx  =>
-                {FIELDS => [qw(creator category subcategory name)],
-                 TYPE => 'UNIQUE'},
+            series_creator_idx  => ['creator'],
+            series_category_idx => {FIELDS => [qw(category subcategory name)],
+                                    TYPE => 'UNIQUE'},
         ],
     },
 
@@ -1762,8 +1845,9 @@ C<ALTER TABLE> SQL statement
     # DEFAULT attribute must appear before any column constraints
     # (e.g., NOT NULL), for Oracle
     $type_ddl .= " DEFAULT $default" if (defined($default));
-    $type_ddl .= " NOT NULL" if ($finfo->{NOTNULL});
+    # PRIMARY KEY must appear before NOT NULL for SQLite.
     $type_ddl .= " PRIMARY KEY" if ($finfo->{PRIMARYKEY});
+    $type_ddl .= " NOT NULL" if ($finfo->{NOTNULL});
 
     return($type_ddl);
 
@@ -1839,12 +1923,8 @@ sub _hash_identifier {
 sub get_add_fks_sql {
     my ($self, $table, $column_fks) = @_;
 
-    my @add;
-    foreach my $column (keys %$column_fks) {
-        my $def = $column_fks->{$column};
-        my $fk_string = $self->get_fk_ddl($table, $column, $def);
-        push(@add, $fk_string);
-    }
+    my @add = $self->_column_fks_to_ddl($table, $column_fks);
+
     my @sql;
     if ($self->MULTIPLE_FKS_IN_ALTER) {
         my $alter = "ALTER TABLE $table ADD " . join(', ADD ', @add);
@@ -1856,6 +1936,17 @@ sub get_add_fks_sql {
         }
     }
     return @sql;
+}
+
+sub _column_fks_to_ddl {
+    my ($self, $table, $column_fks) = @_;
+    my @ddl;
+    foreach my $column (keys %$column_fks) {
+        my $def = $column_fks->{$column};
+        my $fk_string = $self->get_fk_ddl($table, $column, $def);
+        push(@ddl, $fk_string);
+    }
+    return @ddl;
 }
 
 sub get_drop_fk_sql { 
@@ -1997,7 +2088,7 @@ sub get_table_ddl {
     return @ddl;
 
 } #eosub--get_table_ddl
-#--------------------------------------------------------------------------
+
 sub _get_create_table_ddl {
 
 =item C<_get_create_table_ddl>
@@ -2013,25 +2104,27 @@ sub _get_create_table_ddl {
 
     my $thash = $self->{schema}{$table};
     die "Table $table does not exist in the database schema."
-        unless (ref($thash));
+        unless ref $thash;
 
-    my $create_table = "CREATE TABLE $table \(\n";
-
+    my (@col_lines, @fk_lines);
     my @fields = @{ $thash->{FIELDS} };
     while (@fields) {
         my $field = shift(@fields);
         my $finfo = shift(@fields);
-        $create_table .= "\t$field\t" . $self->get_type_ddl($finfo);
-        $create_table .= "," if (@fields);
-        $create_table .= "\n";
+        push(@col_lines, "\t$field\t" . $self->get_type_ddl($finfo));
+        if ($self->FK_ON_CREATE and $finfo->{REFERENCES}) {
+            my $fk = $finfo->{REFERENCES};
+            my $fk_ddl = $self->get_fk_ddl($table, $field, $fk);
+            push(@fk_lines, $fk_ddl);
+        }
     }
+    
+    my $sql = "CREATE TABLE $table (\n" . join(",\n", @col_lines, @fk_lines)
+              . "\n)";
+    return $sql
 
-    $create_table .= "\)";
+} 
 
-    return($create_table)
-
-} #eosub--_get_create_table_ddl
-#--------------------------------------------------------------------------
 sub _get_create_index_ddl {
 
 =item C<_get_create_index_ddl>
@@ -2085,8 +2178,8 @@ sub get_add_column_ddl {
         if defined $init_value;
 
     if (defined $definition->{REFERENCES}) {
-        push(@statements, $self->get_add_fk_sql($table, $column,
-                                                $definition->{REFERENCES}));
+        push(@statements, $self->get_add_fks_sql($table, { $column =>
+                                                           $definition->{REFERENCES} }));
     }
 
     return (@statements);
@@ -2146,7 +2239,8 @@ sub get_alter_column_ddl {
 
 =cut
 
-    my ($self, $table, $column, $new_def, $set_nulls_to) = @_;
+    my $self = shift;
+    my ($table, $column, $new_def, $set_nulls_to) = @_;
 
     my @statements;
     my $old_def = $self->get_column_abstract($table, $column);
@@ -2183,17 +2277,7 @@ sub get_alter_column_ddl {
 
     # If we went from NULL to NOT NULL.
     if (!$old_def->{NOTNULL} && $new_def->{NOTNULL}) {
-        my $setdefault;
-        # Handle any fields that were NULL before, if we have a default,
-        $setdefault = $default if defined $default;
-        # But if we have a set_nulls_to, that overrides the DEFAULT 
-        # (although nobody would usually specify both a default and 
-        # a set_nulls_to.)
-        $setdefault = $set_nulls_to if defined $set_nulls_to;
-        if (defined $setdefault) {
-            push(@statements, "UPDATE $table SET $column = $setdefault"
-                            . "  WHERE $column IS NULL");
-        }
+        push(@statements, $self->_set_nulls_sql(@_));
         push(@statements, "ALTER TABLE $table ALTER COLUMN $column"
                         . " SET NOT NULL");
     }
@@ -2213,6 +2297,27 @@ sub get_alter_column_ddl {
     }
 
     return @statements;
+}
+
+# Helps handle any fields that were NULL before, if we have a default,
+# when doing an ALTER COLUMN.
+sub _set_nulls_sql {
+    my ($self, $table, $column, $new_def, $set_nulls_to) = @_;
+    my $default = $new_def->{DEFAULT};
+    # If we have a set_nulls_to, that overrides the DEFAULT 
+    # (although nobody would usually specify both a default and 
+    # a set_nulls_to.)
+    $default = $set_nulls_to if defined $set_nulls_to;
+    if (defined $default) {
+         my $specific = $self->{db_specific};
+         $default = $specific->{$default} if exists $specific->{$default};
+    }
+    my @sql;
+    if (defined $default) {
+        push(@sql, "UPDATE $table SET $column = $default"
+                . "  WHERE $column IS NULL");
+    }
+    return @sql;
 }
 
 sub get_drop_index_ddl {
@@ -2548,6 +2653,28 @@ sub set_column {
     $self->_set_object($table, $column, $new_def, $fields);
 }
 
+=item C<set_fk($table, $column \%fk_def)>
+
+Sets the C<REFERENCES> item on the specified column.
+
+=cut
+
+sub set_fk {
+    my ($self, $table, $column, $fk_def) = @_;
+    # Don't want to modify the source def before we explicitly set it below.
+    # This is just us being extra-cautious.
+    my $column_def = dclone($self->get_column_abstract($table, $column));
+    die "Tried to set an fk on $table.$column, but that column doesn't exist"
+        if !$column_def;
+    if ($fk_def) {
+        $column_def->{REFERENCES} = $fk_def;
+    }
+    else {
+        delete $column_def->{REFERENCES};
+    }
+    $self->set_column($table, $column, $column_def);
+}
+
 sub set_index {
 
 =item C<set_index($table, $name, $definition)>
@@ -2700,7 +2827,7 @@ sub serialize_abstract {
  Description: Used for when you've read a serialized Schema off the disk,
               and you want a Schema object that represents that data.
  Params:      $serialized - scalar. The serialized data.
-              $version - A number in the format X.YZ. The "version"
+              $version - A number. The "version"
                   of the Schema that did the serialization.
                   See the docs for C<SCHEMA_VERSION> for more details.
  Returns:     A Schema object. It will have the methods of (and work 
@@ -2713,7 +2840,7 @@ sub deserialize_abstract {
     my ($class, $serialized, $version) = @_;
 
     my $thawed_hash;
-    if (int($version) < 2) {
+    if ($version < 2) {
         $thawed_hash = thaw($serialized);
     }
     else {
@@ -2721,6 +2848,22 @@ sub deserialize_abstract {
         $cpt->reval($serialized) ||
             die "Unable to restore cached schema: " . $@;
         $thawed_hash = ${$cpt->varglob('VAR1')};
+    }
+
+    # Version 2 didn't have the "created" key for REFERENCES items.
+    if ($version < 3) {
+        my $standard = $class->new()->{abstract_schema};
+        foreach my $table_name (keys %$thawed_hash) {
+            my %standard_fields = 
+                @{ $standard->{$table_name}->{FIELDS} || [] };
+            my $table = $thawed_hash->{$table_name};
+            my %fields = @{ $table->{FIELDS} || [] };
+            while (my ($field, $def) = each %fields) {
+                if (exists $def->{REFERENCES}) {
+                    $def->{REFERENCES}->{created} = 1;
+                }
+            }
+        }
     }
 
     return $class->new(undef, $thawed_hash);

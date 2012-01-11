@@ -254,7 +254,7 @@ sub debug {
 
 sub bug_fields {
     my $self = shift;
-    $self->{bug_fields} ||= { map { $_->{name} => $_ } Bugzilla->get_fields };
+    $self->{bug_fields} ||= Bugzilla->fields({ by_name => 1 });
     return $self->{bug_fields};
 }
 
@@ -294,6 +294,7 @@ sub check_requirements {
     my $missing = Bugzilla::Install::Requirements::_check_missing(
         $self->REQUIRED_MODULES, 1);
     my %results = (
+        apache      => [],
         pass        => @$missing ? 0 : 1,
         missing     => $missing,
         any_missing => @$missing ? 1 : 0,

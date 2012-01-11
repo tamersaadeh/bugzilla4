@@ -61,11 +61,7 @@ foreach my $path (@Support::Templates::include_paths) {
     chdir $path; # relative path
     
     # We load a %safe list of acceptable exceptions.
-    if (!-r "filterexceptions.pl") {
-        ok(0, "$path has templates but no filterexceptions.pl file. --ERROR");
-        next;
-    }
-    else {
+    if (-r "filterexceptions.pl") {
         do "filterexceptions.pl";
         if (ON_WINDOWS) {
           # filterexceptions.pl uses / separated paths, while 
@@ -86,10 +82,12 @@ foreach my $path (@Support::Templates::include_paths) {
     # us to flag which members were not found, and report that as a warning, 
     # thereby keeping the lists clean.
     foreach my $file (keys %safe) {
-        my $list = $safe{$file};
-        $safe{$file} = {};
-        foreach my $directive (@$list) {
-            $safe{$file}{$directive} = 0;    
+        if (ref $safe{$file} eq 'ARRAY') {
+            my $list = $safe{$file};
+            $safe{$file} = {};
+            foreach my $directive (@$list) {
+                $safe{$file}{$directive} = 0;    
+            }
         }
     }
 
@@ -110,7 +108,7 @@ foreach my $path (@Support::Templates::include_paths) {
 
         # /g means we execute this loop for every match
         # /s means we ignore linefeeds in the regexp matches
-        while ($slurp =~ /\[%(?:-|\+|~)?(.*?)(?:-|\+|~)?%\]/gs) {
+        while ($slurp =~ /\[%(?:-|\+|~|=)?(.*?)(?:-|\+|~|=)?%\]/gs) {
             my $directive = $1;
 
             my @lineno = ($` =~ m/\n/gs);
@@ -223,8 +221,8 @@ sub directive_ok {
     # Things which are already filtered
     # Note: If a single directive prints two things, and only one is 
     # filtered, we may not catch that case.
-    return 1 if $directive =~ /FILTER\ (html|csv|js|base64|url_quote|css_class_quote|
-                                        ics|quoteUrls|time|uri|xml|lower|html_light|
+    return 1 if $directive =~ /FILTER\ (html|csv|js|base64|css_class_quote|ics|
+                                        quoteUrls|time|uri|xml|lower|html_light|
                                         obsolete|inactive|closed|unitconvert|
                                         txt|html_linebreak|none)\b/x;
 

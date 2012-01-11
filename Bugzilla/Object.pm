@@ -30,6 +30,7 @@ use Bugzilla::Error;
 
 use Date::Parse;
 use List::MoreUtils qw(part);
+use Scalar::Util qw(blessed);
 
 use constant NAME_FIELD => 'name';
 use constant ID_FIELD   => 'id';
@@ -42,6 +43,7 @@ use constant VALIDATOR_DEPENDENCIES => {};
 # XXX At some point, this will be joined with FIELD_MAP.
 use constant REQUIRED_FIELD_MAP  => {};
 use constant EXTRA_REQUIRED_FIELDS => ();
+use constant AUDIT_UPDATES => 1;
 
 # This allows the JSON-RPC interface to return Bugzilla::Object instances
 # as though they were hashes. In the future, this may be modified to return
@@ -391,6 +393,8 @@ sub update {
                             { object => $self, old_object => $old_self,
                               changes => \%changes });
 
+    $self->audit_log(\%changes) if $self->AUDIT_UPDATES;
+
     $dbh->bz_commit_transaction();
 
     if (wantarray) {
@@ -405,9 +409,43 @@ sub remove_from_db {
     Bugzilla::Hook::process('object_before_delete', { object => $self });
     my $table = $self->DB_TABLE;
     my $id_field = $self->ID_FIELD;
-    Bugzilla->dbh->do("DELETE FROM $table WHERE $id_field = ?",
-                      undef, $self->id);
+    my $dbh = Bugzilla->dbh;
+    $dbh->bz_start_transaction();
+    $self->audit_log(AUDIT_REMOVE);
+    $dbh->do("DELETE FROM $table WHERE $id_field = ?", undef, $self->id);
+    $dbh->bz_commit_transaction();
     undef $self;
+}
+
+sub audit_log {
+    my ($self, $changes) = @_;
+    my $class = ref $self;
+    my $dbh = Bugzilla->dbh;
+    my $user_id = Bugzilla->user->id || undef;
+    my $sth = $dbh->prepare(
+        'INSERT INTO audit_log (user_id, class, object_id, field,
+                                removed, added, at_time) 
+              VALUES (?,?,?,?,?,?,LOCALTIMESTAMP(0))');
+    # During creation or removal, $changes is actually just a string
+    # indicating whether we're creating or removing the object.
+    if ($changes eq AUDIT_CREATE or $changes eq AUDIT_REMOVE) {
+        # We put the object's name in the "added" or "removed" field.
+        # We do this thing with NAME_FIELD because $self->name returns
+        # the wrong thing for Bugzilla::User.
+        my $name = $self->{$self->NAME_FIELD};
+        my @added_removed = $changes eq AUDIT_CREATE ? (undef, $name) 
+                                                     : ($name, undef);
+        $sth->execute($user_id, $class, $self->id, $changes, @added_removed);
+        return;
+    }
+
+    # During update, it's the actual %changes hash produced by update().
+    foreach my $field (keys %$changes) {
+        # Skip private changes.
+        next if $field =~ /^_/;
+        my ($from, $to) = @{ $changes->{$field} };
+        $sth->execute($user_id, $class, $self->id, $field, $from, $to);
+    }
 }
 
 ###############################
@@ -462,13 +500,21 @@ sub check_required_create_fields {
 }
 
 sub run_create_validators {
-    my ($class, $params) = @_;
+    my ($class, $params, $options) = @_;
 
     my $validators = $class->_get_validators;
     my %field_values = %$params;
 
+    # Make a hash skiplist for easier searching later
+    my %skip_list = map { $_ => 1 } @{ $options->{skip} || [] };
+
+    # Get the sorted field names
     my @sorted_names = $class->_sort_by_dep(keys %field_values);
-    foreach my $field (@sorted_names) {
+
+    # Remove the skipped names
+    my @unskipped = grep { !$skip_list{$_} } @sorted_names;
+
+    foreach my $field (@unskipped) {
         my $value;
         if (exists $validators->{$field}) {
             my $validator = $validators->{$field};
@@ -513,6 +559,8 @@ sub insert_create_data {
 
     Bugzilla::Hook::process('object_end_of_create', { class => $class,
                                                       object => $object });
+    $object->audit_log(AUDIT_CREATE);
+
     return $object;
 }
 
@@ -527,9 +575,50 @@ sub get_all {
 
 sub check_boolean { return $_[1] ? 1 : 0 }
 
+sub check_time {
+    my ($invocant, $value, $field, $params, $allow_negative) = @_;
+
+    # If we don't have a current value default to zero
+    my $current = blessed($invocant) ? $invocant->{$field}
+                                     : 0;
+    $current ||= 0;
+
+    # Get the new value or zero if it isn't defined
+    $value = trim($value) || 0;
+
+    # Make sure the new value is well formed
+    _validate_time($value, $field, $allow_negative);
+
+    return $value;
+}
+
+
 ###################
 # General Helpers #
 ###################
+
+sub _validate_time {
+    my ($time, $field, $allow_negative) = @_;
+
+    # regexp verifies one or more digits, optionally followed by a period and
+    # zero or more digits, OR we have a period followed by one or more digits
+    # (allow negatives, though, so people can back out errors in time reporting)
+    if ($time !~ /^-?(?:\d+(?:\.\d*)?|\.\d+)$/) {
+        ThrowUserError("number_not_numeric",
+                       {field => $field, num => "$time"});
+    }
+
+    # Callers can optionally allow negative times
+    if ( ($time < 0) && !$allow_negative ) {
+        ThrowUserError("number_too_small",
+                       {field => $field, num => "$time", min_num => "0"});
+    }
+
+    if ($time > 99999.99) {
+        ThrowUserError("number_too_large",
+                       {field => $field, num => "$time", max_num => "99999.99"});
+    }
+}
 
 # Sorts fields according to VALIDATOR_DEPENDENCIES. This is not a
 # traditional topological sort, because a "dependency" does not
@@ -1036,7 +1125,11 @@ Description: Runs the validation of input parameters for L</create>.
              of their input parameters. This method is B<only> called
              by L</create>.
 
-Params:      The same as L</create>.
+Params:      C<$params> - hashref - A value to put in each database
+             field for this object.
+             C<$options> - hashref - Processing options. Currently
+             the only option supported is B<skip>, which can be
+             used to specify a list of fields to not validate.
 
 Returns:     A hash, in a similar format as C<$params>, except that
              these are the values to be inserted into the database,

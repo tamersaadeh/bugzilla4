@@ -88,6 +88,11 @@ sub SETTINGS {
                               default => 'before_comments' },
     # 2008-08-27 LpSolit@gmail.com -- Bug 182238
     timezone           => { subclass => 'Timezone', default => 'local' },
+    # 2011-02-07 dkl@mozilla.com -- Bug 580490
+    quicksearch_fulltext => { options => ['on', 'off'], default => 'on' },
+    # 2011-06-21 glob@mozilla.com -- Bug 589128
+    email_format       => { options => ['html', 'text_only'],
+                            default => 'html' },
     }
 };
 
@@ -149,6 +154,10 @@ use constant SYSTEM_GROUPS => (
         description  => 'Can not be impersonated by other users',
         inherited_by => ['bz_sudoers'],
     },
+    {
+        name         => 'bz_quip_moderators',
+        description  => 'Can moderate quips',
+    },
 );
 
 use constant DEFAULT_CLASSIFICATION => {
@@ -174,12 +183,21 @@ use constant DEFAULT_COMPONENT => {
 };
 
 sub update_settings {
+    my $dbh = Bugzilla->dbh;
+    # If we're setting up settings for the first time, we want to be quieter.
+    my $any_settings = $dbh->selectrow_array(
+        'SELECT 1 FROM setting ' . $dbh->sql_limit(1));
+    if (!$any_settings) {
+        print get_text('install_setting_setup'), "\n";
+    }
+
     my %settings = %{SETTINGS()};
     foreach my $setting (keys %settings) {
         add_setting($setting,
                     $settings{$setting}->{options}, 
                     $settings{$setting}->{default},
-                    $settings{$setting}->{subclass});
+                    $settings{$setting}->{subclass}, undef,
+                    !$any_settings);
     }
 }
 
@@ -188,11 +206,19 @@ sub update_system_groups {
 
     $dbh->bz_start_transaction();
 
+    # If there is no editbugs group, this is the first time we're
+    # adding groups.
+    my $editbugs_exists = new Bugzilla::Group({ name => 'editbugs' });
+    if (!$editbugs_exists) {
+        print get_text('install_groups_setup'), "\n";
+    }
+
     # Create most of the system groups
     foreach my $definition (SYSTEM_GROUPS) {
         my $exists = new Bugzilla::Group({ name => $definition->{name} });
         if (!$exists) {
             $definition->{isbuggroup} = 0;
+            $definition->{silently} = !$editbugs_exists;
             my $inherited_by = delete $definition->{inherited_by};
             my $created = Bugzilla::Group->create($definition);
             # Each group in inherited_by is automatically a member of this
@@ -328,14 +354,12 @@ sub make_admin {
     $user = ref($user) ? $user 
             : new Bugzilla::User(login_to_id($user, THROW_ERROR));
 
-    my $admin_group = new Bugzilla::Group({ name => 'admin' });
-
-    # Admins get explicit membership and bless capability for the admin group
-    $dbh->selectrow_array("SELECT id FROM groups WHERE name = 'admin'");
-
     my $group_insert = $dbh->prepare(
         'INSERT INTO user_group_map (user_id, group_id, isbless, grant_type)
               VALUES (?, ?, ?, ?)');
+
+    # Admins get explicit membership and bless capability for the admin group
+    my $admin_group = new Bugzilla::Group({ name => 'admin' });
     # These are run in an eval so that we can ignore the error of somebody
     # already being granted these things.
     eval { 

@@ -395,7 +395,7 @@ $vars->{'qa_contact_disabled'}  = !$has_editbugs;
 
 $vars->{'cloned_bug_id'}         = $cloned_bug_id;
 
-$vars->{'token'}             = issue_session_token('createbug:');
+$vars->{'token'} = issue_session_token('create_bug');
 
 
 my @enter_bug_fields = grep { $_->enter_bug } Bugzilla->active_custom_fields;
@@ -502,7 +502,7 @@ else {
 #
 # Eventually maybe each product should have a "current version"
 # parameter.
-$vars->{'version'} = [map($_->name, @{$product->versions})];
+$vars->{'version'} = $product->versions;
 
 my $version_cookie = $cgi->cookie("VERSION-" . $product->name);
 
@@ -512,16 +512,16 @@ if ( ($cloned_bug_id) &&
 } elsif (formvalue('version')) {
     $default{'version'} = formvalue('version');
 } elsif (defined $version_cookie
-         and grep { $_ eq $version_cookie } @{ $vars->{'version'} })
+         and grep { $_->name eq $version_cookie } @{ $vars->{'version'} })
 {
     $default{'version'} = $version_cookie;
 } else {
-    $default{'version'} = $vars->{'version'}->[$#{$vars->{'version'}}];
+    $default{'version'} = $vars->{'version'}->[$#{$vars->{'version'}}]->name;
 }
 
 # Get list of milestones.
 if ( Bugzilla->params->{'usetargetmilestone'} ) {
-    $vars->{'target_milestone'} = [map($_->name, @{$product->milestones})];
+    $vars->{'target_milestone'} = $product->milestones;
     if (formvalue('target_milestone')) {
        $default{'target_milestone'} = formvalue('target_milestone');
     } else {

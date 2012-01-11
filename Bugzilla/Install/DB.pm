@@ -28,10 +28,15 @@ use Bugzilla::Install ();
 use Bugzilla::Install::Util qw(indicate_progress install_string);
 use Bugzilla::Util;
 use Bugzilla::Series;
+use Bugzilla::BugUrl;
+use Bugzilla::Field;
 
 use Date::Parse;
 use Date::Format;
 use IO::File;
+use List::MoreUtils qw(uniq);
+use URI;
+use URI::QueryParam;
 
 # NOTE: This is NOT the function for general table updates. See
 # update_table_definitions for that. This is only for the fielddefs table.
@@ -88,7 +93,6 @@ sub update_fielddefs_definition {
     }
 
     $dbh->bz_add_column('fielddefs', 'visibility_field_id', {TYPE => 'INT3'});
-    $dbh->bz_add_column('fielddefs', 'visibility_value_id', {TYPE => 'INT2'});
     $dbh->bz_add_column('fielddefs', 'value_field_id', {TYPE => 'INT3'});
     $dbh->bz_add_index('fielddefs', 'fielddefs_value_field_id_idx',
                        ['value_field_id']);
@@ -112,6 +116,16 @@ sub update_fielddefs_definition {
         {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => 'FALSE'});
     $dbh->bz_add_index('fielddefs', 'fielddefs_is_mandatory_idx',
                        ['is_mandatory']);
+
+    # 2010-04-05 dkl@redhat.com - Bug 479400
+    _migrate_field_visibility_value();
+
+    $dbh->bz_add_column('fielddefs', 'is_numeric',
+        {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => 'FALSE'});
+    $dbh->do('UPDATE fielddefs SET is_numeric = 1 WHERE type = '
+             . FIELD_TYPE_BUG_ID);
+             
+    Bugzilla::Hook::process('install_update_db_fielddefs');
 
     # Remember, this is not the function for adding general table changes.
     # That is below. Add new changes to the fielddefs table above this
@@ -429,14 +443,6 @@ sub update_table_definitions {
     # PUBLIC is a reserved word in Oracle.
     $dbh->bz_rename_column('series', 'public', 'is_public');
 
-    # 2005-09-28 bugreport@peshkin.net Bug 149504
-    $dbh->bz_add_column('attachments', 'isurl',
-                        {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => 0});
-
-    # 2005-10-21 LpSolit@gmail.com - Bug 313020
-    $dbh->bz_add_column('namedqueries', 'query_type',
-                        {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => 0});
-
     # 2005-11-04 LpSolit@gmail.com - Bug 305927
     $dbh->bz_alter_column('groups', 'userregexp',
                           {TYPE => 'TINYTEXT', NOTNULL => 1, DEFAULT => "''"});
@@ -544,10 +550,6 @@ sub update_table_definitions {
     # 2007-09-09 LpSolit@gmail.com - Bug 99215
     _fix_attachment_modification_date();
 
-    # This had the wrong definition in DB::Schema.
-    $dbh->bz_alter_column('namedqueries', 'query_type',
-                          {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => 0});
-
     $dbh->bz_drop_index('longdescs', 'longdescs_thetext_idx');
     _populate_bugs_fulltext();
 
@@ -630,8 +632,36 @@ sub update_table_definitions {
     $dbh->bz_alter_column('products', 'allows_unconfirmed',
         { TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => 'TRUE' });
 
+    # 2010-07-18 LpSolit@gmail.com - Bug 119703
+    _remove_attachment_isurl();
+
+    # 2009-05-07 ghendricks@novell.com - Bug 77193
+    _add_isactive_to_product_fields();
+
     # 2010-10-09 LpSolit@gmail.com - Bug 505165
     $dbh->bz_alter_column('flags', 'setter_id', {TYPE => 'INT3', NOTNULL => 1});
+
+    # 2010-10-09 LpSolit@gmail.com - Bug 451735
+    _fix_series_indexes();
+
+    $dbh->bz_add_column('bug_see_also', 'id',
+        {TYPE => 'MEDIUMSERIAL', NOTNULL => 1, PRIMARYKEY => 1});
+
+    _rename_tags_to_tag();
+
+    # 2011-01-29 LpSolit@gmail.com - Bug 616185
+    _migrate_user_tags();
+
+    _populate_bug_see_also_class();
+
+    # 2011-06-15 dkl@mozilla.com - Bug 658929
+    _migrate_disabledtext_boolean();
+
+    # 2011-10-11 miketosh - Bug 690173
+    _on_delete_set_null_for_audit_log_userid();
+
+    # 2011-11-28 dkl@mozilla.com - Bug 685611
+    _fix_notnull_defaults();
 
     ################################################################
     # New --TABLE-- changes should go *** A B O V E *** this point #
@@ -1283,15 +1313,7 @@ sub _move_quips_into_db {
             $dbh->do("INSERT INTO quips (quip) VALUES (?)", undef, $_);
         }
 
-        print <<EOT;
-
-Quips are now stored in the database, rather than in an external file.
-The quips previously stored in $datadir/comments have been copied into
-the database, and that file has been renamed to $datadir/comments.bak
-You may delete the renamed file once you have confirmed that all your
-quips were moved successfully.
-
-EOT
+        print "\n", install_string('update_quips', { data => $datadir }), "\n";
         $comments->close;
         rename("$datadir/comments", "$datadir/comments.bak")
             || warn "Failed to rename: $!";
@@ -1865,9 +1887,9 @@ sub _remove_spaces_and_commas_from_flagtypes {
                 if (length($tryflagname) > 50) {
                     my $lastchanceflagname = (substr $tryflagname, 0, 47) . '...';
                     if (defined($flagtypes{$lastchanceflagname})) {
-                        print "  ... last attempt as \"$lastchanceflagname\" still failed.'\n",
-                              "Rename the flag by hand and run checksetup.pl again.\n";
-                        die("Bad flag type name $flagname");
+                        print "  ... last attempt as \"$lastchanceflagname\" still failed.'\n";
+                        die install_string('update_flags_bad_name',
+                                           { flag => $flagname }), "\n";
                     }
                     $tryflagname = $lastchanceflagname;
                 }
@@ -2751,12 +2773,7 @@ sub _change_short_desc_from_mediumtext_to_varchar {
                FROM bugs WHERE CHAR_LENGTH(short_desc) > 255');
 
         if (@$long_summary_bugs) {
-            print <<EOT;
-
-WARNING: Some of your bugs had summaries longer than 255 characters.
-They have had their original summary copied into a comment, and then
-the summary was truncated to 255 characters. The affected bug numbers were:
-EOT
+            print "\n", install_string('update_summary_truncated');
             my $comment_sth = $dbh->prepare(
                 'INSERT INTO longdescs (bug_id, who, thetext, bug_when)
                       VALUES (?, ?, ?, NOW())');
@@ -2765,10 +2782,9 @@ EOT
             my @affected_bugs;
             foreach my $bug (@$long_summary_bugs) {
                 my ($bug_id, $summary, $reporter_id) = @$bug;
-                my $summary_comment = "The original summary for this bug"
-                   . " was longer than 255 characters, and so it was truncated"
-                   . " when Bugzilla was upgraded. The original summary was:"
-                   . "\n\n$summary";
+                my $summary_comment =
+                    install_string('update_summary_truncate_comment',
+                                   { summary => $summary });
                 $comment_sth->execute($bug_id, $reporter_id, $summary_comment);
                 my $short_summary = substr($summary, 0, 252) . "...";
                 $desc_sth->execute($short_summary, $bug_id);
@@ -2853,12 +2869,8 @@ sub _move_data_nomail_into_db {
         # If there are any nomail entries remaining, move them to nomail.bad
         # and say something to the user.
         if (scalar(keys %nomail)) {
-            print <<EOT;
-
-WARNING: The following users were listed in data/nomail, but do not
-have an account here. The unmatched entries have been moved
-to $datadir/nomail.bad:
-EOT
+            print "\n", install_string('update_nomail_bad',
+                                       { data => $datadir }), "\n";
             my $nomail_bad = new IO::File("$datadir/nomail.bad", '>>');
             foreach my $unknown_user (keys %nomail) {
                 print "\t$unknown_user\n";
@@ -3157,13 +3169,11 @@ sub _add_foreign_keys_to_multiselects {
           WHERE type = ' . FIELD_TYPE_MULTI_SELECT);
 
     foreach my $name (@$names) {
-        $dbh->bz_add_fk("bug_$name", "bug_id", {TABLE  => 'bugs',
-                                                COLUMN => 'bug_id',
-                                                DELETE => 'CASCADE',});
+        $dbh->bz_add_fk("bug_$name", "bug_id", 
+            {TABLE => 'bugs', COLUMN => 'bug_id', DELETE => 'CASCADE'});
                                                 
-        $dbh->bz_add_fk("bug_$name", "value", {TABLE  => $name,
-                                               COLUMN => 'value',
-                                               DELETE => 'RESTRICT',});
+        $dbh->bz_add_fk("bug_$name", "value",
+            {TABLE  => $name, COLUMN => 'value', DELETE => 'RESTRICT'});
     }
 }
 
@@ -3240,7 +3250,7 @@ sub _add_visiblity_value_to_value_tables {
         undef, FIELD_TYPE_SINGLE_SELECT, FIELD_TYPE_MULTI_SELECT);
     foreach my $field (@standard_fields, @$custom_fields) {
         $dbh->bz_add_column($field, 'visibility_value_id', {TYPE => 'INT2'});
-        $dbh->bz_add_index($field, "${field}_visibility_value_id_idx", 
+        $dbh->bz_add_index($field, "${field}_visibility_value_id_idx",
                            ['visibility_value_id']);
     }
 }
@@ -3280,15 +3290,16 @@ sub _fix_logincookies_ipaddr {
 }
 
 sub _fix_invalid_custom_field_names {
-    my @fields = Bugzilla->get_fields({ custom => 1 });
+    my $fields = Bugzilla->fields({ custom => 1 });
 
-    foreach my $field (@fields) {
+    foreach my $field (@$fields) {
         next if $field->name =~ /^[a-zA-Z0-9_]+$/;
         # The field name is illegal and can break the DB. Kill the field!
         $field->set_obsolete(1);
-        print "Removing custom field '" . $field->name . "' (illegal name)... ";
+        print install_string('update_cf_invalid_name',
+                             { field => $field->name }), "\n";
         eval { $field->remove_from_db(); };
-        print $@ ? "failed:\n$@\n" : "succeeded\n";
+        warn $@ if $@;
     }
 }
 
@@ -3382,9 +3393,8 @@ sub _convert_flagtypes_fks_to_set_null {
     foreach my $column (qw(request_group_id grant_group_id)) {
         my $fk = $dbh->bz_fk_info('flagtypes', $column);
         if ($fk and !defined $fk->{DELETE}) {
-            # checksetup will re-create the FK with the appropriate definition
-            # at the end of its table upgrades, so we just drop it here.
-            $dbh->bz_drop_fk('flagtypes', $column);
+            $fk->{DELETE} = 'SET NULL';
+            $dbh->bz_alter_fk('flagtypes', $column, $fk);
         }
     }
 }
@@ -3400,10 +3410,243 @@ sub _fix_decimal_types {
 sub _fix_series_creator_fk {
     my $dbh = Bugzilla->dbh;
     my $fk = $dbh->bz_fk_info('series', 'creator');
-    # Change the FK from SET NULL to CASCADE. (It will be re-created
-    # automatically at the end of all DB changes.)
     if ($fk and $fk->{DELETE} eq 'SET NULL') {
-        $dbh->bz_drop_fk('series', 'creator');
+        $fk->{DELETE} = 'CASCADE';
+        $dbh->bz_alter_fk('series', 'creator', $fk);
+    }
+}
+
+sub _remove_attachment_isurl {
+    my $dbh = Bugzilla->dbh;
+
+    if ($dbh->bz_column_info('attachments', 'isurl')) {
+        # Now all attachments must have a filename.
+        $dbh->do('UPDATE attachments SET filename = ? WHERE isurl = 1',
+                 undef, 'url.txt');
+        $dbh->bz_drop_column('attachments', 'isurl');
+        $dbh->do("DELETE FROM fielddefs WHERE name='attachments.isurl'");
+    }
+}
+
+sub _add_isactive_to_product_fields {
+    my $dbh = Bugzilla->dbh;
+
+    # If we add the isactive column all values should start off as active
+    if (!$dbh->bz_column_info('components', 'isactive')) {
+        $dbh->bz_add_column('components', 'isactive', 
+            {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => 'TRUE'});
+    }
+    
+    if (!$dbh->bz_column_info('versions', 'isactive')) {
+        $dbh->bz_add_column('versions', 'isactive', 
+            {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => 'TRUE'});
+    }
+
+    if (!$dbh->bz_column_info('milestones', 'isactive')) {
+        $dbh->bz_add_column('milestones', 'isactive', 
+            {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => 'TRUE'});
+    }
+}
+
+sub _migrate_field_visibility_value {
+    my $dbh = Bugzilla->dbh;
+
+    if ($dbh->bz_column_info('fielddefs', 'visibility_value_id')) {
+        print "Populating new field_visibility table...\n";
+
+        $dbh->bz_start_transaction();
+
+        my %results =
+            @{ $dbh->selectcol_arrayref(
+                "SELECT id, visibility_value_id FROM fielddefs
+                 WHERE visibility_value_id IS NOT NULL",
+               { Columns => [1,2] }) };
+
+        my $insert_sth =
+            $dbh->prepare("INSERT INTO field_visibility (field_id, value_id)
+                           VALUES (?, ?)");
+
+        foreach my $id (keys %results) {
+            $insert_sth->execute($id, $results{$id});
+        }
+
+        $dbh->bz_commit_transaction();
+        $dbh->bz_drop_column('fielddefs', 'visibility_value_id');
+    }
+}
+
+sub _fix_series_indexes {
+    my $dbh = Bugzilla->dbh;
+    return if $dbh->bz_index_info('series', 'series_category_idx');
+
+    $dbh->bz_drop_index('series', 'series_creator_idx');
+    $dbh->bz_add_index('series', 'series_creator_idx', ['creator']);
+    $dbh->bz_add_index('series', 'series_category_idx',
+        {FIELDS => [qw(category subcategory name)], TYPE => 'UNIQUE'});
+}
+
+sub _migrate_user_tags {
+    my $dbh = Bugzilla->dbh;
+    return unless $dbh->bz_column_info('namedqueries', 'query_type');
+
+    my $tags = $dbh->selectall_arrayref('SELECT id, userid, name, query
+                                           FROM namedqueries
+                                          WHERE query_type != 0');
+
+    my $sth_tags = $dbh->prepare(
+        'INSERT INTO tag (user_id, name) VALUES (?, ?)');
+    my $sth_tag_id = $dbh->prepare(
+        'SELECT id FROM tag WHERE user_id = ? AND name = ?');
+    my $sth_bug_tag = $dbh->prepare('INSERT INTO bug_tag (bug_id, tag_id)
+                                     VALUES (?, ?)');
+    my $sth_nq = $dbh->prepare('UPDATE namedqueries SET query = ?
+                                WHERE id = ?');
+    my $sth_nq_footer = $dbh->prepare(
+        'DELETE FROM namedqueries_link_in_footer 
+               WHERE user_id = ? AND namedquery_id = ?');
+
+    if (scalar @$tags) {
+        print install_string('update_queries_to_tags'), "\n";
+    }
+
+    my $total = scalar(@$tags);
+    my $current = 0;
+
+    $dbh->bz_start_transaction();
+    foreach my $tag (@$tags) {
+        my ($query_id, $user_id, $name, $query) = @$tag;
+        # Tags are all lowercase.
+        my $tag_name = lc($name);
+
+        $sth_tags->execute($user_id, $tag_name);
+
+        my $tag_id = $dbh->selectrow_array($sth_tag_id,
+            undef, $user_id, $tag_name);
+
+        indicate_progress({ current => ++$current, total => $total,
+                            every => 25 });
+
+        my $uri = URI->new("buglist.cgi?$query", 'http');
+        my $bug_id_list = $uri->query_param_delete('bug_id');
+        if (!$bug_id_list) {
+            warn "No bug_id param for tag $name from user $user_id: $query";
+            next;
+        }
+        my @bug_ids = split(/[\s,]+/, $bug_id_list);
+        # Make sure that things like "001" get converted to "1"
+        @bug_ids = map { int($_) } @bug_ids;
+        # And remove duplicates
+        @bug_ids = uniq @bug_ids;
+        foreach my $bug_id (@bug_ids) {
+            # If "int" above failed this might be undef. We also
+            # don't want to accept bug 0.
+            next if !$bug_id;
+            $sth_bug_tag->execute($bug_id, $tag_id);
+        }
+        
+        # Existing tags may be used in whines, or shared with
+        # other users. So we convert them rather than delete them.
+        $uri->query_param('tag', $tag_name);
+        $sth_nq->execute($uri->query, $query_id);
+        # But we don't keep showing them in the footer.
+        $sth_nq_footer->execute($user_id, $query_id);
+    }
+
+    $dbh->bz_commit_transaction();
+
+    $dbh->bz_drop_column('namedqueries', 'query_type');
+}
+
+sub _populate_bug_see_also_class {
+    my $dbh = Bugzilla->dbh;
+
+    if ($dbh->bz_column_info('bug_see_also', 'class')) {
+        # The length was incorrectly set to 64 instead of 255.
+        $dbh->bz_alter_column('bug_see_also', 'class',
+                              {TYPE => 'varchar(255)', NOTNULL => 1});
+        return;
+    }
+
+    $dbh->bz_add_column('bug_see_also', 'class',
+        {TYPE => 'varchar(255)', NOTNULL => 1, DEFAULT => "''"}, '');
+
+    my $result = $dbh->selectall_arrayref(
+        "SELECT id, value FROM bug_see_also");
+
+    my $update_sth =
+        $dbh->prepare("UPDATE bug_see_also SET class = ? WHERE id = ?");
+    
+    $dbh->bz_start_transaction();
+    foreach my $see_also (@$result) {
+        my ($id, $value) = @$see_also;
+        my $class = Bugzilla::BugUrl->class_for($value);
+        $update_sth->execute($class, $id);
+    }
+    $dbh->bz_commit_transaction();
+}
+
+sub _migrate_disabledtext_boolean {
+    my $dbh = Bugzilla->dbh;
+    if (!$dbh->bz_column_info('profiles', 'is_enabled')) {
+        $dbh->bz_add_column("profiles", 'is_enabled',
+                            {TYPE => 'BOOLEAN', NOTNULL => 1, DEFAULT => 'TRUE'});
+        $dbh->do("UPDATE profiles SET is_enabled = 0 
+                  WHERE disabledtext != ''");
+    }
+}
+
+sub _rename_tags_to_tag {
+    my $dbh = Bugzilla->dbh;
+    if ($dbh->bz_table_info('tags')) {
+        # If we get here, it's because the schema created "tag" as an empty
+        # table while "tags" still exists. We get rid of the empty
+        # tag table so we can do the rename over the top of it.
+        $dbh->bz_drop_table('tag');
+        $dbh->bz_drop_index('tags', 'tags_user_id_idx');
+        $dbh->bz_rename_table('tags','tag');
+        $dbh->bz_add_index('tag', 'tag_user_id_idx',
+                           {FIELDS => [qw(user_id name)], TYPE => 'UNIQUE'});
+    }
+    if (my $bug_tag_fk = $dbh->bz_fk_info('bug_tag', 'tag_id')) {
+        # bz_rename_table() didn't handle FKs correctly.
+        if ($bug_tag_fk->{TABLE} eq 'tags') {
+            $bug_tag_fk->{TABLE} = 'tag';
+            $dbh->bz_alter_fk('bug_tag', 'tag_id', $bug_tag_fk);
+        }
+    }
+}
+
+sub _on_delete_set_null_for_audit_log_userid {
+    my $dbh = Bugzilla->dbh;
+    my $fk = $dbh->bz_fk_info('audit_log', 'user_id');
+    if ($fk and !defined $fk->{DELETE}) {
+        $fk->{DELETE} = 'SET NULL';
+        $dbh->bz_alter_fk('audit_log', 'user_id', $fk);
+    }
+}
+
+sub _fix_notnull_defaults {
+    my $dbh = Bugzilla->dbh;
+
+    $dbh->bz_alter_column('bugs', 'bug_file_loc', 
+                          {TYPE => 'MEDIUMTEXT', NOTNULL => 1,  
+                           DEFAULT => "''"}, '');
+
+    my $custom_fields = Bugzilla::Field->match({ 
+        custom => 1, type => [ FIELD_TYPE_FREETEXT, FIELD_TYPE_TEXTAREA ] 
+    });
+
+    foreach my $field (@$custom_fields) {
+        if ($field->type == FIELD_TYPE_FREETEXT) {
+            $dbh->bz_alter_column('bugs', $field->name,
+                                  {TYPE => 'varchar(255)', NOTNULL => 1,
+                                   DEFAULT => "''"}, '');
+        }
+        if ($field->type == FIELD_TYPE_TEXTAREA) {
+            $dbh->bz_alter_column('bugs', $field->name,
+                                  {TYPE => 'MEDIUMTEXT', NOTNULL => 1,
+                                   DEFAULT => "''"}, '');
+        }
     }
 }
 

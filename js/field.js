@@ -22,7 +22,15 @@
 /* This library assumes that the needed YUI libraries have been loaded 
    already. */
 
+var bz_no_validate_enter_bug = false;
 function validateEnterBug(theform) {
+    // This is for the "bookmarkable templates" button.
+    if (bz_no_validate_enter_bug) {
+        // Set it back to false for people who hit the "back" button
+        bz_no_validate_enter_bug = false;
+        return true;
+    }
+
     var component = theform.component;
     var short_desc = theform.short_desc;
     var version = theform.version;
@@ -203,13 +211,19 @@ function updateCalendarFromField(date_field) {
     }
 }
 
+function setupEditLink(id) {
+    var link_container = 'container_showhide_' + id;
+    var input_container = 'container_' + id;
+    var link = 'showhide_' + id;
+    hideEditableField(link_container, input_container, link);
+}
 
 /* Hide input fields and show the text with (edit) next to it */  
-function hideEditableField( container, input, action, field_id, original_value ) {
+function hideEditableField( container, input, action, field_id, original_value, new_value ) {
     YAHOO.util.Dom.removeClass(container, 'bz_default_hidden');
     YAHOO.util.Dom.addClass(input, 'bz_default_hidden');
     YAHOO.util.Event.addListener(action, 'click', showEditableField,
-                                 new Array(container, input));
+                                 new Array(container, input, new_value));
     if(field_id != ""){
         YAHOO.util.Event.addListener(window, 'load', checkForChangedFieldValues,
                         new Array(container, input, field_id, original_value));
@@ -221,9 +235,9 @@ function hideEditableField( container, input, action, field_id, original_value )
  *
  * var e: the event
  * var ContainerInputArray: An array containing the (edit) and text area and the input being displayed
- * var ContainerInputArray[0]: the conainer that will be hidden usually shows the (edit) text
+ * var ContainerInputArray[0]: the container that will be hidden usually shows the (edit) or (take) text
  * var ContainerInputArray[1]: the input area and label that will be displayed
- *
+ * var ContainerInputArray[2]: the new value to set the input field to when (take) is clicked
  */
 function showEditableField (e, ContainerInputArray) {
     var inputs = new Array();
@@ -240,6 +254,11 @@ function showEditableField (e, ContainerInputArray) {
         inputs = inputArea.getElementsByTagName('input');
     }
     if ( inputs.length > 0 ) {
+        // Change the first field's value to ContainerInputArray[2]
+        // if present before focusing.
+        if (ContainerInputArray[2]) {
+            inputs[0].value = ContainerInputArray[2];
+        }
         // focus on the first field, this makes it easier to edit
         inputs[0].focus();
         inputs[0].select();
@@ -459,12 +478,12 @@ function setClassification() {
  * a certain value. May only be called after the controller has already
  * been added to the DOM.
  */
-function showFieldWhen(controlled_id, controller_id, value) {
+function showFieldWhen(controlled_id, controller_id, values) {
     var controller = document.getElementById(controller_id);
     // Note that we don't get an object for "controlled" here, because it
     // might not yet exist in the DOM. We just pass along its id.
-    YAHOO.util.Event.addListener(controller, 'change', 
-        handleVisControllerValueChange, [controlled_id, controller, value]);
+    YAHOO.util.Event.addListener(controller, 'change',
+        handleVisControllerValueChange, [controlled_id, controller, values]);
 }
 
 /**
@@ -474,13 +493,21 @@ function showFieldWhen(controlled_id, controller_id, value) {
 function handleVisControllerValueChange(e, args) {
     var controlled_id = args[0];
     var controller = args[1];
-    var value = args[2];
+    var values = args[2];
 
     var label_container = 
         document.getElementById('field_label_' + controlled_id);
     var field_container =
         document.getElementById('field_container_' + controlled_id);
-    if (bz_valueSelected(controller, value)) {
+    var selected = false;
+    for (var i = 0; i < values.length; i++) {
+        if (bz_valueSelected(controller, values[i])) {
+            selected = true;
+            break;
+        }
+    }
+
+    if (selected) {
         YAHOO.util.Dom.removeClass(label_container, 'bz_hidden_field');
         YAHOO.util.Dom.removeClass(field_container, 'bz_hidden_field');
     }
@@ -518,7 +545,7 @@ function handleValControllerChange(e, args) {
             YAHOO.util.Dom.removeClass(item, 'bz_hidden_option');
             item.disabled = false;
         }
-        else if (!item.disabled) {
+        else if (!item.disabled && controller_item && !controller_item.selected) {
             YAHOO.util.Dom.addClass(item, 'bz_hidden_option');
             if (item.selected) {
                 item.selected = false;
@@ -642,13 +669,6 @@ function browserCanHideOptions(aSelect) {
 
 /* (end) option hiding code */
 
-// A convenience function to sanitize raw text for harmful HTML before outputting
-function _escapeHTML(text) {
-    return text.replace(/&/g, '&amp;').
-                replace(/</g, '&lt;').
-                replace(/>/g, '&gt;');
-}
-
 /**
  * The Autoselect
  */
@@ -664,7 +684,7 @@ YAHOO.bugzilla.userAutocomplete = {
           id : YAHOO.bugzilla.userAutocomplete.counter,
           params : [ { 
             match : [ decodeURIComponent(enteredText) ],
-            include_fields : [ "email", "real_name" ]
+            include_fields : [ "name", "real_name" ]
           } ]
       };
       var stringified =  YAHOO.lang.JSON.stringify(json_object);
@@ -674,7 +694,8 @@ YAHOO.bugzilla.userAutocomplete = {
       return stringified;
     },
     resultListFormat : function(oResultData, enteredText, sResultMatch) {
-        return ( _escapeHTML(oResultData.real_name) + " (" +  _escapeHTML(oResultData.email) + ")");
+        return ( YAHOO.lang.escapeHTML(oResultData.real_name) + " ("
+                 + YAHOO.lang.escapeHTML(oResultData.name) + ")");
     },
     debug_helper : function ( ){
         /* used to help debug any errors that might happen */
@@ -693,7 +714,7 @@ YAHOO.bugzilla.userAutocomplete = {
             resultsList : "result.users",
             metaFields : { error: "error", jsonRpcId: "id"},
             fields : [
-                { key : "email" },
+                { key : "name" },
                 { key : "real_name"}
             ]
         };

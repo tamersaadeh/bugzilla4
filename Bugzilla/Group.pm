@@ -185,6 +185,16 @@ sub products {
 ####        Methods        ####
 ###############################
 
+sub check_members_are_visible {
+    my $self = shift;
+    my $user = Bugzilla->user;
+    return if !Bugzilla->params->{'usevisibilitygroups'};
+    my $is_visible = grep { $_->id == $_ } @{ $user->visible_groups_inherited };
+    if (!$is_visible) {
+        ThrowUserError('group_not_visible', { group => $self });
+    }
+}
+
 sub set_description { $_[0]->set('description', $_[1]); }
 sub set_is_active   { $_[0]->set('isactive', $_[1]);    }
 sub set_name        { $_[0]->set('name', $_[1]);        }
@@ -379,8 +389,11 @@ sub create {
     my ($params) = @_;
     my $dbh = Bugzilla->dbh;
 
-    print get_text('install_group_create', { name => $params->{name} }) . "\n" 
-        if Bugzilla->usage_mode == USAGE_MODE_CMDLINE;
+    my $silently = delete $params->{silently};
+    if (Bugzilla->usage_mode == USAGE_MODE_CMDLINE and !$silently) {
+        print get_text('install_group_create', { name => $params->{name} }),
+              "\n";
+    }
 
     $dbh->bz_start_transaction();
 
@@ -424,6 +437,21 @@ sub ValidateGroupName {
     $sth->execute($name);
     my ($ret) = $sth->fetchrow_array();
     return $ret;
+}
+
+sub check_no_disclose {
+    my ($class, $params) = @_;
+    my $action = delete $params->{action};
+
+    $action =~ /^(?:add|remove)$/
+      or ThrowCodeError('bad_arg', { argument => $action,
+                                     function => "${class}::check_no_disclose" });
+
+    $params->{_error} = ($action eq 'add') ? 'group_restriction_not_allowed'
+                                           : 'group_invalid_removal';
+
+    my $group = $class->check($params);
+    return $group;
 }
 
 ###############################
@@ -508,21 +536,68 @@ be a member of this group.
 
 =item C<ValidateGroupName($name, @users)>
 
- Description: ValidateGroupName checks to see if ANY of the users
-              in the provided list of user objects can see the
-              named group.
+Description: ValidateGroupName checks to see if ANY of the users
+             in the provided list of user objects can see the
+             named group.
 
- Params:      $name - String with the group name.
-              @users - An array with Bugzilla::User objects.
+Params:      $name - String with the group name.
+             @users - An array with Bugzilla::User objects.
 
- Returns:     It returns the group id if successful
-              and undef otherwise.
+Returns:     It returns the group id if successful
+             and undef otherwise.
 
 =back
+
 
 =head1 METHODS
 
 =over
+
+=item C<check_no_disclose>
+
+=over
+
+=item B<Description>
+
+Throws an error if the user cannot add or remove this group to/from a given
+bug, but doesn't specify if this is because the group doesn't exist, or the
+user is not allowed to edit this group restriction.
+
+=item B<Params>
+
+This method takes a single hashref as argument, with the following keys:
+
+=over
+
+=item C<name>
+
+C<string> The name of the group to add or remove.
+
+=item C<bug_id>
+
+C<integer> The ID of the bug to which the group change applies.
+
+=item C<product>
+
+C<string> The name of the product the bug belongs to.
+
+=item C<action>
+
+C<string> Must be either C<add> or C<remove>, depending on whether the group
+must be added or removed from the bug. Any other value will generate an error.
+
+=back
+
+=item C<Returns>
+
+A C<Bugzilla::Group> object on success, else an error is thrown.
+
+=back
+
+=item C<check_members_are_visible>
+
+Throws an error if this group is not visible (according to 
+visibility groups) to the currently-logged-in user.
 
 =item C<check_remove>
 

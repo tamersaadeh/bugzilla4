@@ -25,7 +25,6 @@ package Bugzilla::Test::Search::AndTest;
 use base qw(Bugzilla::Test::Search::OrTest);
 
 use Bugzilla::Test::Search::Constants;
-use Bugzilla::Test::Search::FakeCGI;
 use List::MoreUtils qw(all);
 
 use constant type => 'AND';
@@ -41,12 +40,10 @@ sub bug_is_contained {
     return all { $_->bug_is_contained($number) } $self->field_tests;
 }
 
-########################
-# SKIP & TODO Messages #
-########################
-
-sub _join_skip { () }
-sub _join_broken_constant { {} }
+sub _bug_will_actually_be_contained {
+    my ($self, $number) = @_;
+    return all { $_->will_actually_contain_bug($number) } $self->field_tests;
+}
 
 ##############################
 # Bugzilla::Search arguments #
@@ -55,15 +52,15 @@ sub _join_broken_constant { {} }
 sub search_params {
     my ($self) = @_;
     my @all_params = map { $_->search_params } $self->field_tests;
-    my $params = new Bugzilla::Test::Search::FakeCGI;
+    my %params;
     my $chart = 0;
     foreach my $item (@all_params) {
-        $params->param("field0-$chart-0", $item->param('field0-0-0'));
-        $params->param("type0-$chart-0", $item->param('type0-0-0'));
-        $params->param("value0-$chart-0", $item->param('value0-0-0'));
+        $params{"field0-$chart-0"} = $item->{'field0-0-0'};
+        $params{"type0-$chart-0"}  = $item->{'type0-0-0'};
+        $params{"value0-$chart-0"} = $item->{'value0-0-0'};
         $chart++;
     }
-    return $params;
+    return \%params;
 }
 
 1;

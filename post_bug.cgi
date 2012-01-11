@@ -55,34 +55,14 @@ my $vars = {};
 ######################################################################
 
 # redirect to enter_bug if no field is passed.
-print $cgi->redirect(correct_urlbase() . 'enter_bug.cgi') unless $cgi->param();
+unless ($cgi->param()) {
+    print $cgi->redirect(correct_urlbase() . 'enter_bug.cgi');
+    exit;
+}
 
 # Detect if the user already used the same form to submit a bug
 my $token = trim($cgi->param('token'));
-if ($token) {
-    my ($creator_id, $date, $old_bug_id) = Bugzilla::Token::GetTokenData($token);
-    unless ($creator_id
-              && ($creator_id == $user->id)
-              && ($old_bug_id =~ "^createbug:"))
-    {
-        # The token is invalid.
-        ThrowUserError('token_does_not_exist');
-    }
-
-    $old_bug_id =~ s/^createbug://;
-
-    if ($old_bug_id && (!$cgi->param('ignore_token')
-                        || ($cgi->param('ignore_token') != $old_bug_id)))
-    {
-        $vars->{'bugid'} = $old_bug_id;
-        $vars->{'allow_override'} = defined $cgi->param('ignore_token') ? 0 : 1;
-
-        print $cgi->header();
-        $template->process("bug/create/confirm-create-dupe.html.tmpl", $vars)
-           || ThrowTemplateError($template->error());
-        exit;
-    }
-}    
+check_token_data($token, 'create_bug', 'index.cgi');
 
 # do a match on the fields if applicable
 Bugzilla::User::match_field ({
@@ -150,21 +130,26 @@ my %bug_params;
 foreach my $field (@bug_fields) {
     $bug_params{$field} = $cgi->param($field);
 }
-$bug_params{'cc'}          = [$cgi->param('cc')];
-$bug_params{'groups'}      = [$cgi->param('groups')];
-$bug_params{'comment'}     = $comment;
+foreach my $field (qw(cc groups)) {
+    next if !$cgi->should_set($field);
+    $bug_params{$field} = [$cgi->param($field)];
+}
+$bug_params{'comment'} = $comment;
 
 my @multi_selects = grep {$_->type == FIELD_TYPE_MULTI_SELECT && $_->enter_bug}
                          Bugzilla->active_custom_fields;
 
 foreach my $field (@multi_selects) {
+    next if !$cgi->should_set($field->name);
     $bug_params{$field->name} = [$cgi->param($field->name)];
 }
 
 my $bug = Bugzilla::Bug->create(\%bug_params);
 
-# Get the bug ID back.
+# Get the bug ID back and delete the token used to create this bug.
 my $id = $bug->bug_id;
+delete_token($token);
+
 # We do this directly from the DB because $bug->creation_ts has the seconds
 # formatted out of it (which should be fixed some day).
 my $timestamp = $dbh->selectrow_array(
@@ -183,7 +168,7 @@ if (defined $cgi->param('version')) {
 # after the bug is filed.
 
 # Add an attachment if requested.
-if (defined($cgi->upload('data')) || $cgi->param('attachurl')) {
+if (defined($cgi->upload('data')) || $cgi->param('attach_text')) {
     $cgi->param('isprivate', $cgi->param('comment_is_private'));
 
     # Must be called before create() as it may alter $cgi->param('ispatch').
@@ -198,14 +183,12 @@ if (defined($cgi->upload('data')) || $cgi->param('attachurl')) {
         $attachment = Bugzilla::Attachment->create(
             {bug           => $bug,
              creation_ts   => $timestamp,
-             data          => scalar $cgi->param('attachurl') || $cgi->upload('data'),
+             data          => scalar $cgi->param('attach_text') || $cgi->upload('data'),
              description   => scalar $cgi->param('description'),
-             filename      => $cgi->param('attachurl') ? '' : scalar $cgi->upload('data'),
+             filename      => $cgi->param('attach_text') ? "file_$id.txt" : scalar $cgi->upload('data'),
              ispatch       => scalar $cgi->param('ispatch'),
              isprivate     => scalar $cgi->param('isprivate'),
-             isurl         => scalar $cgi->param('attachurl'),
              mimetype      => $content_type,
-             store_in_file => scalar $cgi->param('bigfile'),
             });
     };
     Bugzilla->error_mode($error_mode_cache);
@@ -239,12 +222,6 @@ Bugzilla::Hook::process('post_bug_after_creation', { vars => $vars });
 
 ThrowCodeError("bug_error", { bug => $bug }) if $bug->error;
 
-if ($token) {
-    trick_taint($token);
-    $dbh->do('UPDATE tokens SET eventdata = ? WHERE token = ?', undef, 
-             ("createbug:$id", $token));
-}
-
 my $recipients = { changer => $user };
 my $bug_sent = Bugzilla::BugMail::Send($id, $recipients);
 $bug_sent->{type} = 'created';
@@ -258,8 +235,11 @@ foreach my $dep (@{$bug->dependson || []}, @{$bug->blocked || []}) {
 }
 $vars->{sentmail} = \@all_mail_results;
 
+$format = $template->get_format("bug/create/created",
+                                 scalar($cgi->param('created-format')),
+                                 "html");
 print $cgi->header();
-$template->process("bug/create/created.html.tmpl", $vars)
+$template->process($format->{'template'}, $vars)
     || ThrowTemplateError($template->error());
 
 1;

@@ -17,6 +17,13 @@
   *
   * Contributor(s): Myk Melez <myk@mozilla.org>
   */
+.bz_query_head {
+  text-align: center;
+}
+
+.bz_query_timestamp {
+  font-weight: bold;
+}
 
 .search_description {
   margin: .5em 0;
@@ -115,3 +122,8 @@ td.bz_total {
 .bz_query_explain {
     text-align: left;
 }
+
+.bz_short_desc_column a, .bz_short_short_desc_column a {
+    color: inherit;
+}
+

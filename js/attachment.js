@@ -53,14 +53,13 @@ function setContentTypeDisabledState(form)
     form.contenttypeentry.disabled = isdisabled;
 }
 
-function URLFieldHandler() {
-    var field_attachurl = document.getElementById("attachurl");
+function TextFieldHandler() {
+    var field_text = document.getElementById("attach_text");
     var greyfields = new Array("data", "ispatch", "autodetect",
-                               "list", "manual", "bigfile",
-                               "contenttypeselection",
+                               "list", "manual", "contenttypeselection",
                                "contenttypeentry");
     var i, thisfield;
-    if (field_attachurl.value.match(/^\s*$/)) {
+    if (field_text.value.match(/^\s*$/)) {
         for (i = 0; i < greyfields.length; i++) {
             thisfield = document.getElementById(greyfields[i]);
             if (thisfield) {
@@ -79,7 +78,7 @@ function URLFieldHandler() {
 
 function DataFieldHandler() {
     var field_data = document.getElementById("data");
-    var greyfields = new Array("attachurl");
+    var greyfields = new Array("attach_text");
     var i, thisfield;
     if (field_data.value.match(/^\s*$/)) {
         for (i = 0; i < greyfields.length; i++) {
@@ -103,11 +102,9 @@ function clearAttachmentFields() {
 
     document.getElementById('data').value = '';
     DataFieldHandler();
-    if ((element = document.getElementById('bigfile')))
-        element.checked = '';
-    if ((element = document.getElementById('attachurl'))) {
+    if ((element = document.getElementById('attach_text'))) {
         element.value = '';
-        URLFieldHandler();
+        TextFieldHandler();
     }
     document.getElementById('description').value = '';
     /* Fire onchange so that the disabled state of the content-type
@@ -312,7 +309,7 @@ function hideElementById(id)
   }
 }
 
-function showElementById(id, val)
+function showElementById(id)
 {
   var elm = document.getElementById(id);
   if (elm) {
@@ -348,3 +345,16 @@ function toggle_attachment_details_visibility ( )
     }
 }
 
+/* Used in bug/create.html.tmpl to show/hide the attachment field. */
+
+function handleWantsAttachment(wants_attachment) {
+    if (wants_attachment) {
+        hideElementById('attachment_false');
+        showElementById('attachment_true');
+    }
+    else {
+        showElementById('attachment_false');
+        hideElementById('attachment_true');
+        clearAttachmentFields();
+    }
+}

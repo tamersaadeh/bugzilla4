@@ -58,6 +58,8 @@ use Bugzilla::FlagType;
 use Bugzilla::Group;
 use Bugzilla::Install ();
 use Bugzilla::Test::Search::Constants;
+use Bugzilla::Test::Search::CustomTest;
+use Bugzilla::Test::Search::FieldTestNormal;
 use Bugzilla::Test::Search::OperatorTest;
 use Bugzilla::User ();
 use Bugzilla::Util qw(generate_random_password);
@@ -99,14 +101,21 @@ sub num_tests {
                      ? ($top_combinations * $all_combinations) : 0;
     # And AND tests, which means we run 2x $join_tests;
     $join_tests = $join_tests * 2;
-    my $operator_field_tests = ($top_combinations + $join_tests) * TESTS_PER_RUN;
+    # Also, because of NOT tests and Normal tests, we run 3x $top_combinations.
+    my $basic_tests = $top_combinations * 3;
+    my $operator_field_tests = ($basic_tests + $join_tests) * TESTS_PER_RUN;
 
     # Then we test each field/operator combination for SQL injection.
     my @injection_values = INJECTION_TESTS;
     my $sql_injection_tests = scalar(@fields) * scalar(@top_operators)
                               * scalar(@injection_values) * NUM_SEARCH_TESTS;
 
-    return $operator_field_tests + $sql_injection_tests;
+    # This @{ [] } thing is the only reasonable way to get a count out of a
+    # constant array.
+    my $special_tests = scalar(@{ [SPECIAL_PARAM_TESTS, CUSTOM_SEARCH_TESTS] }) 
+                        * TESTS_PER_RUN;
+    
+    return $operator_field_tests + $sql_injection_tests + $special_tests;
 }
 
 sub _total_operator_tests {
@@ -147,7 +156,7 @@ sub all_fields {
     my $self = shift;
     if (not $self->{all_fields}) {
         $self->_create_custom_fields();
-        my @fields = Bugzilla->get_fields;
+        my @fields = @{ Bugzilla->fields };
         @fields = sort { $a->name cmp $b->name } @fields;
         $self->{all_fields} = \@fields;
     }
@@ -221,9 +230,11 @@ sub bug_create_value {
     if ($number == 6 and $field ne 'alias') {
         $number = 1;
     }
-    my $value = $self->_bug_create_values->{$number}->{$field};
-    return $value if defined $value;
-    return $self->_extra_bug_create_values->{$number}->{$field};
+    my $extra_values = $self->_extra_bug_create_values->{$number};
+    if (exists $extra_values->{$field}) {
+        return $extra_values->{$field};
+    }
+    return $self->_bug_create_values->{$number}->{$field};
 }
 sub bug_update_value {
     my ($self, $number, $field) = @_;
@@ -420,6 +431,7 @@ sub _create_field_values {
         }
         $values{$field} = $value;
     }
+    $values{'tag'} = ["$number-tag-" . random()];
     
     my @date_fields = grep { $_->type == FIELD_TYPE_DATETIME } $self->all_fields;
     foreach my $field (@date_fields) {
@@ -472,6 +484,7 @@ sub _create_field_values {
             my $name = $field->name;
             $values{$name} = [$values{$name}, $new_value->name];
         }
+        push(@{ $values{'tag'} }, "6-tag-" . random());
     }
 
     # On bug 5, any field that *can* be left empty, *is* left empty.
@@ -585,6 +598,7 @@ sub _create_one_bug {
     my $update_alias = $self->bug_update_value($number, 'alias');
     
     # Otherwise, make bug 6 a clone of bug 1.
+    my $real_number = $number;
     $number = 1 if $number == 6;
     
     my $reporter = $self->bug_create_value($number, 'reporter');
@@ -597,7 +611,7 @@ sub _create_one_bug {
     
     # There are some things in bug_create_values that shouldn't go into
     # create().
-    delete @params{qw(attachment set_flags)};
+    delete @params{qw(attachment set_flags tag)};
     
     my ($status, $resolution, $see_also) = 
         delete @params{qw(bug_status resolution see_also)};
@@ -609,7 +623,7 @@ sub _create_one_bug {
     my $extra_values = $self->_extra_bug_create_values->{$number};
     foreach my $field (qw(comments remaining_time percentage_complete
                          keyword_objects everconfirmed dependson blocked
-                         groups_in classification))
+                         groups_in classification actual_time))
     {
         $extra_values->{$field} = $bug->$field;
     }
@@ -629,6 +643,7 @@ sub _create_one_bug {
         $dbh->do('UPDATE longdescs SET bug_when = ? WHERE bug_id = ?',
                  undef, $ts, $bug->id);
         $bug->{creation_ts} = $ts;
+        $extra_values->{see_also} = [];
     }
     else {
         # Manually set the creation_ts so that each bug has a different one.
@@ -647,8 +662,18 @@ sub _create_one_bug {
         $dbh->do('UPDATE bugs SET creation_ts = ?, bug_status = ?,
                   resolution = ? WHERE bug_id = ?',
                  undef, $creation_ts, $status, $resolution, $bug->id);
-        $dbh->do('INSERT INTO bug_see_also (bug_id, value) VALUES (?,?)',
-                 undef, $bug->id, $see_also);
+        $dbh->do('INSERT INTO bug_see_also (bug_id, value, class) VALUES (?,?,?)',
+                 undef, $bug->id, $see_also, 'Bugzilla::BugUrl::Bugzilla');
+        $extra_values->{see_also} = $bug->see_also;
+
+        # All the tags must be created as the admin user, so that the
+        # admin user can find them, later.
+        my $original_user = Bugzilla->user;
+        Bugzilla->set_user($self->admin);
+        my $tags = $self->bug_create_value($number, 'tag');
+        $bug->add_tag($_) foreach @$tags;
+        $extra_values->{tags} = $tags;
+        Bugzilla->set_user($original_user);
 
         if ($number == 1) {
             # Bug 1 needs to start off with reporter_accessible and
@@ -657,6 +682,10 @@ sub _create_one_bug {
             $dbh->do('UPDATE bugs SET reporter_accessible = 0,
                       cclist_accessible = 0 WHERE bug_id = ?',
                       undef, $bug->id);
+            # Bug 1 gets three comments, so that longdescs.count matches it
+            # uniquely. The third comment is added in the middle, so that the
+            # last comment contains all of the important data, like work_time.
+            $bug->add_comment("1-comment-" . random(100));
         }
         
         my %update_params = %{ $self->_bug_update_values->{$number} };
@@ -682,9 +711,14 @@ sub _create_one_bug {
         $update_params{groups} = { add => $update_params{groups},
                                    remove => $bug->groups_in };
         my @cc_remove = map { $_->login } @{ $bug->cc_users };
-        my $cc_add = $update_params{cc};
-        $cc_add = [$cc_add] if !ref $cc_add;
-        $update_params{cc} = { add => $cc_add, remove => \@cc_remove };
+        my $cc_new = $update_params{cc};
+        my @cc_add = ref($cc_new) ? @$cc_new : ($cc_new);
+        # We make the admin an explicit CC on bug 1 (but not on bug 6), so
+        # that we can test the %user% pronoun properly.
+        if ($real_number == 1) {
+            push(@cc_add, $self->admin->login);
+        }
+        $update_params{cc} = { add => \@cc_add, remove => \@cc_remove };
         my $see_also_remove = $bug->see_also;
         my $see_also_add = [$update_params{see_also}];
         $update_params{see_also} = { add => $see_also_add, 
@@ -699,7 +733,7 @@ sub _create_one_bug {
         $update_params{reporter_accessible} = $number == 1 ? 1 : 0;
         $update_params{cclist_accessible} = $number == 1 ? 1 : 0;
         $update_params{alias} = $update_alias;
-        
+
         $bug->set_all(\%update_params);
         my $flags = $self->bug_create_value($number, 'set_flags')->{b};
         $bug->set_flags([], $flags);
@@ -817,6 +851,20 @@ sub value_translation_cache {
     return $self->{value_translation_cache}->{$test_name};
 }
 
+# When doing AND/OR tests, the value for transformed_value_was_equal
+# (see Bugzilla::Test::Search::FieldTest) won't be recalculated
+# if we pull our values from the value_translation_cache. So we need
+# to also cache the values for transformed_value_was_equal.
+sub was_equal_cache {
+    my ($self, $field_test, $number, $value) = @_;
+    return if !$self->option('long');
+    my $test_name = $field_test->name;
+    if (@_ == 4) {
+        $self->{tvwe_cache}->{$test_name}->{$number} = $value;
+    }
+    return $self->{tvwe_cache}->{$test_name}->{$number};
+}
+
 #############
 # Main Test #
 #############
@@ -850,6 +898,18 @@ sub run {
     # Even though _setup_bugs set us as an admin, we want to be sure at
     # this point that we have an admin with refreshed group memberships.
     Bugzilla->set_user($self->admin);
+    foreach my $test (CUSTOM_SEARCH_TESTS) {
+        my $custom_test = new Bugzilla::Test::Search::CustomTest($test, $self);
+        $custom_test->run();
+    }
+    foreach my $test (SPECIAL_PARAM_TESTS) {
+        my $operator_test =
+            new Bugzilla::Test::Search::OperatorTest($test->{operator}, $self);
+        my $field = Bugzilla::Field->check($test->{field});
+        my $special_test = new Bugzilla::Test::Search::FieldTestNormal(
+            $operator_test, $field, $test);
+        $special_test->run();
+    }
     foreach my $operator ($self->top_level_operators) {
         my $operator_test =
             new Bugzilla::Test::Search::OperatorTest($operator, $self);

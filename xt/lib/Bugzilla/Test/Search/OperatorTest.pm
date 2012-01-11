@@ -27,9 +27,11 @@ use strict;
 use warnings;
 use Bugzilla::Test::Search::Constants;
 use Bugzilla::Test::Search::FieldTest;
+use Bugzilla::Test::Search::FieldTestNormal;
 use Bugzilla::Test::Search::InjectionTest;
 use Bugzilla::Test::Search::OrTest;
 use Bugzilla::Test::Search::AndTest;
+use Bugzilla::Test::Search::NotTest;
 
 ###############
 # Constructor #
@@ -63,6 +65,11 @@ sub run {
             my $field_test =
                 new Bugzilla::Test::Search::FieldTest($self, $field, $test);
             $field_test->run();
+            my $normal_test =
+                new Bugzilla::Test::Search::FieldTestNormal($field_test);
+            $normal_test->run();
+            my $not_test = new Bugzilla::Test::Search::NotTest($field_test);
+            $not_test->run();
             
             next if !$self->search_test->option('long');
 

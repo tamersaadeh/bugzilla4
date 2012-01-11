@@ -114,7 +114,7 @@ if ( $action eq 'reqpw' ) {
     $user_account = Bugzilla::User->check($login_name);
 
     # Make sure the user account is active.
-    if ($user_account->is_disabled) {
+    if (!$user_account->is_enabled) {
         ThrowUserError('account_disabled',
                        {disabled_reason => get_text('account_disabled', {account => $login_name})});
     }
@@ -352,6 +352,7 @@ sub cancelChangeEmail {
 sub request_create_account {
     my $token = shift;
 
+    Bugzilla->user->check_account_creation_enabled;
     my (undef, $date, $login_name) = Bugzilla::Token::GetTokenData($token);
     $vars->{'token'} = $token;
     $vars->{'email'} = $login_name . Bugzilla->params->{'emailsuffix'};
@@ -365,6 +366,7 @@ sub request_create_account {
 sub confirm_create_account {
     my $token = shift;
 
+    Bugzilla->user->check_account_creation_enabled;
     my (undef, undef, $login_name) = Bugzilla::Token::GetTokenData($token);
 
     my $password = $cgi->param('passwd1') || '';

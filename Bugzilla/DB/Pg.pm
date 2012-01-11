@@ -117,7 +117,7 @@ sub sql_istring {
 sub sql_position {
     my ($self, $fragment, $text) = @_;
 
-    return "POSITION($fragment IN ${text}::text)";
+    return "POSITION(${fragment}::text IN ${text}::text)";
 }
 
 sub sql_regexp {
@@ -177,10 +177,10 @@ sub sql_date_format {
     return "TO_CHAR($date, " . $self->quote($format) . ")";
 }
 
-sub sql_interval {
-    my ($self, $interval, $units) = @_;
+sub sql_date_math {
+    my ($self, $date, $operator, $interval, $units) = @_;
     
-    return "$interval * INTERVAL '1 $units'";
+    return "$date $operator $interval * INTERVAL '1 $units'";
 }
 
 sub sql_string_concat {
@@ -190,18 +190,6 @@ sub sql_string_concat {
     # need to cast both parameters to text. Version 7.4 seems to handle this
     # properly, so when we stop support 7.3, this can be removed.
     return '(CAST(' . join(' AS text) || CAST(', @params) . ' AS text))';
-}
-
-sub sql_string_until {
-    my ($self, $string, $substring) = @_;
-
-    # PostgreSQL does not permit a negative substring length; therefore we
-    # use CASE to only perform the SUBSTRING operation when $substring can
-    # be found withing $string.
-    my $position = $self->sql_position($substring, $string);
-    return "CASE WHEN $position != 0"
-             . " THEN SUBSTRING($string FROM 1 FOR $position - 1)"
-             . " ELSE $string END";
 }
 
 # Tell us whether or not a particular sequence exists in the DB.
@@ -294,15 +282,60 @@ END
     $self->bz_add_index('products', 'products_name_lower_idx',
         {FIELDS => ['LOWER(name)'], TYPE => 'UNIQUE'});
 
-    # bz_rename_column didn't correctly rename the sequence.
-    if ($self->bz_column_info('fielddefs', 'id')
-        && $self->bz_sequence_exists('fielddefs_fieldid_seq')) 
-    {
-        print "Fixing fielddefs_fieldid_seq sequence...\n";
-        $self->do("ALTER TABLE fielddefs_fieldid_seq RENAME TO fielddefs_id_seq");
-        $self->do("ALTER TABLE fielddefs ALTER COLUMN id
-                    SET DEFAULT NEXTVAL('fielddefs_id_seq')");
+    # bz_rename_column and bz_rename_table didn't correctly rename
+    # the sequence.
+    $self->_fix_bad_sequence('fielddefs', 'id', 'fielddefs_fieldid_seq', 'fielddefs_id_seq');
+    # If the 'tags' table still exists, then bz_rename_table()
+    # will fix the sequence for us.
+    if (!$self->bz_table_info('tags')) {
+        my $res = $self->_fix_bad_sequence('tag', 'id', 'tags_id_seq', 'tag_id_seq');
+        # If $res is true, then the sequence has been renamed, meaning that
+        # the primary key must be renamed too.
+        if ($res) {
+            $self->do('ALTER INDEX tags_pkey RENAME TO tag_pkey');
+        }
     }
+
+    # Certain sequences got upgraded before we required Pg 8.3, and
+    # so they were not properly associated with their columns.
+    my @tables = $self->bz_table_list_real;
+    foreach my $table (@tables) {
+        my @columns = $self->bz_table_columns_real($table);
+        foreach my $column (@columns) {
+            # All our SERIAL pks have "id" in their name at the end.
+            next unless $column =~ /id$/;
+            my $sequence = "${table}_${column}_seq";
+            if ($self->bz_sequence_exists($sequence)) {
+                my $is_associated = $self->selectrow_array(
+                    'SELECT pg_get_serial_sequence(?,?)',
+                    undef, $table, $column);
+                next if $is_associated;
+                print "Fixing $sequence to be associated"
+                      . " with $table.$column...\n";
+                $self->do("ALTER SEQUENCE $sequence OWNED BY $table.$column");
+                # In order to produce an exactly identical schema to what
+                # a brand-new checksetup.pl run would produce, we also need
+                # to re-set the default on this column.
+                $self->do("ALTER TABLE $table
+                          ALTER COLUMN $column
+                           SET DEFAULT nextval('$sequence')");
+            }
+        }
+    }
+}
+
+sub _fix_bad_sequence {
+    my ($self, $table, $column, $old_seq, $new_seq) = @_;
+    if ($self->bz_column_info($table, $column)
+        && $self->bz_sequence_exists($old_seq))
+    {
+        print "Fixing $old_seq sequence...\n";
+        $self->do("ALTER SEQUENCE $old_seq RENAME TO $new_seq");
+        $self->do("ALTER TABLE $table ALTER COLUMN $column
+                    SET DEFAULT NEXTVAL('$new_seq')");
+        return 1;
+    }
+    return 0;
 }
 
 # Renames things that differ only in case.

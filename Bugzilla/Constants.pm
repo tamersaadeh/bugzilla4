@@ -35,9 +35,13 @@ use base qw(Exporter);
 
 # For bz_locations
 use File::Basename;
+use Memoize;
 
 @Bugzilla::Constants::EXPORT = qw(
     BUGZILLA_VERSION
+
+    REMOTE_FILE
+    LOCAL_FILE
 
     bz_locations
 
@@ -80,9 +84,6 @@ use File::Basename;
     DEFAULT_COLUMN_LIST
     DEFAULT_QUERY_NAME
     DEFAULT_MILESTONE
-
-    QUERY_LIST
-    LIST_OF_BUGS
 
     SAVE_NUM_SEARCHES
 
@@ -148,6 +149,7 @@ use File::Basename;
     ERROR_MODE_TEST
 
     COLOR_ERROR
+    COLOR_SUCCESS
 
     INSTALLATION_MODE_INTERACTIVE
     INSTALLATION_MODE_NON_INTERACTIVE
@@ -190,6 +192,9 @@ use File::Basename;
     PRIVILEGES_REQUIRED_REPORTER
     PRIVILEGES_REQUIRED_ASSIGNEE
     PRIVILEGES_REQUIRED_EMPOWERED
+
+    AUDIT_CREATE
+    AUDIT_REMOVE
 );
 
 @Bugzilla::Constants::EXPORT_OK = qw(contenttypes);
@@ -197,7 +202,11 @@ use File::Basename;
 # CONSTANTS
 #
 # Bugzilla version
-use constant BUGZILLA_VERSION => "4.0";
+use constant BUGZILLA_VERSION => "4.2rc1";
+
+# Location of the remote and local XML files to track new releases.
+use constant REMOTE_FILE => 'http://updates.bugzilla.org/bugzilla-update.xml';
+use constant LOCAL_FILE  => 'bugzilla-update.xml'; # Relative to datadir.
 
 # These are unique values that are unlikely to match a string or a number,
 # to be used in criteria for match() functions and other things. They start
@@ -275,8 +284,8 @@ use constant MAILTO_GROUP => 1;
 
 # The default list of columns for buglist.cgi
 use constant DEFAULT_COLUMN_LIST => (
-    "bug_severity", "priority", "op_sys","assigned_to",
-    "bug_status", "resolution", "short_desc"
+    "product", "component", "assigned_to",
+    "bug_status", "resolution", "short_desc", "changeddate"
 );
 
 # Used by query.cgi and buglist.cgi as the named-query name
@@ -286,14 +295,10 @@ use constant DEFAULT_QUERY_NAME => '(Default query)';
 # The default "defaultmilestone" created for products.
 use constant DEFAULT_MILESTONE => '---';
 
-# The possible types for saved searches.
-use constant QUERY_LIST => 0;
-use constant LIST_OF_BUGS => 1;
-
 # How many of the user's most recent searches to save.
 use constant SAVE_NUM_SEARCHES => 10;
 
-# The column length for displayed (and wrapped) bug comments.
+# The column width for comment textareas and comments in bugmails.
 use constant COMMENT_COLS => 80;
 # Used in _check_comment(). Gives the max length allowed for a comment.
 use constant MAX_COMMENT_LENGTH => 65535;
@@ -400,11 +405,11 @@ use constant EMPTY_DATETIME_REGEX => qr/^[0\-:\sA-Za-z]+$/;
 
 # See the POD for Bugzilla::Field/is_abnormal to see why these are listed
 # here.
-use constant ABNORMAL_SELECTS => qw(
-    classification
-    product
-    component
-);
+use constant ABNORMAL_SELECTS => {
+    classification => 1,
+    component      => 1,
+    product        => 1,
+};
 
 # The fields from fielddefs that are blocked from non-timetracking users.
 # work_time is sometimes called actual_time.
@@ -431,8 +436,8 @@ use constant MAX_STS_AGE => 604800;
 
 # Protocols which are considered as safe.
 use constant SAFE_PROTOCOLS => ('afs', 'cid', 'ftp', 'gopher', 'http', 'https',
-                                'irc', 'mid', 'news', 'nntp', 'prospero', 'telnet',
-                                'view-source', 'wais');
+                                'irc', 'ircs', 'mid', 'news', 'nntp', 'prospero',
+                                'telnet', 'view-source', 'wais');
 
 # Valid MIME types for attachments.
 use constant LEGAL_CONTENT_TYPES => ('application', 'audio', 'image', 'message',
@@ -469,6 +474,7 @@ use constant ERROR_MODE_TEST           => 4;
 
 # The ANSI colors of messages that command-line scripts use
 use constant COLOR_ERROR => 'red';
+use constant COLOR_SUCCESS => 'green';
 
 # The various modes that checksetup.pl can run in.
 use constant INSTALLATION_MODE_INTERACTIVE => 0;
@@ -476,19 +482,21 @@ use constant INSTALLATION_MODE_NON_INTERACTIVE => 1;
 
 # Data about what we require for different databases.
 use constant DB_MODULE => {
-    'mysql' => {db => 'Bugzilla::DB::Mysql', db_version => '4.1.2',
+    # MySQL 5.0.15 was the first production 5.0.x release.
+    'mysql' => {db => 'Bugzilla::DB::Mysql', db_version => '5.0.15',
                 dbd => { 
                     package => 'DBD-mysql',
                     module  => 'DBD::mysql',
                     # Disallow development versions
                     blacklist => ['_'],
-                    # For UTF-8 support
-                    version => '4.00',
+                    # For UTF-8 support. 4.001 makes sure that blobs aren't
+                    # marked as UTF-8.
+                    version => '4.001',
                 },
                 name => 'MySQL'},
     # Also see Bugzilla::DB::Pg::bz_check_server_version, which has special
     # code to require DBD::Pg 2.17.2 for PostgreSQL 9 and above.
-    'pg'    => {db => 'Bugzilla::DB::Pg', db_version => '8.00.0000',
+    'pg'    => {db => 'Bugzilla::DB::Pg', db_version => '8.03.0000',
                 dbd => {
                     package => 'DBD-Pg',
                     module  => 'DBD::Pg',
@@ -502,10 +510,19 @@ use constant DB_MODULE => {
                      version => '1.19',
                 },
                 name => 'Oracle'},
+     # SQLite 3.6.22 fixes a WHERE clause problem that may affect us.
+    sqlite => {db => 'Bugzilla::DB::Sqlite', db_version => '3.6.22',
+               dbd => {
+                   package => 'DBD-SQLite',
+                   module  => 'DBD::SQLite',
+                   # 1.29 is the version that contains 3.6.22.
+                   version => '1.29',
+               },
+               name => 'SQLite'},
 };
 
 # True if we're on Win32.
-use constant ON_WINDOWS => ($^O =~ /MSWin32/i);
+use constant ON_WINDOWS => ($^O =~ /MSWin32/i) ? 1 : 0;
 # True if we're using ActiveState Perl (as opposed to Strawberry) on Windows.
 use constant ON_ACTIVESTATE => eval { &Win32::BuildNumber };
 
@@ -568,6 +585,11 @@ use constant PRIVILEGES_REQUIRED_REPORTER  => 1;
 use constant PRIVILEGES_REQUIRED_ASSIGNEE  => 2;
 use constant PRIVILEGES_REQUIRED_EMPOWERED => 3;
 
+# Special field values used in the audit_log table to mean either
+# "we just created this object" or "we just deleted this object".
+use constant AUDIT_CREATE => '__create__';
+use constant AUDIT_REMOVE => '__remove__';
+
 sub bz_locations {
     # We know that Bugzilla/Constants.pm must be in %INC at this point.
     # So the only question is, what's the name of the directory
@@ -595,6 +617,7 @@ sub bz_locations {
         $datadir = "data";
     }
 
+    $datadir = "$libpath/$datadir";
     # We have to return absolute paths for mod_perl. 
     # That means that if you modify these paths, they must be absolute paths.
     return {
@@ -604,10 +627,11 @@ sub bz_locations {
         # make sure this still points to the CGIs.
         'cgi_path'    => $libpath,
         'templatedir' => "$libpath/template",
+        'template_cache' => "$datadir/template",
         'project'     => $project,
         'localconfig' => "$libpath/$localconfig",
-        'datadir'     => "$libpath/$datadir",
-        'attachdir'   => "$libpath/$datadir/attachments",
+        'datadir'     => $datadir,
+        'attachdir'   => "$datadir/attachments",
         'skinsdir'    => "$libpath/skins",
         'graphsdir'   => "$libpath/graphs",
         # $webdotdir must be in the web server's tree somewhere. Even if you use a 
@@ -616,9 +640,13 @@ sub bz_locations {
         # change showdependencygraph.cgi to set image_url to the correct 
         # location.
         # The script should really generate these graphs directly...
-        'webdotdir'   => "$libpath/$datadir/webdot",
+        'webdotdir'   => "$datadir/webdot",
         'extensionsdir' => "$libpath/extensions",
     };
 }
+
+# This makes us not re-compute all the bz_locations data every time it's
+# called.
+BEGIN { memoize('bz_locations') };
 
 1;

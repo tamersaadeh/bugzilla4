@@ -67,6 +67,7 @@ foreach my $panel (keys %$param_panels) {
                  param_list => \@module_param_list,
                  sortkey => eval "\$${module}::sortkey;"
                };
+    defined($item->{'sortkey'}) || ($item->{'sortkey'} = 100000);
     push(@panels, $item);
     $current_module = $panel if ($current_panel eq lc($panel));
 }
@@ -98,6 +99,11 @@ if ($action eq 'save' && $current_module) {
                 $value =~ s/\r\n?/\n/g;
                 # assume single linefeed is an empty string
                 $value =~ s/^\n$//;
+            }
+            # Stop complaining if the URL has no trailing slash.
+            # XXX - This hack can go away once bug 303662 is implemented.
+            if ($name =~ /(?<!webdot)base$/) {
+                $value = "$value/" if ($value && $value !~ m#/$#);
             }
         }
 

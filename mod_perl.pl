@@ -16,7 +16,6 @@
 # Contributor(s): Max Kanat-Alexander <mkanat@bugzilla.org>
 
 package Bugzilla::ModPerl;
-
 use strict;
 use warnings;
 
@@ -36,25 +35,27 @@ use lib Bugzilla::Constants::bz_locations()->{'ext_libpath'};
 # startup, so we always specify () after using any module in this
 # file.
 
+use Apache2::Log ();
 use Apache2::ServerUtil;
 use ModPerl::RegistryLoader ();
-use CGI ();
-CGI->compile(qw(:cgi -no_xhtml -oldstyle_urls :private_tempfiles
-                :unique_headers SERVER_PUSH :push));
 use File::Basename ();
-use Template::Config ();
-Template::Config->preload();
 
-# For PerlChildInitHandler
-eval { require Math::Random::Secure };
-
+# This loads most of our modules.
 use Bugzilla ();
+# Loading Bugzilla.pm doesn't load this, though, and we want it preloaded.
+use Bugzilla::BugMail ();
 use Bugzilla::CGI ();
 use Bugzilla::Extension ();
 use Bugzilla::Install::Requirements ();
-use Bugzilla::Mailer ();
-use Bugzilla::Template ();
 use Bugzilla::Util ();
+use Bugzilla::RNG ();
+
+# Make warnings go to the virtual host's log and not the main
+# server log.
+BEGIN { *CORE::GLOBAL::warn = \&Apache2::ServerRec::warn; }
+
+# Pre-compile the CGI.pm methods that we're going to use.
+Bugzilla::CGI->compile(qw(:cgi :push));
 
 use Apache2::SizeLimit;
 # This means that every httpd child will die after processing
@@ -67,13 +68,11 @@ my $cgi_path = Bugzilla::Constants::bz_locations()->{'cgi_path'};
 my $server = Apache2::ServerUtil->server;
 my $conf = <<EOT;
 # Make sure each httpd child receives a different random seed (bug 476622).
-# Math::Random::Secure has one srand that needs to be called for
+# Bugzilla::RNG has one srand that needs to be called for
 # every process, and Perl has another. (Various Perl modules still use
-# the built-in rand(), even though we only use Math::Random::Secure in
-# Bugzilla itself, so we need to srand() both of them.) However, 
-# Math::Random::Secure may not be installed, so we call its srand in an
-# eval.
-PerlChildInitHandler "sub { eval { Math::Random::Secure::srand() }; srand(); }"
+# the built-in rand(), even though we never use it in Bugzilla itself,
+# so we need to srand() both of them.)
+PerlChildInitHandler "sub { Bugzilla::RNG::srand(); srand(); }"
 <Directory "$cgi_path">
     AddHandler perl-script .cgi
     # No need to PerlModule these because they're already defined in mod_perl.pl

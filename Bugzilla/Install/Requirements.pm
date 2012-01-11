@@ -150,14 +150,36 @@ sub REQUIRED_MODULES {
     {
         package => 'URI',
         module  => 'URI',
-        version => 0
+        # This version properly handles a semicolon as the delimiter
+        # in a URL query string.
+        version => '1.37',
     },
     {
         package => 'List-MoreUtils',
         module  => 'List::MoreUtils',
         version => 0.22,
     },
+    {
+        package => 'Math-Random-ISAAC',
+        module  => 'Math::Random::ISAAC',
+        version => '1.0.1',
+    },
     );
+
+    if (ON_WINDOWS) {
+        push(@modules, {
+            package => 'Win32',
+            module  => 'Win32',
+            # 0.35 fixes a memory leak in GetOSVersion, which we use.
+            version => 0.35,
+        }, 
+        {
+            package => 'Win32-API',
+            module  => 'Win32::API',
+            # 0.55 fixes a bug with char* that might affect Bugzilla::RNG.
+            version => '0.55',
+        });
+    }
 
     my $extra_modules = _get_extension_requirements('REQUIRED_MODULES');
     push(@modules, @$extra_modules);
@@ -201,12 +223,6 @@ sub OPTIONAL_MODULES {
         feature => ['graphical_reports'],
     },
     {
-        package => 'XML-Twig',
-        module  => 'XML::Twig',
-        version => 0,
-        feature => ['moving', 'updates'],
-    },
-    {
         package => 'MIME-tools',
         # MIME::Parser is packaged as MIME::Tools on ActiveState Perl
         module  => ON_WINDOWS ? 'MIME::Tools' : 'MIME::Parser',
@@ -220,9 +236,16 @@ sub OPTIONAL_MODULES {
         feature => ['updates'],
     },
     {
+        package => 'XML-Twig',
+        module  => 'XML::Twig',
+        version => 0,
+        feature => ['moving', 'updates'],
+    },
+    {
         package => 'PatchReader',
         module  => 'PatchReader',
-        version => '0.9.4',
+        # 0.9.6 fixes two notable bugs and significantly improves the UX.
+        version => '0.9.6',
         feature => ['patch_viewer'],
     },
     {
@@ -283,6 +306,19 @@ sub OPTIONAL_MODULES {
         version => 0,
         feature => ['html_desc'],
     },
+    {
+        # we need version 2.21 of Encode for mime_name
+        package => 'Encode',
+        module  => 'Encode',
+        version => 2.21,
+        feature => ['detect_charset'],
+    },
+    {
+        package => 'Encode-Detect',
+        module  => 'Encode::Detect',
+        version => 0,
+        feature => ['detect_charset'],
+    },
 
     # Inbound Email
     {
@@ -327,24 +363,7 @@ sub OPTIONAL_MODULES {
         version => '0.93',
         feature => ['mod_perl'],
     },
-    {
-        package => 'Math-Random-Secure',
-        module  => 'Math::Random::Secure',
-        # This is the first version that installs properly on Windows.
-        version => '0.05',
-        feature => ['rand_security'],
-    },
     );
-
-    if (ON_WINDOWS) {
-        # SizeLimit needs Win32::API to work on Windows.
-        push(@modules, {
-            package => 'Win32-API',
-            module  => 'Win32::API',
-            version => 0,
-            feature => ['mod_perl'],
-        });
-    }
 
     my $extra_modules = _get_extension_requirements('OPTIONAL_MODULES');
     push(@modules, @$extra_modules);
@@ -530,9 +549,8 @@ sub print_module_instructions {
           or ($output and $check_results->{any_missing}) ) ? 1 : 0;
 
     # We only print the PPM repository note if we have to.
-    if ($need_module_instructions and ON_ACTIVESTATE) {
-        my $perl_ver = sprintf('%vd', $^V);
-            
+    my $perl_ver = sprintf('%vd', $^V);
+    if ($need_module_instructions && ON_ACTIVESTATE && vers_cmp($perl_ver, '5.12') < 0) {
         # URL when running Perl 5.8.x.
         my $url_to_theory58S = 'http://theoryx5.uwinnipeg.ca/ppms';
         # Packages for Perl 5.10 are not compatible with Perl 5.8.
@@ -607,18 +625,18 @@ sub _translate_feature {
 sub check_graphviz {
     my ($output) = @_;
 
-    return 1 if (Bugzilla->params->{'webdotbase'} =~ /^https?:/);
+    my $webdotbase = Bugzilla->params->{'webdotbase'};
+    return 1 if $webdotbase =~ /^https?:/;
 
     my $return;
-    $return = 1 if -x Bugzilla->params->{'webdotbase'};
+    $return = 1 if -x $webdotbase;
 
     if ($output) {
         _checking_for({ package => 'GraphViz', ok => $return });
     }
 
     if (!$return) {
-        print "not a valid executable: " . Bugzilla->params->{'webdotbase'}
-              . "\n";
+        print install_string('bad_executable', { bin => $webdotbase }), "\n";
     }
 
     my $webdotdir = bz_locations()->{'webdotdir'};
@@ -627,8 +645,8 @@ sub check_graphviz {
         my $htaccess = new IO::File("$webdotdir/.htaccess", 'r') 
             || die "$webdotdir/.htaccess: " . $!;
         if (!grep(/png/, $htaccess->getlines)) {
-            print "Dependency graph images are not accessible.\n";
-            print "delete $webdotdir/.htaccess and re-run checksetup.pl to fix.\n";
+            print STDERR install_string('webdot_bad_htaccess',
+                                        { dir => $webdotdir }), "\n";
         }
         $htaccess->close;
     }
@@ -699,8 +717,9 @@ sub _checking_for {
     # show "ok" or "not found".
     if (exists $params->{found}) {
         my $found_string;
-        # We do a string compare in case it's non-numeric.
-        if ($found and $found eq "-1") {
+        # We do a string compare in case it's non-numeric. We make sure
+        # it's not a version object as negative versions are forbidden.
+        if ($found && !ref($found) && $found eq '-1') {
             $found_string = install_string('module_not_found');
         }
         elsif ($found) {

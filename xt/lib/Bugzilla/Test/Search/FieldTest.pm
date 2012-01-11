@@ -26,7 +26,6 @@ package Bugzilla::Test::Search::FieldTest;
 
 use strict;
 use warnings;
-use Bugzilla::Test::Search::FakeCGI;
 use Bugzilla::Search;
 use Bugzilla::Test::Search::Constants;
 
@@ -60,7 +59,7 @@ sub field_object { return $_[0]->{field_object} }
 # than we need the object.
 sub field {
     my ($self) = @_;
-    return $self->{field_name} ||= $self->field_object->name;
+    $self->{field_name} ||= $self->field_object->name;
     return $self->{field_name};
 }
 # The Bugzilla::Test::Search object that this is a child of.
@@ -157,9 +156,12 @@ sub debug_value {
 # result was equal to its first value.
 sub transformed_value_was_equal {
     my ($self, $number, $value) = @_;
-    if (defined $value) {
+    if (@_ > 2) {
         $self->{transformed_value_was_equal}->{$number} = $value;
+        $self->search_test->was_equal_cache($self, $number, $value);
     }
+    my $cached = $self->search_test->was_equal_cache($self, $number);
+    return $cached if defined $cached;
     return $self->{transformed_value_was_equal}->{$number};
 }
 
@@ -167,7 +169,9 @@ sub transformed_value_was_equal {
 sub bug_is_contained {
     my ($self, $number) = @_;
     my $contains = $self->test->{contains};
-    if ($self->transformed_value_was_equal($number)) {
+    if ($self->transformed_value_was_equal($number)
+        and !$self->test->{override}->{$self->field}->{contains})
+    {
         $contains = $self->test->{if_equal}->{contains};
     }
     return grep($_ == $number, @$contains) ? 1 : 0;
@@ -179,18 +183,22 @@ sub bug_is_contained {
 
 # The tests we know are broken for this operator/field combination.
 sub _known_broken {
-    my $self = shift;
+    my ($self, $constant, $skip_pg_check) = @_;
+    $constant ||= KNOWN_BROKEN;
     my $field = $self->field;
     my $type = $self->field_object->type;
     my $operator = $self->operator;
     my $value = $self->main_value;
-    
     my $value_name = "$operator-$value";
-    my $value_broken = KNOWN_BROKEN->{$value_name}->{$field};
-    $value_broken ||= KNOWN_BROKEN->{$value_name}->{$type};
+    if (my $extra_name = $self->test->{extra_name}) {
+        $value_name .= "-$extra_name";
+    }    
+    
+    my $value_broken = $constant->{$value_name}->{$field};
+    $value_broken ||= $constant->{$value_name}->{$type};
     return $value_broken if $value_broken;
-    my $operator_broken = KNOWN_BROKEN->{$operator}->{$field};
-    $operator_broken ||= KNOWN_BROKEN->{$operator}->{$type};
+    my $operator_broken = $constant->{$operator}->{$field};
+    $operator_broken ||= $constant->{$operator}->{$type};
     return $operator_broken if $operator_broken;
     return {};
 }
@@ -208,6 +216,23 @@ sub contains_known_broken {
         return "$field $operator contains $number is known to be broken";
     }
     return undef;
+}
+
+# Used by subclasses. Checks both bug_is_contained and contains_known_broken
+# to tell you whether or not the bug will *actually* be found by the test.
+sub will_actually_contain_bug {
+    my ($self, $number) = @_;
+    my $is_contained = $self->bug_is_contained($number) ? 1 : 0;
+    my $is_broken = $self->contains_known_broken($number) ? 1 : 0;
+
+    # If the test is supposed to contain the bug and *isn't* broken,
+    # then the test will contain the bug.
+    return 1 if ($is_contained and !$is_broken);
+    # If this test is *not* supposed to contain the bug, but that test is
+    # broken, then this test *will* contain the bug.
+    return 1 if (!$is_contained and $is_broken);
+
+    return 0;
 }
 
 # Returns a string if creating a Bugzilla::Search object throws an error,
@@ -269,21 +294,18 @@ sub join_broken {
 # Accessors: Bugzilla::Search Arguments #
 #########################################
 
-# The CGI object that will get passed to Bugzilla::Search as its arguments.
+# The data that will get passed to Bugzilla::Search as its arguments.
 sub search_params {
-    my $self = shift;
+    my ($self) = @_;
     return $self->{search_params} if $self->{search_params};
 
-    my $field = $self->field;
-    my $operator = $self->operator;
-    my $value = $self->translated_value;
+    my %params = (
+        "field0-0-0" => $self->field,
+        "type0-0-0"  => $self->operator,
+        "value0-0-0"  => $self->translated_value,
+    );
     
-    my $cgi = new Bugzilla::Test::Search::FakeCGI;
-    $cgi->param("field0-0-0", $field);
-    $cgi->param('type0-0-0', $operator);
-    $cgi->param('value0-0-0', $value);
-    
-    $self->{search_params} = $cgi;
+    $self->{search_params} = \%params;
     return $self->{search_params};
 }
 
@@ -323,6 +345,12 @@ sub _field_values_for_bug {
         # searches use the last comment.
         @values = reverse @values;
     }
+    elsif ($field eq 'longdescs.count') {
+        @values = scalar(@{ $self->bug($number)->comments });
+    }
+    elsif ($field eq 'work_time') {
+        @values = $self->_values_for($number, 'actual_time');
+    }
     elsif ($field eq 'bug_group') {
         @values = $self->_values_for($number, 'groups_in', 'name');
     }
@@ -331,6 +359,12 @@ sub _field_values_for_bug {
     }
     elsif ($field eq 'content') {
         @values = $self->_values_for($number, 'short_desc');
+    }
+    elsif ($field eq 'see_also') {
+        @values = $self->_values_for($number, 'see_also', 'name');
+    }
+    elsif ($field eq 'tag') {
+        @values = $self->_values_for($number, 'tags');
     }
     # Bugzilla::Bug truncates creation_ts, but we need the full value
     # from the database. This has no special value for changedfrom,
@@ -370,7 +404,7 @@ sub _values_for {
         my $bug = $self->bug($number);
         $item = $bug->$bug_field;
     }
-    
+
     if ($item_field) {
         if ($bug_field eq 'flags' and $item_field eq 'name') {
             return (map { $_->name . $_->status } @$item);
@@ -424,7 +458,13 @@ sub _translate_value_for_bug {
     $value =~ s/<$number-delta>/$bug_delta/g;
     my $reporter = $bug->reporter->login;
     $value =~ s/<$number-reporter>/$reporter/g;
-
+    if ($value =~ /<$number-bug_group>/) {
+        my @bug_groups = map { $_->name } @{ $bug->groups_in };
+        @bug_groups = grep { $_ =~ /^\d+-group-/ } @bug_groups;
+        my $group = $bug_groups[0];
+        $value =~ s/<$number-bug_group>/$group/g;
+    }
+    
     my @bug_values = $self->bug_values($number);    
     return $value if !@bug_values;
     
@@ -469,11 +509,6 @@ sub _substr_value {
             $substr_size += length($field);
         }
         my $string = substr($value, 0, $substr_size);
-        # Make percentage_complete substrings strings match integers uniquely,
-        # by searching for the full decimal number.
-        if ($field eq 'percentage_complete' and length($string) < $substr_size) {
-            $string .= ".000";
-        }
         return $string;
     }
     return substr($value, $substr_size);
@@ -504,20 +539,17 @@ sub do_tests {
 
     my $search_broken = $self->search_known_broken;
     
-    my $search;
+    my $search = $self->_test_search_object_creation();
+
+    my $sql;
     TODO: {
         local $TODO = $search_broken if $search_broken;
-        $search = $self->_test_search_object_creation();
+        lives_ok { $sql = $search->sql } "$name: generate SQL";
     }
     
-    my ($results, $sql);
+    my $results;
     SKIP: {
-        skip "Can't run SQL without Search object", 2 if !$search;
-        lives_ok { $sql = $search->getSQL() } "$name: get SQL";
-    
-        # This prevents warnings from DBD::mysql if we pass undef $sql,
-        # which happens if "new Bugzilla::Search" fails.
-        $sql ||= '';
+        skip "Can't run SQL without any SQL", 1 if !defined $sql;
         $results = $self->_test_sql($sql);
     }
 

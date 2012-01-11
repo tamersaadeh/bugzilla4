@@ -226,10 +226,10 @@ sub sql_date_format {
     return "DATE_FORMAT($date, " . $self->quote($format) . ")";
 }
 
-sub sql_interval {
-    my ($self, $interval, $units) = @_;
+sub sql_date_math {
+    my ($self, $date, $operator, $interval, $units) = @_;
     
-    return "INTERVAL $interval $units";
+    return "$date $operator INTERVAL $interval $units";
 }
 
 sub sql_iposition {
@@ -328,35 +328,9 @@ sub bz_setup_database {
     my ($innodb_on) = @{$self->selectcol_arrayref(
         q{SHOW VARIABLES LIKE '%have_innodb%'}, {Columns=>[2]})};
     if ($innodb_on ne 'YES') {
-        die <<EOT;
-InnoDB is disabled in your MySQL installation. 
-Bugzilla requires InnoDB to be enabled. 
-Please enable it and then re-run checksetup.pl.
-
-EOT
+        die install_string('mysql_innodb_disabled');
     }
 
-
-    my %table_status = @{ $self->selectcol_arrayref("SHOW TABLE STATUS", 
-                                                    {Columns=>[1,2]}) };
-    my @isam_tables;
-    foreach my $name (keys %table_status) {
-        push(@isam_tables, $name) if (defined($table_status{$name}) && $table_status{$name} eq "ISAM");
-    }
-
-    if(scalar(@isam_tables)) {
-        print "One or more of the tables in your existing MySQL database are\n"
-              . "of type ISAM. ISAM tables are deprecated in MySQL 3.23 and\n"
-              . "don't support more than 16 indexes per table, which \n"
-              . "Bugzilla needs.\n  Converting your ISAM tables to type"
-              . " MyISAM:\n\n";
-        foreach my $table (@isam_tables) {
-            print "Converting table $table... ";
-            $self->do("ALTER TABLE $table TYPE = MYISAM");
-            print "done.\n";
-        }
-        print "\nISAM->MyISAM table conversion done.\n\n";
-    }
 
     my ($sd_index_deleted, $longdescs_index_deleted);
     my @tables = $self->bz_table_list_real();
@@ -387,26 +361,24 @@ EOT
     }
 
     # Upgrade tables from MyISAM to InnoDB
-    my @myisam_tables;
-    foreach my $name (keys %table_status) {
-        if (defined($table_status{$name})
-            && $table_status{$name} =~ /^MYISAM$/i 
-            && !grep($_ eq $name, Bugzilla::DB::Schema::Mysql::MYISAM_TABLES))
-        {
-            push(@myisam_tables, $name) ;
-        }
+    my $db_name = Bugzilla->localconfig->{db_name};
+    my $myisam_tables = $self->selectcol_arrayref(
+        'SELECT TABLE_NAME FROM information_schema.TABLES 
+          WHERE TABLE_SCHEMA = ? AND ENGINE = ?',
+        undef, $db_name, 'MyISAM');
+    foreach my $should_be_myisam (Bugzilla::DB::Schema::Mysql::MYISAM_TABLES) {
+        @$myisam_tables = grep { $_ ne $should_be_myisam } @$myisam_tables;
     }
-    if (scalar @myisam_tables) {
+
+    if (scalar @$myisam_tables) {
         print "Bugzilla now uses the InnoDB storage engine in MySQL for",
               " most tables.\nConverting tables to InnoDB:\n";
-        foreach my $table (@myisam_tables) {
+        foreach my $table (@$myisam_tables) {
             print "Converting table $table... ";
             $self->do("ALTER TABLE $table ENGINE = InnoDB");
             print "done.\n";
         }
     }
-    
-    $self->_after_table_status(\@tables);
     
     # Versions of Bugzilla before the existence of Bugzilla::DB::Schema did 
     # not provide explicit names for the table indexes. This means
@@ -435,17 +407,7 @@ EOT
         # We just do the check here since this check is a reliable way
         # of telling that we are upgrading from a version pre-2.20.
         if (grep($_ eq 'bz_schema', $self->bz_table_list_real())) {
-            die("\nYou are upgrading from a version before 2.20, but the"
-              . " bz_schema\ntable already exists. This means that you"
-              . " restored a mysqldump into\nthe Bugzilla database without"
-              . " first dropping the already-existing\nBugzilla database,"
-              . " at some point. Whenever you restore a Bugzilla\ndatabase"
-              . " backup, you must always drop the entire database first.\n\n"
-              . "Please drop your Bugzilla database and restore it from a"
-              . " backup that\ndoes not contain the bz_schema table. If for"
-              . " some reason you cannot\ndo this, you can connect to your"
-              . " MySQL database and drop the bz_schema\ntable, as a last"
-              . " resort.\n");
+            die install_string('bz_schema_exists_before_220');
         }
 
         my $bug_count = $self->selectrow_array("SELECT COUNT(*) FROM bugs");
@@ -459,12 +421,8 @@ EOT
         # If we're going to take longer than 5 minutes, we let the user know
         # and allow them to abort.
         if ($rename_time > 5) {
-            print "\nWe are about to rename old indexes.\n"
-                  . "The estimated time to complete renaming is "
-                  . "$rename_time minutes.\n"
-                  . "You cannot interrupt this action once it has begun.\n"
-                  . "If you would like to cancel, press Ctrl-C now..."
-                  . " (Waiting 45 seconds...)\n\n";
+            print "\n", install_string('mysql_index_renaming',
+                                       { minutes => $rename_time });
             # Wait 45 seconds for them to respond.
             sleep(45) unless Bugzilla->installation_answers->{NO_PAUSE};
         }
@@ -678,8 +636,11 @@ EOT
 
     # 2005-09-24 - bugreport@peshkin.net, bug 307602
     # Make sure that default 4G table limit is overridden
-    my $row = $self->selectrow_hashref("SHOW TABLE STATUS LIKE 'attach_data'");
-    if ($$row{'Create_options'} !~ /MAX_ROWS/i) {
+    my $attach_data_create = $self->selectrow_array(
+        'SELECT CREATE_OPTIONS FROM information_schema.TABLES 
+          WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?',
+        undef, $db_name, 'attach_data');
+    if ($attach_data_create !~ /MAX_ROWS/i) {
         print "Converting attach_data maximum size to 100G...\n";
         $self->do("ALTER TABLE attach_data
                    AVG_ROW_LENGTH=1000000,
@@ -691,49 +652,31 @@ EOT
     # partial-conversion situations can happen, and this handles anything
     # that could come up (including having the DB charset be utf8 but not
     # the table charsets.
-    my $utf_table_status =
-        $self->selectall_arrayref("SHOW TABLE STATUS", {Slice=>{}});
-    $self->_after_table_status([map($_->{Name}, @$utf_table_status)]);
-    my @non_utf8_tables = grep(defined($_->{Collation}) && $_->{Collation} !~ /^utf8/, @$utf_table_status);
+    #
+    # TABLE_COLLATION IS NOT NULL prevents us from trying to convert views.
+    my $non_utf8_tables = $self->selectrow_array(
+        "SELECT 1 FROM information_schema.TABLES 
+          WHERE TABLE_SCHEMA = ? AND TABLE_COLLATION IS NOT NULL 
+                AND TABLE_COLLATION NOT LIKE 'utf8%' 
+          LIMIT 1", undef, $db_name);
     
-    if (Bugzilla->params->{'utf8'} && scalar @non_utf8_tables) {
-        print <<EOT;
-
-WARNING: We are about to convert your table storage format to UTF8. This
-         allows Bugzilla to correctly store and sort international characters.
-         However, if you have any non-UTF-8 data in your database,
-         it ***WILL BE DELETED*** by this process. So, before
-         you continue with checksetup.pl, if you have any non-UTF-8
-         data (or even if you're not sure) you should press Ctrl-C now
-         to interrupt checksetup.pl, and run contrib/recode.pl to make all 
-         the data in your database into UTF-8. You should also back up your
-         database before continuing. This will affect every single table
-         in the database, even non-Bugzilla tables.
-
-         If you ever used a version of Bugzilla before 2.22, we STRONGLY
-         recommend that you stop checksetup.pl NOW and run contrib/recode.pl.
-
-EOT
+    if (Bugzilla->params->{'utf8'} && $non_utf8_tables) {
+        print "\n", install_string('mysql_utf8_conversion');
 
         if (!Bugzilla->installation_answers->{NO_PAUSE}) {
             if (Bugzilla->installation_mode == 
                 INSTALLATION_MODE_NON_INTERACTIVE) 
             {
-                print <<EOT;
-         Re-run checksetup.pl in interactive mode (without an 'answers' file)
-         to continue.
-EOT
-                exit;
+                die install_string('continue_without_answers'), "\n";
             }
             else {
-                print "         Press Enter to continue or Ctrl-C to exit...";
+                print "\n         " . install_string('enter_or_ctrl_c');
                 getc;
             }
         }
 
         print "Converting table storage format to UTF-8. This may take a",
               " while.\n";
-        my @dropped_fks;
         foreach my $table ($self->bz_table_list_real) {
             my $info_sth = $self->prepare("SHOW FULL COLUMNS FROM $table");
             $info_sth->execute();
@@ -752,8 +695,9 @@ EOT
 
                     print "$table.$name needs to be converted to UTF-8...\n";
 
-                    my $dropped = $self->bz_drop_related_fks($table, $name);
-                    push(@dropped_fks, @$dropped);
+                    # These will be automatically re-created at the end
+                    # of checksetup.
+                    $self->bz_drop_related_fks($table, $name);
 
                     my $col_info =
                         $self->bz_column_info_real($table, $name);
@@ -804,10 +748,6 @@ EOT
             }
 
         } # foreach my $table (@tables)
-
-        foreach my $fk_args (@dropped_fks) {
-            $self->bz_add_fk(@$fk_args);
-        }
     }
 
     # Sometimes you can have a situation where all the tables are utf8,
@@ -820,6 +760,22 @@ EOT
     }
 
      $self->_fix_defaults();
+
+    # Bug 451735 highlighted a bug in bz_drop_index() which didn't
+    # check for FKs before trying to delete an index. Consequently,
+    # the series_creator_idx index was considered to be deleted
+    # despite it was still present in the DB. That's why we have to
+    # force the deletion, bypassing the DB schema.
+    if (!$self->bz_index_info('series', 'series_category_idx')) {
+        if (!$self->bz_index_info('series', 'series_creator_idx')
+            && $self->bz_index_info_real('series', 'series_creator_idx'))
+        {
+            foreach my $column (qw(creator category subcategory name)) {
+                $self->bz_drop_related_fks('series', $column);
+            }
+            $self->bz_drop_index_raw('series', 'series_creator_idx');
+        }
+    }
 }
 
 # When you import a MySQL 3/4 mysqldump into MySQL 5, columns that
@@ -875,19 +831,6 @@ sub _fix_defaults {
                          @{ $fix_columns{$table} });
         my $sql = "ALTER TABLE $table " . join(',', @alters);
         $self->do($sql);
-    }
-}
-
-# There is a bug in MySQL 4.1.0 - 4.1.15 that makes certain SELECT
-# statements fail after a SHOW TABLE STATUS: 
-# http://bugs.mysql.com/bug.php?id=13535
-# This is a workaround, a dummy SELECT to reset the LAST_INSERT_ID.
-sub _after_table_status {
-    my ($self, $tables) = @_;
-    if (grep($_ eq 'bugs', @$tables)
-        && $self->bz_column_info_real("bugs", "bug_id"))
-    {
-        $self->do('SELECT 1 FROM bugs WHERE bug_id IS NULL');
     }
 }
 
@@ -1077,11 +1020,12 @@ this code does.
 sub _bz_build_schema_from_disk {
     my ($self) = @_;
 
-    print "Building Schema object from database...\n";
-
     my $schema = $self->_bz_schema->get_empty_schema();
 
     my @tables = $self->bz_table_list_real();
+    if (@tables) {
+        print "Building Schema object from database...\n"; 
+    }
     foreach my $table (@tables) {
         $schema->add_table($table);
         my @columns = $self->bz_table_columns_real($table);
@@ -1103,4 +1047,5 @@ sub _bz_build_schema_from_disk {
 
     return $schema;
 }
+
 1;

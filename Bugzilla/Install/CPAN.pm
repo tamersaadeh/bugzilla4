@@ -33,6 +33,7 @@ use Bugzilla::Constants;
 use Bugzilla::Install::Requirements qw(have_vers);
 use Bugzilla::Install::Util qw(bin_loc install_string);
 
+use Config;
 use CPAN;
 use Cwd qw(abs_path);
 use File::Path qw(rmtree);
@@ -53,6 +54,13 @@ use constant REQUIREMENTS => (
         module  => 'YAML',
         package => 'YAML',
         version => 0,
+    },
+    {
+        # Many modules on CPAN are now built with Dist::Zilla, which
+        # unfortunately means they require this version of EU::MM to install.
+        module  => 'ExtUtils::MakeMaker',
+        package => 'ExtUtils-MakeMaker',
+        version => '6.31',
     },
 );
 
@@ -102,6 +110,8 @@ use constant CPAN_DEFAULTS => {
 sub check_cpan_requirements {
     my ($original_dir, $original_args) = @_;
 
+    _require_compiler();
+
     my @install;
     foreach my $module (REQUIREMENTS) {
         my $installed = have_vers($module, 1);
@@ -120,6 +130,26 @@ sub check_cpan_requirements {
         chdir $original_dir;
         exec($^X, $0, @$original_args);
     }
+}
+
+sub _require_compiler {
+    my @errors;
+
+    my $cc_name = $Config{cc};
+    my $cc_exists = bin_loc($cc_name);
+
+    if (!$cc_exists) {
+        push(@errors, install_string('install_no_compiler'));
+    }
+
+    my $make_name = $CPAN::Config->{make};
+    my $make_exists = bin_loc($make_name);
+
+    if (!$make_exists) {
+        push(@errors, install_string('install_no_make'));
+    }
+
+    die @errors if @errors;
 }
 
 sub install_module {
@@ -150,8 +180,21 @@ sub install_module {
     if (!$module) {
         die install_string('no_such_module', { module => $name }) . "\n";
     }
+    my $version = $module->cpan_version;
+    my $module_name = $name;
+
+    if ($name eq 'LWP::UserAgent' && $^V lt v5.8.8) {
+        # LWP 6.x requires Perl 5.8.8 or newer.
+        # As PAUSE only indexes the very last version of each module,
+        # we have to specify the path to the tarball ourselves.
+        $name = 'GAAS/libwww-perl-5.837.tar.gz';
+        # This tarball contains LWP::UserAgent 5.835.
+        $version = '5.835';
+    }
+
     print install_string('install_module', 
-              { module => $name, version => $module->cpan_version }) . "\n";
+              { module => $module_name, version => $version }) . "\n";
+
     if ($test) {
         CPAN::Shell->force('install', $name);
     }
@@ -194,7 +237,7 @@ sub set_cpan_config {
 
         # If we can't make one, we finally try to use the Bugzilla directory.
         if (!-w $dir) {
-            print "WARNING: Using the Bugzilla directory as the CPAN home.\n";
+            print STDERR install_string('cpan_bugzilla_home'), "\n";
             $dir = "$bzlib/.cpan";
         }
     }

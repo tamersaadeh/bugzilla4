@@ -232,6 +232,10 @@
     .clickable_area {
         cursor: pointer;
     }
+
+    textarea {
+        font-family: monospace;
+    }
 /* generic (end) */
 
 /* Links that control whether or not something is visible. */
@@ -248,6 +252,18 @@ div#docslinks {
 
 #docslinks h2 {
     margin: 0;
+}
+
+/**************************/
+/* Bug links and statuses */
+/**************************/
+
+.bz_bug_link {
+    /* Catch-all if you want common styles for all bug links */
+}
+
+.bz_bug_link .bz_status_UNCONFIRMED {
+    font-style: italic;
 }
 
 .bz_obsolete {
@@ -280,16 +296,10 @@ div#docslinks {
     margin-bottom: 2em;
 }
 
-/* The rules for these classes make international text wrap correctly,
-   even for languages like Japanese that have no spaces. */
-.bz_comment_text, .uneditable_textarea {
+/* tbody.file pre is for the Diff view of attachments. */
+.bz_comment_text, .uneditable_textarea, tbody.file pre {
      font-family: monospace;
-    /* Note that these must all be on separate lines or they stop
-       working in Konqueror. */
-     white-space: pre-wrap;      /* CSS 3 & 2.1 */
-     white-space: -moz-pre-wrap; /* Gecko */
-     white-space: -pre-wrap;     /* Opera 4-6 */
-     white-space: -o-pre-wrap;   /* Opera 7 */
+     white-space: pre-wrap;
 }
 
 .bz_comment_text {
@@ -371,6 +381,10 @@ input.requestee {
 
 #error_msg {
     font-size: x-large;
+}
+
+.warning {
+  color: red;
 }
 
 .throw_error {

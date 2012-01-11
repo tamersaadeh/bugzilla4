@@ -74,10 +74,10 @@ if ($action eq 'search') {
 ###########################################################################
 } elsif ($action eq 'list') {
     my $matchvalue    = $cgi->param('matchvalue') || '';
-    my $matchstr      = $cgi->param('matchstr');
+    my $matchstr      = trim($cgi->param('matchstr'));
     my $matchtype     = $cgi->param('matchtype');
     my $grouprestrict = $cgi->param('grouprestrict') || '0';
-    my $query = 'SELECT DISTINCT userid, login_name, realname, disabledtext ' .
+    my $query = 'SELECT DISTINCT userid, login_name, realname, is_enabled ' .
                 'FROM profiles';
     my @bindValues;
     my $nextCondition;
@@ -137,7 +137,7 @@ if ($action eq 'search') {
                 $expr = "profiles.login_name";
             }
 
-            if ($matchstr =~ /^(regexp|notregexp|exact)$/) {
+            if ($matchtype =~ /^(regexp|notregexp|exact)$/) {
                 $matchstr ||= '.';
             }
             else {
@@ -213,7 +213,9 @@ if ($action eq 'search') {
         cryptpassword => $password,
         realname      => scalar $cgi->param('name'),
         disabledtext  => scalar $cgi->param('disabledtext'),
-        disable_mail  => scalar $cgi->param('disable_mail')});
+        disable_mail  => scalar $cgi->param('disable_mail'),
+        extern_id     => scalar $cgi->param('extern_id'),
+        });
 
     userDataToVars($new_user->id);
 
@@ -256,6 +258,8 @@ if ($action eq 'search') {
             if $cgi->param('password');
         $otherUser->set_disabledtext($cgi->param('disabledtext'));
         $otherUser->set_disable_mail($cgi->param('disable_mail'));
+        $otherUser->set_extern_id($cgi->param('extern_id'))
+            if defined($cgi->param('extern_id'));
         $changes = $otherUser->update();
     }
 

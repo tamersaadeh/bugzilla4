@@ -32,6 +32,7 @@ use Bugzilla::Error;
 use Bugzilla::Install::Localconfig;
 use Bugzilla::Install::Util qw(install_string);
 use Bugzilla::Util;
+use Bugzilla::Hook;
 
 use File::Find;
 use File::Path;
@@ -45,6 +46,7 @@ our @EXPORT = qw(
     update_filesystem
     create_htaccess
     fix_all_file_permissions
+    fix_dir_permissions
     fix_file_permissions
 );
 
@@ -121,6 +123,7 @@ sub FILESYSTEM {
     my $extlib        = bz_locations()->{'ext_libpath'};
     my $skinsdir      = bz_locations()->{'skinsdir'};
     my $localconfig   = bz_locations()->{'localconfig'};
+    my $template_cache = bz_locations()->{'template_cache'};
     my $graphsdir     = bz_locations()->{'graphsdir'};
 
     # We want to set the permissions the same for all localconfig files
@@ -163,6 +166,7 @@ sub FILESYSTEM {
         'bugzilla.dtd'  => { perms => WS_SERVE },
         'mod_perl.pl'   => { perms => WS_SERVE },
         'robots.txt'    => { perms => WS_SERVE },
+        '.htaccess'     => { perms => WS_SERVE },
 
         'contrib/README'       => { perms => OWNER_WRITE },
         'contrib/*/README'     => { perms => OWNER_WRITE },
@@ -191,7 +195,7 @@ sub FILESYSTEM {
     # the webserver.
     my %recurse_dirs = (
         # Writeable directories
-        "$datadir/template" => { files => CGI_READ,
+         $template_cache    => { files => CGI_READ,
                                   dirs => DIR_CGI_OVERWRITE },
          $attachdir         => { files => CGI_WRITE,
                                   dirs => DIR_CGI_WRITE },
@@ -199,6 +203,8 @@ sub FILESYSTEM {
                                   dirs => DIR_CGI_WRITE | DIR_ALSO_WS_SERVE },
          $graphsdir         => { files => WS_SERVE,
                                   dirs => DIR_CGI_WRITE | DIR_ALSO_WS_SERVE },
+         "$datadir/db"      => { files => CGI_WRITE,
+                                  dirs => DIR_CGI_WRITE },
 
          # Readable directories
          "$datadir/mining"     => { files => CGI_READ,
@@ -265,6 +271,7 @@ sub FILESYSTEM {
         "$datadir/extensions"   => DIR_CGI_READ,
         $extensionsdir          => DIR_CGI_READ,
         # Directories that cgi scripts can write to.
+        "$datadir/db"           => DIR_CGI_WRITE,
         $attachdir              => DIR_CGI_WRITE,
         $graphsdir              => DIR_CGI_WRITE | DIR_ALSO_WS_SERVE,
         $webdotdir              => DIR_CGI_WRITE | DIR_ALSO_WS_SERVE,
@@ -358,6 +365,15 @@ Deny from all
 EOT
         },
     );
+
+    Bugzilla::Hook::process('install_filesystem', {
+        files            => \%files,
+        create_dirs      => \%create_dirs,
+        non_recurse_dirs => \%non_recurse_dirs,
+        recurse_dirs     => \%recurse_dirs,
+        create_files     => \%create_files,
+        htaccess         => \%htaccess,
+    });
 
     my %all_files = (%create_files, %htaccess, %index_html, %files);
     my %all_dirs  = (%create_dirs, %non_recurse_dirs);
@@ -630,6 +646,26 @@ sub _update_old_charts {
     } 
 }
 
+sub fix_dir_permissions {
+    my ($dir) = @_;
+    return if ON_WINDOWS;
+    # Note that _get_owner_and_group is always silent here.
+    my ($owner_id, $group_id) = _get_owner_and_group();
+
+    my $perms;
+    my $fs = FILESYSTEM();
+    if ($perms = $fs->{recurse_dirs}->{$dir}) {
+        _fix_perms_recursively($dir, $owner_id, $group_id, $perms);
+    }
+    elsif ($perms = $fs->{all_dirs}->{$dir}) {
+        _fix_perms($dir, $owner_id, $group_id, $perms);
+    }
+    else {
+        # Do nothing. We know nothing about this directory.
+        warn "Unknown directory $dir";
+    }
+}
+
 sub fix_file_permissions {
     my ($file) = @_;
     return if ON_WINDOWS;
@@ -827,6 +863,12 @@ Params:      C<$output> - C<true> if you want this function to print
                  out information about what it's doing.
 
 Returns:     nothing
+
+=item C<fix_dir_permissions>
+
+Given the name of a directory, its permissions will be fixed according to
+how they are supposed to be set in Bugzilla's current configuration.
+If it fails to set the permissions, a warning will be printed to STDERR.
 
 =item C<fix_file_permissions>
 

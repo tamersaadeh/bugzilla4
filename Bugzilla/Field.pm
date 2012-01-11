@@ -28,7 +28,7 @@ Bugzilla::Field - a particular piece of information about bugs
   use Data::Dumper;
 
   # Display information about all fields.
-  print Dumper(Bugzilla->get_fields());
+  print Dumper(Bugzilla->fields());
 
   # Display information about non-obsolete custom fields.
   print Dumper(Bugzilla->active_custom_fields);
@@ -36,9 +36,9 @@ Bugzilla::Field - a particular piece of information about bugs
   use Bugzilla::Field;
 
   # Display information about non-obsolete custom fields.
-  # Bugzilla->get_fields() is a wrapper around Bugzilla::Field->match(),
-  # so both methods take the same arguments.
-  print Dumper(Bugzilla::Field->match({ obsolete => 0, custom => 1 }));
+  # Bugzilla->fields() is a wrapper around Bugzilla::Field->get_all(),
+  # with arguments which filter the fields before returning them.
+  print Dumper(Bugzilla->fields({ obsolete => 0, custom => 1 }));
 
   # Create or update a custom field or field definition.
   my $field = Bugzilla::Field->create(
@@ -77,6 +77,7 @@ use base qw(Exporter Bugzilla::Object);
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Util;
+use List::MoreUtils qw(any);
 
 use Scalar::Util qw(blessed);
 
@@ -99,10 +100,10 @@ use constant DB_COLUMNS => qw(
     enter_bug
     buglist
     visibility_field_id
-    visibility_value_id
     value_field_id
     reverse_desc
     is_mandatory
+    is_numeric
 );
 
 use constant VALIDATORS => {
@@ -118,16 +119,18 @@ use constant VALIDATORS => {
     type         => \&_check_type,
     value_field_id      => \&_check_value_field_id,
     visibility_field_id => \&_check_visibility_field_id,
-    visibility_value_id => \&_check_control_value,
+    visibility_values => \&_check_visibility_values,
     is_mandatory => \&Bugzilla::Object::check_boolean,
+    is_numeric   => \&_check_is_numeric,
 };
 
 use constant VALIDATOR_DEPENDENCIES => {
+    is_numeric => ['type'],
     name => ['custom'],
     type => ['custom'],
     reverse_desc => ['type'],
     value_field_id => ['type'],
-    visibility_value_id => ['visibility_field_id'],
+    visibility_values => ['visibility_field_id'],
 };
 
 use constant UPDATE_COLUMNS => qw(
@@ -138,10 +141,10 @@ use constant UPDATE_COLUMNS => qw(
     enter_bug
     buglist
     visibility_field_id
-    visibility_value_id
     value_field_id
     reverse_desc
     is_mandatory
+    is_numeric
     type
 );
 
@@ -149,10 +152,12 @@ use constant UPDATE_COLUMNS => qw(
 use constant SQL_DEFINITIONS => {
     # Using commas because these are constants and they shouldn't
     # be auto-quoted by the "=>" operator.
-    FIELD_TYPE_FREETEXT,      { TYPE => 'varchar(255)' },
+    FIELD_TYPE_FREETEXT,      { TYPE => 'varchar(255)', 
+                                NOTNULL => 1, DEFAULT => "''"},
     FIELD_TYPE_SINGLE_SELECT, { TYPE => 'varchar(64)', NOTNULL => 1,
                                 DEFAULT => "'---'" },
-    FIELD_TYPE_TEXTAREA,      { TYPE => 'MEDIUMTEXT' },
+    FIELD_TYPE_TEXTAREA,      { TYPE => 'MEDIUMTEXT', 
+                                NOTNULL => 1, DEFAULT => "''"},
     FIELD_TYPE_DATETIME,      { TYPE => 'DATETIME'   },
     FIELD_TYPE_BUG_ID,        { TYPE => 'INT3'       },
 };
@@ -160,9 +165,10 @@ use constant SQL_DEFINITIONS => {
 # Field definitions for the fields that ship with Bugzilla.
 # These are used by populate_field_definitions to populate
 # the fielddefs table.
+# 'days_elapsed' is set in populate_field_definitions() itself.
 use constant DEFAULT_FIELDS => (
     {name => 'bug_id',       desc => 'Bug #',      in_new_bugmail => 1,
-     buglist => 1},
+     buglist => 1, is_numeric => 1},
     {name => 'short_desc',   desc => 'Summary',    in_new_bugmail => 1,
      is_mandatory => 1, buglist => 1},
     {name => 'classification', desc => 'Classification', in_new_bugmail => 1,
@@ -200,15 +206,20 @@ use constant DEFAULT_FIELDS => (
     {name => 'qa_contact',   desc => 'QAContact',  in_new_bugmail => 1,
      buglist => 1},
     {name => 'cc',           desc => 'CC',         in_new_bugmail => 1},
-    {name => 'dependson',    desc => 'Depends on', in_new_bugmail => 1},
-    {name => 'blocked',      desc => 'Blocks',     in_new_bugmail => 1},
+    {name => 'dependson',    desc => 'Depends on', in_new_bugmail => 1,
+     is_numeric => 1},
+    {name => 'blocked',      desc => 'Blocks',     in_new_bugmail => 1,
+     is_numeric => 1},
 
     {name => 'attachments.description', desc => 'Attachment description'},
     {name => 'attachments.filename',    desc => 'Attachment filename'},
     {name => 'attachments.mimetype',    desc => 'Attachment mime type'},
-    {name => 'attachments.ispatch',     desc => 'Attachment is patch'},
-    {name => 'attachments.isobsolete',  desc => 'Attachment is obsolete'},
-    {name => 'attachments.isprivate',   desc => 'Attachment is private'},
+    {name => 'attachments.ispatch',     desc => 'Attachment is patch',
+     is_numeric => 1},
+    {name => 'attachments.isobsolete',  desc => 'Attachment is obsolete',
+     is_numeric => 1},
+    {name => 'attachments.isprivate',   desc => 'Attachment is private',
+     is_numeric => 1},
     {name => 'attachments.submitter',   desc => 'Attachment creator'},
 
     {name => 'target_milestone',      desc => 'Target Milestone',
@@ -218,30 +229,38 @@ use constant DEFAULT_FIELDS => (
     {name => 'delta_ts',              desc => 'Last changed date',
      buglist => 1},
     {name => 'longdesc',              desc => 'Comment'},
-    {name => 'longdescs.isprivate',   desc => 'Comment is private'},
+    {name => 'longdescs.isprivate',   desc => 'Comment is private',
+     is_numeric => 1},
+    {name => 'longdescs.count',       desc => 'Number of Comments',
+     buglist => 1, is_numeric => 1},
     {name => 'alias',                 desc => 'Alias', buglist => 1},
-    {name => 'everconfirmed',         desc => 'Ever Confirmed'},
-    {name => 'reporter_accessible',   desc => 'Reporter Accessible'},
-    {name => 'cclist_accessible',     desc => 'CC Accessible'},
+    {name => 'everconfirmed',         desc => 'Ever Confirmed',
+     is_numeric => 1},
+    {name => 'reporter_accessible',   desc => 'Reporter Accessible',
+     is_numeric => 1},
+    {name => 'cclist_accessible',     desc => 'CC Accessible',
+     is_numeric => 1},
     {name => 'bug_group',             desc => 'Group', in_new_bugmail => 1},
     {name => 'estimated_time',        desc => 'Estimated Hours',
-     in_new_bugmail => 1, buglist => 1},
-    {name => 'remaining_time',        desc => 'Remaining Hours', buglist => 1},
+     in_new_bugmail => 1, buglist => 1, is_numeric => 1},
+    {name => 'remaining_time',        desc => 'Remaining Hours', buglist => 1,
+     is_numeric => 1},
     {name => 'deadline',              desc => 'Deadline',
      type => FIELD_TYPE_DATETIME, in_new_bugmail => 1, buglist => 1},
     {name => 'commenter',             desc => 'Commenter'},
     {name => 'flagtypes.name',        desc => 'Flags', buglist => 1},
     {name => 'requestees.login_name', desc => 'Flag Requestee'},
     {name => 'setters.login_name',    desc => 'Flag Setter'},
-    {name => 'work_time',             desc => 'Hours Worked', buglist => 1},
+    {name => 'work_time',             desc => 'Hours Worked', buglist => 1,
+     is_numeric => 1},
     {name => 'percentage_complete',   desc => 'Percentage Complete',
-     buglist => 1},
+     buglist => 1, is_numeric => 1},
     {name => 'content',               desc => 'Content'},
     {name => 'attach_data.thedata',   desc => 'Attachment data'},
-    {name => 'attachments.isurl',     desc => 'Attachment is a URL'},
     {name => "owner_idle_time",       desc => "Time Since Assignee Touched"},
     {name => 'see_also',              desc => "See Also",
      type => FIELD_TYPE_BUG_URLS},
+    {name => 'tag',                   desc => 'Tags'},
 );
 
 ################
@@ -272,6 +291,13 @@ sub _check_description {
 }
 
 sub _check_enter_bug { return $_[1] ? 1 : 0; }
+
+sub _check_is_numeric {
+    my ($invocant, $value, undef, $params) = @_;
+    my $type = blessed($invocant) ? $invocant->type : $params->{type};
+    return 1 if $type == FIELD_TYPE_BUG_ID;
+    return $value ? 1 : 0;
+}
 
 sub _check_mailhead { return $_[1] ? 1 : 0; }
 
@@ -358,8 +384,8 @@ sub _check_visibility_field_id {
     return $field->id;
 }
 
-sub _check_control_value {
-    my ($invocant, $value_id, undef, $params) = @_;
+sub _check_visibility_values {
+    my ($invocant, $values, undef, $params) = @_;
     my $field;
     if (blessed $invocant) {
         $field = $invocant->visibility_field;
@@ -367,11 +393,24 @@ sub _check_control_value {
     elsif ($params->{visibility_field_id}) {
         $field = $invocant->new($params->{visibility_field_id});
     }
-    # When no field is set, no value is set.
-    return undef if !$field;
-    my $value_obj = Bugzilla::Field::Choice->type($field)
-                    ->check({ id => $value_id });
-    return $value_obj->id;
+    # When no field is set, no values are set.
+    return [] if !$field;
+
+    if (!scalar @$values) {
+        ThrowUserError('field_visibility_values_must_be_selected',
+                       { field => $field });
+    }
+
+    my @visibility_values;
+    my $choice = Bugzilla::Field::Choice->type($field);
+    foreach my $value (@$values) {
+        if (!blessed $value) {
+            $value = $choice->check({ id => $value });
+        }
+        push(@visibility_values, $value);
+    }
+
+    return \@visibility_values;
 }
 
 sub _check_reverse_desc {
@@ -544,7 +583,7 @@ This method returns C<1> if the field is "abnormal", C<0> otherwise.
 
 sub is_abnormal {
     my $self = shift;
-    return grep($_ eq $self->name, ABNORMAL_SELECTS) ? 1 : 0;
+    return ABNORMAL_SELECTS->{$self->name} ? 1 : 0;
 }
 
 sub legal_values {
@@ -604,9 +643,9 @@ sub visibility_field {
 
 =over
 
-=item C<visibility_value>
+=item C<visibility_values>
 
-If we have a L</visibility_field>, then what value does that field have to
+If we have a L</visibility_field>, then what values does that field have to
 be set to in order to show this field? Returns a L<Bugzilla::Field::Choice>
 or undef if there is no C<visibility_field> set.
 
@@ -614,16 +653,23 @@ or undef if there is no C<visibility_field> set.
 
 =cut
 
-
-sub visibility_value {
+sub visibility_values {
     my $self = shift;
-    if ($self->{visibility_field_id}) {
-        require Bugzilla::Field::Choice;
-        $self->{visibility_value} ||=
-            Bugzilla::Field::Choice->type($self->visibility_field)->new(
-                $self->{visibility_value_id});
+    my $dbh = Bugzilla->dbh;
+    
+    return [] if !$self->{visibility_field_id};
+
+    if (!defined $self->{visibility_values}) {
+        my $visibility_value_ids =
+            $dbh->selectcol_arrayref("SELECT value_id FROM field_visibility
+                                      WHERE field_id = ?", undef, $self->id);
+
+        $self->{visibility_values} =
+            Bugzilla::Field::Choice->type($self->visibility_field)
+            ->new_from_list($visibility_value_ids);
     }
-    return $self->{visibility_value};
+
+    return $self->{visibility_values};
 }
 
 =pod
@@ -701,10 +747,13 @@ See L<Bugzilla::Field::ChoiceInterface>.
 sub is_visible_on_bug {
     my ($self, $bug) = @_;
 
-    my $visibility_value = $self->visibility_value;
-    return 1 if !$visibility_value;
+    # Always return visible, if this field is not
+    # visibility controlled.
+    return 1 if !$self->{visibility_field_id};
 
-    return $visibility_value->is_set_on_bug($bug);
+    my $visibility_values = $self->visibility_values;
+
+    return (any { $_->is_set_on_bug($bug) } @$visibility_values) ? 1 : 0;
 }
 
 =over
@@ -756,6 +805,21 @@ a boolean specifying whether or not the field is mandatory;
 
 sub is_mandatory { return $_[0]->{is_mandatory} }
 
+=over
+
+=item C<is_numeric>
+
+A boolean specifying whether or not this field logically contains
+numeric (integer, decimal, or boolean) values. By "logically contains" we
+mean that the user inputs numbers into the value of the field in the UI.
+This is mostly used by L<Bugzilla::Search>.
+
+=back
+
+=cut
+
+sub is_numeric { return $_[0]->{is_numeric} }
+
 
 =pod
 
@@ -785,7 +849,7 @@ They will throw an error if you try to set the values to something invalid.
 
 =item C<set_visibility_field>
 
-=item C<set_visibility_value>
+=item C<set_visibility_values>
 
 =item C<set_value_field>
 
@@ -798,6 +862,7 @@ They will throw an error if you try to set the values to something invalid.
 
 sub set_description    { $_[0]->set('description', $_[1]); }
 sub set_enter_bug      { $_[0]->set('enter_bug',   $_[1]); }
+sub set_is_numeric     { $_[0]->set('is_numeric',  $_[1]); }
 sub set_obsolete       { $_[0]->set('obsolete',    $_[1]); }
 sub set_sortkey        { $_[0]->set('sortkey',     $_[1]); }
 sub set_in_new_bugmail { $_[0]->set('mailhead',    $_[1]); }
@@ -807,12 +872,11 @@ sub set_visibility_field {
     my ($self, $value) = @_;
     $self->set('visibility_field_id', $value);
     delete $self->{visibility_field};
-    delete $self->{visibility_value};
+    delete $self->{visibility_values};
 }
-sub set_visibility_value {
-    my ($self, $value) = @_;
-    $self->set('visibility_value_id', $value);
-    delete $self->{visibility_value};
+sub set_visibility_values {
+    my ($self, $value_ids) = @_;
+    $self->set('visibility_values', $value_ids);
 }
 sub set_value_field {
     my ($self, $value) = @_;
@@ -946,13 +1010,24 @@ C<is_mandatory> - boolean - Whether this field is mandatory. Defaults to 0.
 sub create {
     my $class = shift;
     my ($params) = @_;
+    my $dbh = Bugzilla->dbh;
+
     # This makes sure the "sortkey" validator runs, even if
     # the parameter isn't sent to create().
     $params->{sortkey} = undef if !exists $params->{sortkey};
     $params->{type} ||= 0;
-    my $field = $class->SUPER::create(@_);
+    
+    $dbh->bz_start_transaction();
+    $class->check_required_create_fields(@_);
+    my $field_values      = $class->run_create_validators($params);
+    my $visibility_values = delete $field_values->{visibility_values};
+    my $field             = $class->insert_create_data($field_values);
+    
+    $field->set_visibility_values($visibility_values);
+    $field->_update_visibility_values();
 
-    my $dbh = Bugzilla->dbh;
+    $dbh->bz_commit_transaction();
+
     if ($field->custom) {
         my $name = $field->name;
         my $type = $field->type;
@@ -982,9 +1057,29 @@ sub update {
     if ($changes->{value_field_id} && $self->is_select) {
         $dbh->do("UPDATE " . $self->name . " SET visibility_value_id = NULL");
     }
+    $self->_update_visibility_values();
     return $changes;
 }
 
+sub _update_visibility_values {
+    my $self = shift;
+    my $dbh = Bugzilla->dbh;
+
+    my @visibility_value_ids = map($_->id, @{$self->visibility_values});
+    $self->_delete_visibility_values();
+    for my $value_id (@visibility_value_ids) {
+        $dbh->do("INSERT INTO field_visibility (field_id, value_id)
+                  VALUES (?, ?)", undef, $self->id, $value_id);
+    }
+}
+
+sub _delete_visibility_values {
+    my ($self) = @_;
+    my $dbh = Bugzilla->dbh;
+    $dbh->do("DELETE FROM field_visibility WHERE field_id = ?",
+        undef, $self->id);
+    delete $self->{visibility_values};
+}
 
 =pod
 
@@ -1042,6 +1137,7 @@ sub populate_field_definitions {
             $field->set_buglist($def->{buglist});
             $field->_set_type($def->{type}) if $def->{type};
             $field->set_is_mandatory($def->{is_mandatory});
+            $field->set_is_numeric($def->{is_numeric});
             $field->update();
         }
         else {

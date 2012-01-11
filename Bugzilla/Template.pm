@@ -61,6 +61,17 @@ use Scalar::Util qw(blessed);
 
 use base qw(Template);
 
+use constant FORMAT_TRIPLE => '%19s|%-28s|%-28s';
+use constant FORMAT_3_SIZE => [19,28,28];
+use constant FORMAT_DOUBLE => '%19s %-55s';
+use constant FORMAT_2_SIZE => [19,55];
+
+# Pseudo-constant.
+sub SAFE_URL_REGEXP {
+    my $safe_protocols = join('|', SAFE_PROTOCOLS);
+    return qr/($safe_protocols):[^\s<>\"]+[\w\/]/i;
+}
+
 # Convert the constants in the Bugzilla::Constants module into a hash we can
 # pass to the template object for reflection into its "constants" namespace
 # (which is like its "variables" namespace, but for constants).  To do so, we
@@ -200,12 +211,8 @@ sub quoteUrls {
               ~egox;
 
     # non-mailto protocols
-    my $safe_protocols = join('|', SAFE_PROTOCOLS);
-    my $protocol_re = qr/($safe_protocols)/i;
-
-    $text =~ s~\b(${protocol_re}:  # The protocol:
-                  [^\s<>\"]+       # Any non-whitespace
-                  [\w\/])          # so that we end in \w or /
+    my $safe_protocols = SAFE_URL_REGEXP();
+    $text =~ s~\b($safe_protocols)
               ~($tmp = html_quote($1)) &&
                ($things[$count++] = "<a href=\"$tmp\">$tmp</a>") &&
                ("\0\0" . ($count-1) . "\0\0")
@@ -222,7 +229,8 @@ sub quoteUrls {
 
     # mailto:
     # Use |<nothing> so that $1 is defined regardless
-    $text =~ s~\b(mailto:|)?([\w\.\-\+\=]+\@[\w\-]+(?:\.[\w\-]+)+)\b
+    # &#64; is the encoded '@' character.
+    $text =~ s~\b(mailto:|)?([\w\.\-\+\=]+&\#64;[\w\-]+(?:\.[\w\-]+)+)\b
               ~<a href=\"mailto:$2\">$1$2</a>~igx;
 
     # attachment links
@@ -256,8 +264,10 @@ sub quoteUrls {
               ~get_bug_link($1, $1)
               ~egmx;
 
-    # Now remove the encoding hacks
-    $text =~ s/\0\0(\d+)\0\0/$things[$1]/eg;
+    # Now remove the encoding hacks in reverse order
+    for (my $i = $#things; $i >= 0; $i--) {
+        $text =~ s/\0\0($i)\0\0/$things[$i]/eg;
+    }
     $text =~ s/$chr1\0/\0/g;
 
     return $text;
@@ -312,44 +322,49 @@ sub get_attachment_link {
 
 sub get_bug_link {
     my ($bug, $link_text, $options) = @_;
+    $options ||= {};
     my $dbh = Bugzilla->dbh;
 
-    if (!$bug) {
-        return html_quote('<missing bug number>');
+    if (defined $bug) {
+        $bug = blessed($bug) ? $bug : new Bugzilla::Bug($bug);
+        return $link_text if $bug->{error};
     }
 
-    $bug = blessed($bug) ? $bug : new Bugzilla::Bug($bug);
-    return $link_text if $bug->{error};
-    
-    # Initialize these variables to be "" so that we don't get warnings
-    # if we don't change them below (which is highly likely).
-    my ($pre, $title, $post) = ("", "", "");
+    my $template = Bugzilla->template_inner;
+    my $linkified;
+    $template->process('bug/link.html.tmpl', 
+        { bug => $bug, link_text => $link_text, %$options }, \$linkified);
+    return $linkified;
+}
 
-    $title = get_text('get_status', { status => $bug->bug_status });
-    if ($bug->bug_status eq 'UNCONFIRMED') {
-        $pre = "<i>";
-        $post = "</i>";
+# We use this instead of format because format doesn't deal well with
+# multi-byte languages.
+sub multiline_sprintf {
+    my ($format, $args, $sizes) = @_;
+    my @parts;
+    my @my_sizes = @$sizes; # Copy this so we don't modify the input array.
+    foreach my $string (@$args) {
+        my $size = shift @my_sizes;
+        my @pieces = split("\n", wrap_hard($string, $size));
+        push(@parts, \@pieces);
     }
-    if ($bug->resolution) {
-        $pre .= '<span class="bz_closed">';
-        $title .= ' ' . get_text('get_resolution',
-                                 { resolution => $bug->resolution });
-        $post .= '</span>';
-    }
-    if (Bugzilla->user->can_see_bug($bug)) {
-        $title .= " - " . $bug->short_desc;
-        if ($options->{use_alias} && $link_text =~ /^\d+$/ && $bug->alias) {
-            $link_text = $bug->alias;
-        }
-    }
-    # Prevent code injection in the title.
-    $title = html_quote(clean_text($title));
 
-    my $linkval = "show_bug.cgi?id=" . $bug->id;
-    if (defined $options->{comment_num}) {
-        $linkval .= "#c" . $options->{comment_num};
+    my $formatted;
+    while (1) {
+        # Get the first item of each part.
+        my @line = map { shift @$_ } @parts;
+        # If they're all undef, we're done.
+        last if !grep { defined $_ } @line;
+        # Make any single undef item into ''
+        @line = map { defined $_ ? $_ : '' } @line;
+        # And append a formatted line
+        $formatted .= sprintf($format, @line);
+        # Remove trailing spaces, or they become lots of =20's in
+        # quoted-printable emails.
+        $formatted =~ s/\s+$//;
+        $formatted .= "\n";
     }
-    return qq{$pre<a href="$linkval" title="$title">$link_text</a>$post};
+    return $formatted;
 }
 
 #####################
@@ -430,9 +445,10 @@ sub _css_link_set {
         return \%set;
     }
     
-    my $user = Bugzilla->user;
+    my $skin_user_prefs = Bugzilla->user->settings->{skin};
     my $cgi_path = bz_locations()->{'cgi_path'};
-    my $all_skins = $user->settings->{'skin'}->legal_values;    
+    # If the DB is not accessible, user settings are not available.
+    my $all_skins = $skin_user_prefs ? $skin_user_prefs->legal_values : [];
     my %skin_urls;
     foreach my $option (@$all_skins) {
         next if $option eq 'standard';
@@ -444,7 +460,7 @@ sub _css_link_set {
     }
     $set{alternate} = \%skin_urls;
     
-    my $skin = $user->settings->{'skin'}->{'value'};
+    my $skin = $skin_user_prefs->{'value'};
     if ($skin ne 'standard' and defined $set{alternate}->{$skin}) {
         $set{skin} = delete $set{alternate}->{$skin};
     }
@@ -591,7 +607,7 @@ sub create {
         ABSOLUTE => 1,
         RELATIVE => $ENV{MOD_PERL} ? 0 : 1,
 
-        COMPILE_DIR => bz_locations()->{'datadir'} . "/template",
+        COMPILE_DIR => bz_locations()->{'template_cache'},
 
         # Initialize templates (f.e. by loading plugins like Hook).
         PRE_PROCESS => ["global/initialize.none.tmpl"],
@@ -641,6 +657,7 @@ sub create {
                 $var =~ s/\r/\\r/g;
                 $var =~ s/\@/\\x40/g; # anti-spam for email addresses
                 $var =~ s/</\\x3c/g;
+                $var =~ s/>/\\x3e/g;
                 return $var;
             },
             
@@ -674,15 +691,12 @@ sub create {
 
             xml => \&Bugzilla::Util::xml_quote ,
 
-            # This filter escapes characters in a variable or value string for
-            # use in a query string.  It escapes all characters NOT in the
-            # regex set: [a-zA-Z0-9_\-.].  The 'uri' filter should be used for
-            # a full URL that may have characters that need encoding.
-            url_quote => \&Bugzilla::Util::url_quote ,
-
             # This filter is similar to url_quote but used a \ instead of a %
             # as prefix. In addition it replaces a ' ' by a '_'.
             css_class_quote => \&Bugzilla::Util::css_class_quote ,
+
+            # Removes control characters and trims extra whitespace.
+            clean_text => \&Bugzilla::Util::clean_text ,
 
             quoteUrls => [ sub {
                                my ($context, $bug, $comment) = @_;
@@ -845,6 +859,14 @@ sub create {
             # Function to create date strings
             'time2str' => \&Date::Format::time2str,
 
+            # Fixed size column formatting for bugmail.
+            'format_columns' => sub {
+                my $cols = shift;
+                my $format = ($cols == 3) ? FORMAT_TRIPLE : FORMAT_DOUBLE;
+                my $col_size = ($cols == 3) ? FORMAT_3_SIZE : FORMAT_2_SIZE;
+                return multiline_sprintf($format, \@_, $col_size);
+            },
+
             # Generic linear search function
             'lsearch' => sub {
                 my ($array, $item) = @_;
@@ -883,8 +905,8 @@ sub create {
                 my $url = shift;
                 return 0 unless $url;
 
-                my $safe_protocols = join('|', SAFE_PROTOCOLS);
-                return 1 if $url =~ /^($safe_protocols):[^\s<>\"]+[\w\/]$/i;
+                my $safe_url_regexp = SAFE_URL_REGEXP();
+                return 1 if $url =~ /^$safe_url_regexp$/;
                 # Pointing to a local file with no colon in its name is fine.
                 return 1 if $url =~ /^[^\s<>\":]+[\w\/]$/i;
                 # If we come here, then we cannot guarantee it's safe.
@@ -897,8 +919,8 @@ sub create {
             # A way for all templates to get at Field data, cached.
             'bug_fields' => sub {
                 my $cache = Bugzilla->request_cache;
-                $cache->{template_bug_fields} ||= 
-                    { map { $_->name => $_ } Bugzilla->get_fields() };
+                $cache->{template_bug_fields} ||=
+                    Bugzilla->fields({ by_name => 1 });
                 return $cache->{template_bug_fields};
             },
             
@@ -917,6 +939,14 @@ sub create {
             # it only once per-language no matter how many times
             # $template->process() is called.
             'field_descs' => sub { return template_var('field_descs') },
+
+            # Calling bug/field-help.none.tmpl once per label is very
+            # expensive, so we generate it once per-language.
+            'help_html' => sub { return template_var('help_html') },
+
+            # This way we don't have to load field-descs.none.tmpl in
+            # many templates.
+            'display_value' => \&Bugzilla::Util::display_value,
 
             'install_string' => \&Bugzilla::Install::Util::install_string,
 
@@ -937,6 +967,7 @@ sub create {
                 }
                 return \@optional;
             },
+            'default_authorizer' => new Bugzilla::Auth(),
         },
     };
 
@@ -959,23 +990,27 @@ sub precompile_templates {
     my ($output) = @_;
 
     # Remove the compiled templates.
+    my $cache_dir = bz_locations()->{'template_cache'};
     my $datadir = bz_locations()->{'datadir'};
-    if (-e "$datadir/template") {
+    if (-e $cache_dir) {
         print install_string('template_removing_dir') . "\n" if $output;
 
         # This frequently fails if the webserver made the files, because
         # then the webserver owns the directories.
-        rmtree("$datadir/template");
+        rmtree($cache_dir);
 
         # Check that the directory was really removed, and if not, move it
         # into data/deleteme/.
-        if (-e "$datadir/template") {
+        if (-e $cache_dir) {
+            my $deleteme = "$datadir/deleteme";
+            
             print STDERR "\n\n",
                 install_string('template_removal_failed', 
-                               { datadir => $datadir }), "\n\n";
-            mkpath("$datadir/deleteme");
+                               { deleteme => $deleteme, 
+                                 template_cache => $cache_dir }), "\n\n";
+            mkpath($deleteme);
             my $random = generate_random_password();
-            rename("$datadir/template", "$datadir/deleteme/$random")
+            rename($cache_dir, "$deleteme/$random")
               or die "move failed: $!";
         }
     }
@@ -1041,10 +1076,10 @@ sub _do_template_symlink {
 
     my $abs_root  = dirname($abs_path);
     my $dir_name  = basename($abs_path);
-    my $datadir   = bz_locations()->{'datadir'};
-    my $container = "$datadir/template$abs_root";
+    my $cache_dir   = bz_locations()->{'template_cache'};
+    my $container = "$cache_dir$abs_root";
     mkpath($container);
-    my $target = "$datadir/template/$dir_name";
+    my $target = "$cache_dir/$dir_name";
     # Check if the directory exists, because if there are no extensions,
     # there won't be an "data/template/extensions" directory to link to.
     if (-d $target) {

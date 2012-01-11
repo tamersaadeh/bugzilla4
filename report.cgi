@@ -29,6 +29,8 @@ use Bugzilla::Constants;
 use Bugzilla::Util;
 use Bugzilla::Error;
 use Bugzilla::Field;
+use Bugzilla::Search;
+
 use List::MoreUtils qw(uniq);
 
 my $cgi = Bugzilla->cgi;
@@ -45,8 +47,6 @@ if (grep(/^cmd-/, $cgi->param())) {
     print $cgi->redirect($location);
     exit;
 }
-
-use Bugzilla::Search;
 
 Bugzilla->login();
 
@@ -121,15 +121,16 @@ my $valid_columns = Bugzilla::Search::REPORT_COLUMNS;
   || ($valid_columns->{$tbl_field} && trick_taint($tbl_field))
   || ThrowCodeError("report_axis_invalid", {fld => "z", val => $tbl_field});
 
-my @axis_fields = ($row_field || EMPTY_COLUMN, 
-                   $col_field || EMPTY_COLUMN,
-                   $tbl_field || EMPTY_COLUMN);
+my @axis_fields = grep { $_ } ($row_field, $col_field, $tbl_field);
 
 # Clone the params, so that Bugzilla::Search can modify them
 my $params = new Bugzilla::CGI($cgi);
-my $search = new Bugzilla::Search('fields' => \@axis_fields, 
-                                  'params' => $params);
-my $query = $search->getSQL();
+my $search = new Bugzilla::Search(
+    fields => \@axis_fields, 
+    params => scalar $params->Vars,
+    allow_unlimited => 1,
+);
+my $query = $search->sql;
 
 $::SIG{TERM} = 'DEFAULT';
 $::SIG{PIPE} = 'DEFAULT';
@@ -151,16 +152,10 @@ my $row_isnumeric = 1;
 my $tbl_isnumeric = 1;
 
 foreach my $result (@$results) {
-    my ($row, $col, $tbl) = @$result;
-
     # handle empty dimension member names
-    $row = ' ' if ($row eq '');
-    $col = ' ' if ($col eq '');
-    $tbl = ' ' if ($tbl eq '');
-
-    $row = "" if ($row eq EMPTY_COLUMN);
-    $col = "" if ($col eq EMPTY_COLUMN);
-    $tbl = "" if ($tbl eq EMPTY_COLUMN);
+    my $row = check_value($row_field, $result);
+    my $col = check_value($col_field, $result);
+    my $tbl = check_value($tbl_field, $result);
 
     $data{$tbl}{$col}{$row}++;
     $names{"col"}{$col}++;
@@ -172,9 +167,9 @@ foreach my $result (@$results) {
     $tbl_isnumeric &&= ($tbl =~ /^-?\d+(\.\d+)?$/o);
 }
 
-my @col_names = @{get_names($names{"col"}, $col_isnumeric, $col_field)};
-my @row_names = @{get_names($names{"row"}, $row_isnumeric, $row_field)};
-my @tbl_names = @{get_names($names{"tbl"}, $tbl_isnumeric, $tbl_field)};
+my @col_names = get_names($names{"col"}, $col_isnumeric, $col_field);
+my @row_names = get_names($names{"row"}, $row_isnumeric, $row_field);
+my @tbl_names = get_names($names{"tbl"}, $tbl_isnumeric, $tbl_field);
 
 # The GD::Graph package requires a particular format of data, so once we've
 # gathered everything into the hashes and made sure we know the size of the
@@ -293,9 +288,9 @@ print $cgi->header(-type => $format->{'ctype'},
 if ($cgi->param('debug')) {
     require Data::Dumper;
     print "<pre>data hash:\n";
-    print Data::Dumper::Dumper(%data) . "\n\n";
+    print html_quote(Data::Dumper::Dumper(%data)) . "\n\n";
     print "data array:\n";
-    print Data::Dumper::Dumper(@image_data) . "\n\n</pre>";
+    print html_quote(Data::Dumper::Dumper(@image_data)) . "\n\n</pre>";
 }
 
 # All formats point to the same section of the documentation.
@@ -306,44 +301,48 @@ disable_utf8() if ($format->{'ctype'} =~ /^image\//);
 $template->process("$format->{'template'}", $vars)
   || ThrowTemplateError($template->error());
 
-exit;
-
 
 sub get_names {
-    my ($names, $isnumeric, $field) = @_;
+    my ($names, $isnumeric, $field_name) = @_;
+    my ($field, @sorted);
+    # _realname fields aren't real Bugzilla::Field objects, but they are a
+    # valid axis, so we don't vailidate them as Bugzilla::Field objects.
+    $field = Bugzilla::Field->check($field_name) 
+        if ($field_name && $field_name !~ /_realname$/);
     
-    # These are all the fields we want to preserve the order of in reports.
-    my %fields;
-    my @select_fields = Bugzilla->get_fields({ is_select => 1 });
-    foreach my $field (@select_fields) {
-        my @names =  map($_->name, @{$field->legal_values});
-        unshift @names, ' ' if $field->name eq 'resolution'; 
-        $fields{$field->name} = [ uniq @names ];
-    } 
-    my $field_list = $fields{$field};
-    my @sorted;
-    
-    if ($field_list) {
-        my @unsorted = keys %{$names};
-        
-        # Extract the used fields from the field_list, in the order they 
-        # appear in the field_list. This lets us keep e.g. severities in
-        # the normal order.
-        #
-        # This is O(n^2) but it shouldn't matter for short lists.
-        foreach my $item (@$field_list) {
-            push(@sorted, $item) if grep { $_ eq $item } @unsorted;
+    if ($field && $field->is_select) {
+        foreach my $value (@{$field->legal_values}) {
+            push(@sorted, $value->name) if $names->{$value->name};
         }
+        unshift(@sorted, ' ') if $field_name eq 'resolution';
+        @sorted = uniq @sorted;
     }  
     elsif ($isnumeric) {
         # It's not a field we are preserving the order of, so sort it 
         # numerically...
-        sub numerically { $a <=> $b }
-        @sorted = sort numerically keys(%{$names});
-    } else {
+        @sorted = sort { $a <=> $b } keys %$names;
+    }
+    else {
         # ...or alphabetically, as appropriate.
-        @sorted = sort(keys(%{$names}));
+        @sorted = sort keys %$names;
     }
     
-    return \@sorted;
+    return @sorted;
+}
+
+sub check_value {
+    my ($field, $result) = @_;
+
+    my $value;
+    if (!defined $field) {
+        $value = '';
+    }
+    elsif ($field eq '') {
+        $value = ' ';
+    }
+    else {
+        $value = shift @$result;
+        $value = ' ' if (!defined $value || $value eq '');
+    }
+    return $value;
 }
