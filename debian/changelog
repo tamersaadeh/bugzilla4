@@ -1,3 +1,18 @@
+bugzilla (4.2.0-1) precise; urgency=medium
+
+  * Experimental SQLite Support
+  * Creating an Attachment by Pasting Text Into a Text Field
+  * HTML Bugmail
+  * Improved Searching System
+  * Disabling Old Components, Versions and Milestones
+  * Displaying a Custom Field Value Based on Multiple Values of Another Field
+  * Auditing of All Changes Within Bugzilla
+  * Accessibility Improvements
+  * Other Enhancements and Changes
+  - See http://www.bugzilla.org/releases/4.2/release-notes.htm for more details
+
+ -- Tamer Saadeh <tamersaadeh@gmail.com>  Wed, 11 Jan 2012 19:18:26 +0100
+
 bugzilla (4.0.0-2) natty; urgency=low
 
   * During installation, the CPAN module

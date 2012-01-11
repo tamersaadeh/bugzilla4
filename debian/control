@@ -99,7 +99,6 @@ Depends: perl (>= 5.8.1),
          liburi-perl (>= 1.37),
          liblist-moreutils-perl (>= 0.22),
          libmath-random-isaac-perl (>= 1.0.1),
-
          libgd-gd2-perl,
          libchart-perl,
          libtemplate-plugin-gd-perl,
@@ -108,34 +107,31 @@ Depends: perl (>= 5.8.1),
          libmime-tools-perl (>= 5.406),
          libwww-perl,
          libxml-twig-perl,
-
-
-
+         libnet-ldap-perl,
+         libauthen-sasl-perl,
+         libauthen-radius-perl,
+         libsoap-lite-perl (>= 0.712),
+         libjson-rpc-perl,
+         libjson-xs-perl (>= 2.0),
+         libtest-taint-perl,
+         libhtml-parser-perl (>= 3.40),
+         libhtml-scrubber-perl,
+         libencode-perl (>= 2.21),
+         libencode-detect-perl,
+         libtheschwartz-perl,
+         libdaemon-generic-perl,
+         libapache2-mod-perl2 (>= 1.99902)
          ${python:Depends},
          ${misc:Depends}
 Suggests: bugzilla4-doc,
-          libnet-ldap-perl,
-
-          libmailtools-perl (>= 1.77-1),
-
-          libhtml-parser-perl,
-          libhtml-scrubber-perl,
- 
-          libauthen-radius-perl,
           graphviz,
-          libsoap-lite-perl (>= 0.712),
           patchutils,
- 
+          cvs,
           ruby,
-          libjson-xs-perl (>= 2.0),
-          libapache2-mod-perl2 (>= 1.999022)
-Recommends: 
-            
-            libxml-parser-perl,
-            perlmagick,
-            mysql-server | postgresql,
-            cvs,
-            imagemagick
+          imagemagick,
+          libxml-parser-perl,
+          perlmagick,
+Recommends: mysql-server | postgresql
 Conflicts: bugzilla4-full
 Replaces: bugzilla4-full
 XB-Python-Version: ${python:Versions}
