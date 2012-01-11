@@ -7,37 +7,34 @@ Build-Depends-Indep: debconf (>= 0.9.95) | debconf-2.0
 XS-Python-Version: all
 Standards-Version: 3.9.1
 
-Package: bugzilla4
-Architecture: all
+Package: bugzilla4-min
+Architecture: any
 Section: web
 Homepage: http://www.bugzilla.org
-Depends: debconf (>= 0.9.95), 
-         libtemplate-perl (>= 2.22),
-         libappconfig-perl (>= 1.56-2),
+Depends: perl (>= 5.8.1),
+         mysql-client | postgresql-client,
+         libdbd-mysql-perl (>= 4.001) | libdbd-pg-perl (>= 1.45),
+         libcgi-pm-perl (>= 3.51),
+         libdigest-sha-perl,
          libtimedate-perl (>= 1.1600-9),
          libdatetime-perl,
          libdatetime-timezone-perl (>= 0.71-1),
-         libemail-send-perl (>= 2.192-1),
-         libmail-sendmail-perl,
-         libemail-mime-perl (>= 1.904) | libemail-mime-modifier-perl (>= 1.442-2),
-         libemail-mime-perl (>= 1.904) | libemail-mime-creator-perl,
-         liburi-perl,
-         libcgi-pm-perl (>= 3.51),
-         libdbd-mysql-perl (>= 1.56-2) | libdbd-pg-perl, 
-         apache2 | httpd,
-         exim4 | mail-transport-agent,
-         ucf (>= 0.08), patch, dbconfig-common (>= 1.8.27),
-         mysql-client | postgresql-client,
-         libjs-yui,
+         libdbi-perl (>= 1.41),
+         libtemplate-perl (>= 2.22),
+         libemail-send-perl (>= 2.000),
+         libemail-mime-perl (>= 1.904),
+         liburi-perl (>= 1.37),
          liblist-moreutils-perl (>= 0.22),
+         libmath-random-isaac-perl (>= 1.0.1),
          ${python:Depends},
          ${misc:Depends}
 Suggests: bugzilla4-doc,
+          bugzilla4-full,
           libnet-ldap-perl,
           libgd-text-perl,
           libgd-graph-perl, libgd-gd2-perl,
           libmailtools-perl (>= 1.77-1),
-          libmime-tools-perl (>= 5.425-2),
+          libmime-tools-perl (>= 5.425-2),	
           libhtml-parser-perl,
           libhtml-scrubber-perl,
           libxml-twig-perl,
@@ -56,8 +53,8 @@ Recommends: libchart-perl (>= 0.99c.pre3-0.1),
             mysql-server | postgresql,
             cvs,
             imagemagick
-Conflicts: bugzilla (<< 4.0.0)
-Replaces: bugzilla (<< 4.0.0)
+Conflicts: bugzilla4-min, bugzilla4-full
+Replaces: bugzilla4-min
 XB-Python-Version: ${python:Versions}
 Description: web-based bug tracking system
  Bugzilla is a Bug Tracking System accessible through a web interface,
@@ -79,6 +76,79 @@ Description: web-based bug tracking system
  This package provides a web application that lets users make and look
  up bug reports. Interested users are automatically informed about
  changes to a bug's status.
+ This is the minimalist approach, that is it will only install the minimum
+ to be able to run Bugzilla. If you would like to enjoy Bugzilla's full features
+ you should install bugzilla-full instead.
+
+Package: bugzilla4-full
+Architecture: any
+Section: web
+Homepage: http://www.bugzilla.org
+Depends: perl (>= 5.8.1),
+         mysql-client | postgresql-client,
+         libdbd-mysql-perl (>= 4.001) | libdbd-pg-perl (>= 1.45),
+         libcgi-pm-perl (>= 3.51),
+         libdigest-sha-perl,
+         libtimedate-perl (>= 1.1600-9),
+         libdatetime-perl,
+         libdatetime-timezone-perl (>= 0.71-1),
+         libdbi-perl (>= 1.41),
+         libtemplate-perl (>= 2.22),
+         libemail-send-perl (>= 2.000),
+         libemail-mime-perl (>= 1.904),
+         liburi-perl (>= 1.37),
+         liblist-moreutils-perl (>= 0.22),
+         libmath-random-isaac-perl (>= 1.0.1),
+         ${python:Depends},
+         ${misc:Depends}
+Suggests: bugzilla4-doc,
+          libnet-ldap-perl,
+          libgd-text-perl,
+          libgd-graph-perl, libgd-gd2-perl,
+          libmailtools-perl (>= 1.77-1),
+          libmime-tools-perl (>= 5.425-2),	
+          libhtml-parser-perl,
+          libhtml-scrubber-perl,
+          libxml-twig-perl,
+          libauthen-radius-perl,
+          graphviz,
+          libsoap-lite-perl (>= 0.712),
+          patchutils,
+          libwww-perl,
+          ruby,
+          libjson-xs-perl (>= 2.0),
+          libapache2-mod-perl2 (>= 1.999022)
+Recommends: libchart-perl (>= 0.99c.pre3-0.1),
+            libtemplate-plugin-gd-perl,
+            libxml-parser-perl,
+            perlmagick,
+            mysql-server | postgresql,
+            cvs,
+            imagemagick
+Conflicts: bugzilla4-full
+Replaces: bugzilla4-full
+XB-Python-Version: ${python:Versions}
+Description: web-based bug tracking system
+ Bugzilla is a Bug Tracking System accessible through a web interface,
+ with which you can:
+  * report bugs;
+  * assign bugs to the appropriate developers;
+  * prioritize bugs;
+  * set bug dependencies;
+  * arrange bugs by product and component.
+  * It can also be used as a todo list manager.
+ What's new since 4.0:
+  * A fully-redesigned Advanced Search page
+  * Automatic duplicate detection when filing bugs
+  * Drop-down autocomplete for every field that accepts a user name or email address
+  * Full control and retrieval of bugs via the WebService, including updating existing bugs
+  * Redesigned home page icons from J. Pink Design
+  * Numerous usability improvements
+  * and much, much more...
+ This package provides a web application that lets users make and look
+ up bug reports. Interested users are automatically informed about
+ changes to a bug's status.
+ To enjoy the full features of Bugzilla you must install this package.
 
 Package: bugzilla4-doc
 Section: doc
