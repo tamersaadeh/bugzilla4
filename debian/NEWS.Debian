@@ -1,8 +1,17 @@
-bugzilla (4.0.0.0-0ubuntu1) natty; urgency=low
+bugzilla (4.2.0-1) precise; urgency=medium
 
-  * Initial update to Bugzilla 4.
+  * Experimental SQLite Support
+  * Creating an Attachment by Pasting Text Into a Text Field
+  * HTML Bugmail
+  * Improved Searching System
+  * Disabling Old Components, Versions and Milestones
+  * Displaying a Custom Field Value Based on Multiple Values of Another Field
+  * Auditing of All Changes Within Bugzilla
+  * Accessibility Improvements
+  * Other Enhancements and Changes
+  - See http://www.bugzilla.org/releases/4.2/release-notes.htm for more details
 
- -- Tamer Saadeh <tamer@tamersaadeh.com>  Wed, 13 Apr 2011 15:36:34 +0300
+ -- Tamer Saadeh <tamersaadeh@gmail.com>  Wed, 11 Jan 2012 19:18:26 +0100
 
 bugzilla (3.4.7.0-3) unstable; urgency=low
 

@@ -65,14 +65,6 @@ Description: web-based bug tracking system
   * set bug dependencies;
   * arrange bugs by product and component.
   * It can also be used as a todo list manager.
- What's new since 4.0:
-  * A fully-redesigned Advanced Search page
-  * Automatic duplicate detection when filing bugs
-  * Drop-down autocomplete for every field that accepts a user name or email address
-  * Full control and retrieval of bugs via the WebService, including updating existing bugs
-  * Redesigned home page icons from J. Pink Design
-  * Numerous usability improvements
-  * and much, much more...
  This package provides a web application that lets users make and look
  up bug reports. Interested users are automatically informed about
  changes to a bug's status.
@@ -144,14 +136,6 @@ Description: web-based bug tracking system
   * set bug dependencies;
   * arrange bugs by product and component.
   * It can also be used as a todo list manager.
- What's new since 4.0:
-  * A fully-redesigned Advanced Search page
-  * Automatic duplicate detection when filing bugs
-  * Drop-down autocomplete for every field that accepts a user name or email address
-  * Full control and retrieval of bugs via the WebService, including updating existing bugs
-  * Redesigned home page icons from J. Pink Design
-  * Numerous usability improvements
-  * and much, much more...
  This package provides a web application that lets users make and look
  up bug reports. Interested users are automatically informed about
  changes to a bug's status.
