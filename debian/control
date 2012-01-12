@@ -112,7 +112,7 @@ Depends: perl (>= 5.8.1),
          libencode-detect-perl,
          libtheschwartz-perl,
          libdaemon-generic-perl,
-         libapache2-mod-perl2 (>= 1.99902)
+         libapache2-mod-perl2 (>= 1.99902),
          ${python:Depends},
          ${misc:Depends}
 Suggests: bugzilla4-doc,
@@ -122,7 +122,7 @@ Suggests: bugzilla4-doc,
           ruby,
           imagemagick,
           libxml-parser-perl,
-          perlmagick,
+          perlmagick
 Recommends: mysql-server | postgresql
 Conflicts: bugzilla4-full
 Replaces: bugzilla4-full
