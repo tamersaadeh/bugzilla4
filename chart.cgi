@@ -76,7 +76,7 @@ if (grep(/^cmd-/, $cgi->param())) {
     my $params = $cgi->canonicalise_query("format", "ctype", "action");
     print $cgi->redirect("query.cgi?format=" . $cgi->param('query_format') .
                                                ($params ? "&$params" : ""));
-    exit;
+    exit 1;
 }
 
 my $action = $cgi->param('action');
@@ -99,7 +99,7 @@ $action ||= "assemble";
 if ($action eq "search") {
     my $params = $cgi->canonicalise_query("format", "ctype", "action");
     print $cgi->redirect("buglist.cgi" . ($params ? "?$params" : ""));
-    exit;
+    exit 1;
 }
 
 $user->in_group(Bugzilla->params->{"chartgroup"})
@@ -234,7 +234,7 @@ else {
     ThrowUserError('unknown_action', {action => $action});
 }
 
-exit;
+exit 0;
 
 # Find any selected series and return either the first or all of them.
 sub getAndValidateSeriesIDs {
