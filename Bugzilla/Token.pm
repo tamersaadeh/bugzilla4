@@ -222,7 +222,7 @@ sub check_hash_token {
         print Bugzilla->cgi->header();
         $template->process('global/confirm-action.html.tmpl', $vars)
           || ThrowTemplateError($template->error());
-        exit;
+        exit(0);
     }
 
     # If we come here, then the token is valid and not too old.
@@ -403,7 +403,7 @@ sub check_token_data {
 
         $template->process('admin/confirm-action.html.tmpl', $vars)
           || ThrowTemplateError($template->error());
-        exit;
+        exit(0);
     }
     return 1;
 }
