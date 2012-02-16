@@ -74,6 +74,7 @@ use constant ID_FIELD   => 'bug_id';
 use constant NAME_FIELD => 'alias';
 use constant LIST_ORDER => ID_FIELD;
 # Bugs have their own auditing table, bugs_activity.
+use constant AUDIT_CREATES => 0;
 use constant AUDIT_UPDATES => 0;
 
 # This is a sub because it needs to call other subroutines.
@@ -2852,14 +2853,13 @@ sub add_see_also {
     $class->check_required_create_fields($params);
 
     my $field_values = $class->run_create_validators($params);
-    $uri = $field_values->{value};
-    $field_values->{value} = $uri->as_string;
+    my $value = $field_values->{value}->as_string;
+    trick_taint($value);
+    $field_values->{value} = $value;
 
     # We only add the new URI if it hasn't been added yet. URIs are
     # case-sensitive, but most of our DBs are case-insensitive, so we do
     # this check case-insensitively.
-    my $value = $uri->as_string;
-
     if (!grep { lc($_->name) eq lc($value) } @{ $self->see_also }) {
         my $privs;
         my $can = $self->check_can_change_field('see_also', '', $value, \$privs);
