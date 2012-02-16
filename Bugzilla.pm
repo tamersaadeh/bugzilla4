@@ -145,7 +145,7 @@ sub init_page {
         if (!i_am_cgi()
             && grep { $_ eq $script } SHUTDOWNHTML_EXIT_SILENTLY)
         {
-            exit;
+            exit 0;
         }
 
         # For security reasons, log out users when Bugzilla is down.
@@ -184,7 +184,7 @@ sub init_page {
         $template->process("global/message.$extension.tmpl", $vars, \$t_output)
             || ThrowTemplateError($template->error);
         print $t_output . "\n";
-        exit;
+        exit 0;
     }
 }
 
