@@ -133,7 +133,7 @@ else
   ThrowUserError('unknown_action', {action => $action});
 }
 
-exit;
+exit(0);
 
 ################################################################################
 # Data Validation / Security Authorization
@@ -161,7 +161,7 @@ sub validateID {
         print $cgi->header();
         $template->process("attachment/choose.html.tmpl", $vars) ||
             ThrowTemplateError($template->error());
-        exit;
+        exit(1);
     }
     
     my $attach_id = $cgi->param($param);
@@ -282,7 +282,7 @@ sub get_attachment {
                 unless ($userid && $valid_token) {
                     # Not a valid token.
                     print $cgi->redirect('-location' => correct_urlbase() . $path);
-                    exit;
+                    exit(0);
                 }
                 # Change current user without creating cookies.
                 Bugzilla->set_user(new Bugzilla::User($userid));
@@ -308,7 +308,7 @@ sub get_attachment {
             if (all_attachments_are_public(\%attachments)) {
                 # No need for a token; redirect to attachment base.
                 print $cgi->redirect(-location => $attachbase . $path);
-                exit;
+                exit(0);
             } else {
                 # Make sure the user can view the attachment.
                 foreach my $field_name (@field_names) {
@@ -317,7 +317,7 @@ sub get_attachment {
                 # Create a token and redirect.
                 my $token = url_quote(issue_session_token(pack_token_data(\%attachments)));
                 print $cgi->redirect(-location => $attachbase . "$path&t=$token");
-                exit;
+                exit(0);
             }
         }
     } else {
@@ -682,7 +682,7 @@ sub update {
                 # Warn the user about the mid-air collision and ask them what to do.
                 $template->process("attachment/midair.html.tmpl", $vars)
                   || ThrowTemplateError($template->error());
-                exit;
+                exit(1);
             }
         }
     }
