@@ -65,7 +65,7 @@ sub fail_nodata {
     $template->process("account/auth/login.html.tmpl",
                        { 'target' => $cgi->url(-relative=>1) }) 
         || ThrowTemplateError($template->error());
-    exit;
+    exit(1);
 }
 
 1;

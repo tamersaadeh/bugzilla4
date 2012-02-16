@@ -1617,7 +1617,7 @@ sub _check_dup_id {
             print $cgi->header();
             $template->process("bug/process/confirm-duplicate.html.tmpl", $vars)
               || ThrowTemplateError($template->error());
-            exit;
+            exit(1);
         }
     }
 
@@ -2498,7 +2498,7 @@ sub _set_product {
             my $template = Bugzilla->template;
             $template->process("bug/process/verify-new-product.html.tmpl",
                 \%vars) || ThrowTemplateError($template->error());
-            exit;
+            exit(1);
         }
     }
     else {
