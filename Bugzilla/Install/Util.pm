@@ -531,7 +531,7 @@ sub vers_cmp {
 sub no_checksetup_from_cgi {
     print "Content-Type: text/html; charset=UTF-8\r\n\r\n";
     print install_string('no_checksetup_from_cgi');
-    exit;
+    exit(0);
 }
 
 ######################
