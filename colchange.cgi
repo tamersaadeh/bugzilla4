@@ -165,12 +165,12 @@ if (defined $cgi->param('rememberedquery')) {
     }
     else {
       print $cgi->redirect($vars->{'redirect_url'});
-      exit;
+      exit 0;
     }
     
     $template->process("global/message.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit 0;
 }
 
 if (defined $cgi->param('columnlist')) {
