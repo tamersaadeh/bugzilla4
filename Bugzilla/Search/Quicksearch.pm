@@ -234,7 +234,7 @@ sub _bug_numbers_only {
         # Single bug number; shortcut to show_bug.cgi.
         print $cgi->redirect(
             -uri => correct_urlbase() . "show_bug.cgi?id=$searchstring");
-        exit;
+        exit(0);
     }
     else {
         # List of bug numbers.
@@ -255,7 +255,7 @@ sub _handle_alias {
             $alias = url_quote($alias);
             print Bugzilla->cgi->redirect(
                 -uri => correct_urlbase() . "show_bug.cgi?id=$alias");
-            exit;
+            exit(0);
         }
     }
 }
