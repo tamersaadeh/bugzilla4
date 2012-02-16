@@ -420,7 +420,7 @@ sub _prompt_for_password {
 sub _password_prompt_exit {
     # re-enable input echoing
     system("stty","echo") unless ON_WINDOWS;
-    exit 1;
+    exit(1);
 }
 
 sub reset_password {
