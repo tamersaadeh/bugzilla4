@@ -105,7 +105,7 @@ Encode::Detect, run the following command:
   $^X install-module.pl Encode::Detect
 
 EOT
-        exit;
+        exit 1;
     }
 }
 

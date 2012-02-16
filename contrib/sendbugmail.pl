@@ -23,7 +23,7 @@ my $dbh = Bugzilla->dbh;
 
 sub usage {
     print STDERR "Usage: $0 bug_id user_email\n";
-    exit;
+    exit 1;
 }
 
 if (($#ARGV < 1) || ($#ARGV > 2)) {
