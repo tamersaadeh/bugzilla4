@@ -162,5 +162,5 @@ sub display_data {
                             -type => $format->{'ctype'});
         print $output;
     }
-    exit;
+    exit 0;
 }
