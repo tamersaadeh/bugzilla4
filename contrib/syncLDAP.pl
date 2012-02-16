@@ -70,7 +70,7 @@ foreach my $arg (@ARGV)
          print " -c No create, don't create users, which are in LDAP but not in Bugzilla\n";
          print " -q Quiet mode, give less output\n";
          print "\n";
-         exit;
+         exit 1;
    }
 }
 
@@ -94,7 +94,7 @@ foreach my $login_name (keys %bugzilla_users) {
 my $LDAPserver = Bugzilla->params->{"LDAPserver"};
 if ($LDAPserver eq "") {
    print "No LDAP server defined in bugzilla preferences.\n";
-   exit;
+   exit 1;
 }
 
 my $LDAPconn;
@@ -111,7 +111,7 @@ if($LDAPserver =~ /:\/\//) {
 
 if(!$LDAPconn) {
    print "Connecting to LDAP server failed. Check LDAPserver setting.\n";
-   exit;
+   exit 1;
 }
 my $mesg;
 if (Bugzilla->params->{"LDAPbinddn"}) {
@@ -123,7 +123,7 @@ else {
 }
 if($mesg->code) {
    print "Binding to LDAP server failed: " . $mesg->error . "\nCheck LDAPbinddn setting.\n";
-   exit;
+   exit 1;
 }
 
 # We've got our anonymous bind;  let's look up the users.
@@ -135,7 +135,7 @@ $mesg = $LDAPconn->search( base   => Bugzilla->params->{"LDAPBaseDN"},
 
 if(! $mesg->count) {
    print "LDAP lookup failure. Check LDAPBaseDN setting.\n";
-   exit;
+   exit 1;
 }
    
 my %val = %{ $mesg->as_struct };
