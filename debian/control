@@ -69,8 +69,8 @@ Description: web-based bug tracking system
  up bug reports. Interested users are automatically informed about
  changes to a bug's status.
  This is the minimalist approach, that is it will only install the minimum
- to be able to run Bugzilla. If you would like to enjoy Bugzilla's full features
- you should install bugzilla-full instead.
+ to be able to run Bugzilla. If you would like to use Bugzilla's extra features
+ you should install bugzilla4-full instead.
 
 Package: bugzilla4-full
 Architecture: any
@@ -124,7 +124,7 @@ Suggests: bugzilla4-doc,
           libxml-parser-perl,
           perlmagick
 Recommends: mysql-server | postgresql
-Conflicts: bugzilla4-full
+Conflicts: bugzilla4-full, bugzilla4-min
 Replaces: bugzilla4-full
 XB-Python-Version: ${python:Versions}
 Description: web-based bug tracking system
@@ -139,12 +139,12 @@ Description: web-based bug tracking system
  This package provides a web application that lets users make and look
  up bug reports. Interested users are automatically informed about
  changes to a bug's status.
- To enjoy the full features of Bugzilla you must install this package.
+ This package will install Bugzilla with all of its extra features.
 
 Package: bugzilla4-doc
 Section: doc
 Architecture: all
-Suggests: bugzilla4
+Suggests: bugzilla4-min, bugzilla4-full
 Depends: ${misc:Depends}
 Homepage: http://www.bugzilla.org
 XB-Python-Version: ${python:Versions}
