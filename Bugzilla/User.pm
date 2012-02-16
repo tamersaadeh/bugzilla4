@@ -1613,7 +1613,7 @@ sub match_field {
 
     $template->process("global/confirm-user-match.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit(0);
 
 }
 
