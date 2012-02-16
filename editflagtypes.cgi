@@ -148,7 +148,7 @@ if (my ($category_action) = grep { $_ =~ /^categoryAction-(?:\w+)$/ } $cgi->para
 
     $template->process("admin/flag-type/edit.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit 0;
 }
 
 if ($action eq 'list') {
@@ -209,7 +209,7 @@ if ($action eq 'list') {
 
     $template->process("admin/flag-type/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit 0;
 }
 
 if ($action eq 'enter') {
@@ -230,7 +230,7 @@ if ($action eq 'enter') {
 
     $template->process("admin/flag-type/edit.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit 0;
 }
 
 if ($action eq 'edit' || $action eq 'copy') {
@@ -262,7 +262,7 @@ if ($action eq 'edit' || $action eq 'copy') {
 
     $template->process("admin/flag-type/edit.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit 0;
 }
 
 if ($action eq 'insert') {
@@ -315,7 +315,7 @@ if ($action eq 'insert') {
 
     $template->process("admin/flag-type/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit 0;
 }
 
 if ($action eq 'update') {
@@ -378,7 +378,7 @@ if ($action eq 'update') {
 
     $template->process("admin/flag-type/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit 0;
 }
 
 if ($action eq 'confirmdelete') {
@@ -390,7 +390,7 @@ if ($action eq 'confirmdelete') {
 
     $template->process("admin/flag-type/confirm-delete.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit 0;
 }
 
 if ($action eq 'delete') {
@@ -412,7 +412,7 @@ if ($action eq 'delete') {
 
     $template->process("admin/flag-type/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit 0;
 }
 
 if ($action eq 'deactivate') {
@@ -435,7 +435,7 @@ if ($action eq 'deactivate') {
 
     $template->process("admin/flag-type/list.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit 0;
 }
 
 ThrowUserError('unknown_action', {action => $action});
