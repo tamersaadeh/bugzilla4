@@ -70,7 +70,7 @@ unless ($product && $user->can_access_product($product->name)) {
 
         $template->process("global/choose-product.html.tmpl", $vars)
           || ThrowTemplateError($template->error());
-        exit;
+        exit 0;
     }
 
     # If there is only one product available and the user didn't specify

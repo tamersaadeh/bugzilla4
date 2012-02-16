@@ -57,7 +57,7 @@ if (defined($login)) {
 
     $template->process("account/created.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit 0;
 }
 
 # Show the standard "would you like to create an account?" form.
