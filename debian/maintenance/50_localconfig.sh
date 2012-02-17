@@ -15,9 +15,9 @@ cd "$1" && patch -p1 < "$0"
 
 exit 0
 
---- a/Bugzilla/Install/Localconfig.pm	2010-10-27 14:23:52.000000000 +0200
-+++ b/Bugzilla/Install/Localconfig.pm	2010-10-27 14:26:17.000000000 +0200
-@@ -320,7 +320,7 @@ sub update_localconfig {
+--- a/Bugzilla/Install/Localconfig.pm	2012-02-17 19:03:56 +0100
++++ b/Bugzilla/Install/Localconfig.pm	2012-02-17 19:05:56 +0100
+@@ -208,7 +208,7 @@ sub update_localconfig {
  
      my $output      = $params->{output} || 0;
      my $answer      = Bugzilla->installation_answers;
@@ -26,12 +26,12 @@ exit 0
  
      my @new_vars;
      foreach my $var (LOCALCONFIG_VARS) {
-@@ -390,7 +390,7 @@ EOT
-                                      ["*$var->{name}"]);
+@@ -273,7 +273,7 @@ sub update_localconfig {
+                                      ["*$name"]), "\n";
     }
  
 -    if (@new_vars) {
 +    if (!$params->{debian_localconfig} && @new_vars) {
          my $newstuff = join(', ', @new_vars);
-         print <<EOT;
- 
+         print "\n";
+         print colored(install_string('lc_new_vars', { localconfig => $filename,
