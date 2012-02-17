@@ -67,7 +67,7 @@ sub load_template {
 
     $template->process("admin/workflow/$filename.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit 0;
 }
 
 if ($action eq 'edit') {
