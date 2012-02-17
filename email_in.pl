@@ -91,7 +91,7 @@ sub parse_mail {
     my $auto_submitted = $input_email->header('Auto-Submitted') || '';
     if ($summary =~ /out of( the)? office/i || $auto_submitted eq 'auto-replied') {
         debug_print("Automatic reply detected: $summary");
-        exit;
+        exit 0;
     }
 
     my ($body, $attachments) = get_body_and_attachments($input_email);
@@ -394,7 +394,7 @@ sub die_handler {
     print STDERR "$msg\n";
     # We exit with a successful value, because we don't want the MTA
     # to *also* send a failure notice.
-    exit;
+    exit 0;
 }
 
 ###############
