@@ -163,7 +163,7 @@ if (defined $cgi->param('delta_ts'))
         # Warn the user about the mid-air collision and ask them what to do.
         $template->process("bug/process/midair.html.tmpl", $vars)
           || ThrowTemplateError($template->error());
-        exit;
+        exit 0;
     }
 }
 
@@ -408,7 +408,7 @@ elsif ($action eq 'next_bug' or $action eq 'same_bug') {
         }
         $template->process("bug/show.html.tmpl", $vars)
           || ThrowTemplateError($template->error());
-        exit;
+        exit 0;
     }
 } elsif ($action ne 'nothing') {
     ThrowCodeError("invalid_post_bug_submit_action");
