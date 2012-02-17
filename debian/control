@@ -54,7 +54,7 @@ Suggests: bugzilla4-doc,
           perlmagick,
           mysql-server,
           imagemagick
-Conflicts: bugzilla4-min, bugzilla4-full
+Conflicts: bugzilla4-full
 Replaces: bugzilla4-min
 XB-Python-Version: ${python:Versions}
 Description: web-based bug tracking system
@@ -124,7 +124,7 @@ Suggests: bugzilla4-doc,
           libxml-parser-perl,
           perlmagick
 Recommends: mysql-server
-Conflicts: bugzilla4-full, bugzilla4-min
+Conflicts: bugzilla4-min
 Replaces: bugzilla4-full
 XB-Python-Version: ${python:Versions}
 Description: web-based bug tracking system
