@@ -57,7 +57,7 @@ my $vars = {};
 # redirect to enter_bug if no field is passed.
 unless ($cgi->param()) {
     print $cgi->redirect(correct_urlbase() . 'enter_bug.cgi');
-    exit;
+    exit 1;
 }
 
 # Detect if the user already used the same form to submit a bug
@@ -78,7 +78,7 @@ if (defined $cgi->param('maketemplate')) {
     print $cgi->header();
     $template->process("bug/create/make-template.html.tmpl", $vars)
       || ThrowTemplateError($template->error());
-    exit;
+    exit 0;
 }
 
 umask 0;
