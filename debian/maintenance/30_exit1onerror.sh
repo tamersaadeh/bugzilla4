@@ -1335,3 +1335,51 @@ diff -Naur bugzilla-srcdir.orig//whineatnews.pl bugzilla-srcdir/whineatnews.pl
  
  my $dbh = Bugzilla->dbh;
  my $query = q{SELECT bug_id, short_desc, login_name
+diff -Naur bugzilla-srcdir.orig//editvalues.cgi bugzilla-srcdir/editvalues.cgi
+--- bugzilla-srcdir.orig//editvalues.cgi	2012-02-17 19:03:56 +0100
++++ bugzilla-srcdir/editvalues.cgi	2012-02-17 19:05:56 +0100
+@@ -39,7 +39,7 @@ sub display_field_values {
+     $vars->{'values'} = $vars->{'field'}->legal_values;
+     $template->process("admin/fieldvalues/list.html.tmpl", $vars)
+       || ThrowTemplateError($template->error());
+-    exit;
++    exit 0;
+ }
+ 
+ ######################################################################
+@@ -81,7 +81,7 @@ if (!$cgi->param('field')) {
+     $vars->{'fields'} = \@field_list;
+     $template->process("admin/fieldvalues/select-field.html.tmpl", $vars)
+       || ThrowTemplateError($template->error());
+-    exit;
++    exit 0;
+ }
+ 
+ # At this point, the field must be defined.
+@@ -104,7 +104,7 @@ if ($action eq 'add') {
+     $vars->{'token'} = issue_session_token('add_field_value');
+     $template->process("admin/fieldvalues/create.html.tmpl", $vars)
+       || ThrowTemplateError($template->error());
+-    exit;
++    exit 0;
+ }
+ 
+ #
+@@ -145,7 +145,7 @@ if ($action eq 'del') {
+     $template->process("admin/fieldvalues/confirm-delete.html.tmpl", $vars)
+       || ThrowTemplateError($template->error());
+ 
+-    exit;
++    exit 0;
+ }
+ 
+ 
+@@ -171,7 +171,7 @@ if ($action eq 'edit') {
+     $template->process("admin/fieldvalues/edit.html.tmpl", $vars)
+       || ThrowTemplateError($template->error());
+ 
+-    exit;
++    exit 0;
+ }
+ 
+ 
