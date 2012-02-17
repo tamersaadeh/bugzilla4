@@ -12,8 +12,8 @@ Architecture: any
 Section: web
 Homepage: http://www.bugzilla.org
 Depends: perl (>= 5.8.1),
-         mysql-client | postgresql-client,
-         libdbd-mysql-perl (>= 4.001) | libdbd-pg-perl (>= 1.45),
+         mysql-client,
+         libdbd-mysql-perl (>= 4.001),
          libcgi-pm-perl (>= 3.51),
          libdigest-sha-perl,
          libtimedate-perl (>= 1.1600-9),
@@ -26,13 +26,16 @@ Depends: perl (>= 5.8.1),
          liburi-perl (>= 1.37),
          liblist-moreutils-perl (>= 0.22),
          libmath-random-isaac-perl (>= 1.0.1),
+         cvs,
+         patchutils,
          ${python:Depends},
          ${misc:Depends}
 Suggests: bugzilla4-doc,
           bugzilla4-full,
           libnet-ldap-perl,
           libgd-text-perl,
-          libgd-graph-perl, libgd-gd2-perl,
+          libgd-graph-perl,
+          libgd-gd2-perl,
           libmailtools-perl (>= 1.77-1),
           libmime-tools-perl (>= 5.425-2),	
           libhtml-parser-perl,
@@ -41,7 +44,6 @@ Suggests: bugzilla4-doc,
           libauthen-radius-perl,
           graphviz,
           libsoap-lite-perl (>= 0.712),
-          patchutils,
           libwww-perl,
           ruby,
           libjson-xs-perl (>= 2.0),
@@ -50,8 +52,7 @@ Suggests: bugzilla4-doc,
           libtemplate-plugin-gd-perl,
           libxml-parser-perl,
           perlmagick,
-          mysql-server | postgresql,
-          cvs,
+          mysql-server,
           imagemagick
 Conflicts: bugzilla4-min, bugzilla4-full
 Replaces: bugzilla4-min
@@ -77,8 +78,8 @@ Architecture: any
 Section: web
 Homepage: http://www.bugzilla.org
 Depends: perl (>= 5.8.1),
-         mysql-client | postgresql-client,
-         libdbd-mysql-perl (>= 4.001) | libdbd-pg-perl (>= 1.45),
+         mysql-client,
+         libdbd-mysql-perl (>= 4.001),
          libcgi-pm-perl (>= 3.51),
          libdigest-sha-perl,
          libtimedate-perl (>= 1.1600-9),
@@ -113,17 +114,17 @@ Depends: perl (>= 5.8.1),
          libtheschwartz-perl,
          libdaemon-generic-perl,
          libapache2-mod-perl2 (>= 1.99902),
+         cvs,
+         patchutils,
          ${python:Depends},
          ${misc:Depends}
 Suggests: bugzilla4-doc,
           graphviz,
-          patchutils,
-          cvs,
           ruby,
           imagemagick,
           libxml-parser-perl,
           perlmagick
-Recommends: mysql-server | postgresql
+Recommends: mysql-server
 Conflicts: bugzilla4-full, bugzilla4-min
 Replaces: bugzilla4-full
 XB-Python-Version: ${python:Versions}

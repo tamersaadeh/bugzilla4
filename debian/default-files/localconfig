@@ -24,6 +24,17 @@ $create_htaccess = 0;
 # asroot, or as a user who is a member of the specified group.
 $webservergroup = 'www-data';
 
+# Set this if Bugzilla runs in an Apache SuexecUserGroup environment.
+# (If your web server runs control panel software (cPanel, Plesk or similar),
+# or if your Bugzilla is to run in a shared hosting environment, then you are
+# almost certainly in an Apache SuexecUserGroup environment.)
+# If you have a Windows box, ignore this setting.
+# If set to 0, Bugzilla will set file permissions as tightly as possible.
+# If set to 1, Bugzilla will set file permissions so that it may work in an
+# SuexecUserGroup environment. The difference is that static files (CSS,
+# JavaScript and so on) will receive world read permissions.
+$use_suexec = '0';
+
 # What SQL database to use. Default is mysql. List of supported databases
 # can be obtained by listing Bugzilla/DB directory - every module corresponds
 # to one supported database and the name corresponds to a driver name.
@@ -41,7 +52,7 @@ $db_user = 'bugzilla4';
 # Enter your database password here. It's normally advisable to specify
 # a password for your bugzilla database user.
 # If you use apostrophe (') or a backslash (\) in your password, you'll
-# need to escape it by preceding it with a '\' character. (\') or (\)
+# need to escape it by preceding it with a '\' character. (\') or (\\)
 # (Far simpler just not to use those characters.)
 $db_pass = '';
 
@@ -83,7 +94,7 @@ $cvsbin = '/usr/bin/cvs';
 # viewer), we need the interdiff binary to make diffs between two patches.
 # Because it's possible that this program is not in your path, you can specify
 # its location here.  Please specify the full path to the executable.
-$interdiffbin = '';
+$interdiffbin = '/usr/bin/interdiff';
 
 # The interdiff feature needs diff, so we have to have that path.
 # Please specify the directory name only; do not use trailing slash.
