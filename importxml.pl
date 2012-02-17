@@ -164,7 +164,7 @@ sub Error {
     my @to = ( $params->{"maintainer"}, $exporter);
     Debug( $message, ERR_LEVEL );
     MailMessage( $subject, $message, @to );
-    exit;
+    exit 0;
 }
 
 # This subroutine handles flags for process_bug. It is generic in that
