@@ -115,7 +115,7 @@ if ($product_name eq '') {
             print $cgi->header();
             $template->process("global/choose-classification.html.tmpl", $vars)
                || ThrowTemplateError($template->error());
-            exit;
+            exit 0;
         }
         # If we come here, then there is only one classification available.
         $classification = $classifications[0]->{'object'}->name;
@@ -147,7 +147,7 @@ if ($product_name eq '') {
         print $cgi->header();
         $template->process("global/choose-product.html.tmpl", $vars)
           || ThrowTemplateError($template->error());
-        exit;
+        exit 0;
     } else {
         # Only one product exists.
         $product = $enterable_products[0];
