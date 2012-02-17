@@ -1291,7 +1291,7 @@ diff -Naur bugzilla-srcdir.orig//show_bug.cgi bugzilla-srcdir/show_bug.cgi
 +    exit 0;
  }
  
- my $format = $template->get_format("bug/show", scalar $cgi->param('format'),
+ my $format = $template->get_format("bug/show", scalar $cgi->param('format'), 
 diff -Naur bugzilla-srcdir.orig//testagent.cgi bugzilla-srcdir/testagent.cgi
 --- bugzilla-srcdir.orig//testagent.cgi	2012-02-17 19:03:56 +0100
 +++ bugzilla-srcdir/testagent.cgi	2012-02-17 19:05:56 +0100
