@@ -39,7 +39,7 @@ use Bugzilla::Util;
 use Bugzilla::User;
 
 # Whining is disabled if whinedays is zero
-exit unless Bugzilla->params->{'whinedays'} >= 1;
+exit 1 unless Bugzilla->params->{'whinedays'} >= 1;
 
 my $dbh = Bugzilla->dbh;
 my $query = q{SELECT bug_id, short_desc, login_name
