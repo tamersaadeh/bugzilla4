@@ -95,7 +95,7 @@ diff -Naur bugzilla-srcdir.orig//buglist.cgi bugzilla-srcdir/buglist.cgi
 --- bugzilla-srcdir.orig//buglist.cgi	2012-02-17 19:03:56 +0100
 +++ bugzilla-srcdir/buglist.cgi	2012-02-17 19:05:56 +0100
 @@ -461,7 +461,7 @@ if ($cmdtype eq "dorem") {
-         $vars->{'url'} = "buglist.cgi?newquery=" . url_quote($buffer) . "&cmdtype=doit&remtype=asnamed&newqueryname=" . url_quote($qn
+         $vars->{'url'} = "buglist.cgi?newquery=" . url_quote($buffer) . "&cmdtype=doit&remtype=asnamed&newqueryname=" . url_quote($qname);
          $template->process("global/message.html.tmpl", $vars)
            || ThrowTemplateError($template->error());
 -        exit;
