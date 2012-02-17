@@ -64,7 +64,7 @@ if ($user->in_group('admin')) {
     unless (Bugzilla->params->{'urlbase'}) {
         $template->process('welcome-admin.html.tmpl')
           || ThrowTemplateError($template->error());
-        exit;
+        exit 0;
     }
     # Inform the administrator about new releases, if any.
     $vars->{'release'} = Bugzilla::Update::get_notifications();
