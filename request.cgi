@@ -87,7 +87,7 @@ else {
     $template->process('request/queue.html.tmpl', $vars)
       || ThrowTemplateError($template->error());
 }
-exit;
+exit 0;
 
 ################################################################################
 # Functions
